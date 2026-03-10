@@ -116,7 +116,18 @@ function App() {
   const [syncStatus, setSyncStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [authToken, setAuthToken] = useState<string>('');
 
-  const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(new Set());
+  // 初始化时，把所有有子分类的文件夹都设为折叠状态
+  const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(() => {
+    const initialCollapsed = new Set<string>();
+    categories.forEach(cat => {
+      // 如果这个分类有子分类，就把它加入折叠集合
+      const hasChildren = categories.some(c => c.parentId === cat.id);
+      if (hasChildren) {
+        initialCollapsed.add(cat.id);
+      }
+    });
+    return initialCollapsed;
+  });
 
   const mainRef = useRef<HTMLDivElement>(null);
   const isAutoScrollingRef = useRef(false);
