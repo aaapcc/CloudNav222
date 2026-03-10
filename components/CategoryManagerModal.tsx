@@ -463,7 +463,8 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                   )}
               </div>
             </div>
-          ))}
+          );
+          })}
         </div>
 
         <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
