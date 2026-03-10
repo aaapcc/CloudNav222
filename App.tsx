@@ -120,6 +120,18 @@ function App() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const contextMenuRef = useRef<HTMLDivElement>(null);
 
+  // 👇 在这里添加安全过滤函数（就加在这个位置）
+  // 安全地获取顶级分类（处理 parentId 可能不存在的情况）
+  const getTopLevelCategories = useMemo(() => {
+    return categories.filter(cat => !cat.parentId);
+  }, [categories]);
+
+  // 安全地获取子分类
+  const getSubCategories = (parentId: string) => {
+    return categories.filter(cat => cat.parentId === parentId);
+  };
+  // 👆 添加到这里结束
+
   // --- Helpers ---
 
   const loadFromLocal = () => {
@@ -546,6 +558,16 @@ function App() {
       );
   };
 
+  // 👇 从这里开始添加
+  // 调试：看看 categories 数据
+  console.log('当前 categories:', categories);
+
+  // 如果 categories 不是数组，显示错误
+  if (!Array.isArray(categories)) {
+    return <div>数据加载错误</div>;
+  }
+  // 👆 到这里结束
+  
   return (
     <div className="flex h-screen overflow-hidden text-slate-900 dark:text-slate-50">
       
@@ -709,8 +731,22 @@ function App() {
             </div>
 
             {/* 先渲染顶级分类 */}
-            {categories
-              .filter(cat => !cat.parentId) // 只取顶级分类
+            {getTopLevelCategories
+              .filter(cat => {
+                if (authToken) return cat.isVisible !== false;
+                return cat.isVisible !== false && !cat.isAdminOnly;
+              })
+              .map(cat => {
+                const isLocked = cat.password && !unlockedCategoryIds.has(cat.id);
+                const isEmoji = cat.icon && cat.icon.length <= 4 && !/^[a-zA-Z]+$/.test(cat.icon);
+                
+                // 使用安全函数获取子分类
+                const subCategories = getSubCategories(cat.id).filter(sub => {
+                  if (authToken) return sub.isVisible !== false;
+                  return sub.isVisible !== false && !sub.isAdminOnly;
+                });
+                
+                return (
               .filter(cat => {
                 if (authToken) return cat.isVisible !== false;
                 return cat.isVisible !== false && !cat.isAdminOnly;
@@ -945,8 +981,17 @@ function App() {
             )}
 
             {/* 先过滤出可见的顶级分类 */}
-            {categories
-              .filter(cat => !cat.parentId)
+            {getTopLevelCategories
+              .filter(cat => {
+                if (authToken) return cat.isVisible !== false;
+                return cat.isVisible !== false && !cat.isAdminOnly;
+              })
+              .map(cat => {
+                // 使用安全函数获取子分类
+                const subCategories = getSubCategories(cat.id).filter(sub => {
+                  if (authToken) return sub.isVisible !== false;
+                  return sub.isVisible !== false && !sub.isAdminOnly;
+                });
               .filter(cat => {
                 if (authToken) return cat.isVisible !== false;
                 return cat.isVisible !== false && !cat.isAdminOnly;
