@@ -116,6 +116,8 @@ function App() {
   const [syncStatus, setSyncStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [authToken, setAuthToken] = useState<string>('');
 
+  const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(new Set());
+
   const mainRef = useRef<HTMLDivElement>(null);
   const isAutoScrollingRef = useRef(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -790,39 +792,56 @@ function App() {
                   (authToken ? sub.isVisible !== false : sub.isVisible !== false && !sub.isAdminOnly)
                 );
                 
-                // 默认展开二级目录
                 const hasChildren = subCategories.length > 0;
+                const isCollapsed = collapsedFolders.has(cat.id);
 
                 return (
                   <div key={cat.id} className="space-y-1">
                     {/* 顶级分类 */}
-                    <button
-                      onClick={() => scrollToCategory(cat.id)}
-                      className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all group ${
-                        activeCategory === cat.id 
-                          ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium' 
-                          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
-                      }`}
-                    >
-                      <div className={`p-1.5 rounded-lg transition-colors flex items-center justify-center ${activeCategory === cat.id ? 'bg-blue-100 dark:bg-blue-800' : 'bg-slate-100 dark:bg-slate-800'}`}>
-                        {isLocked ? <Lock size={16} className="text-amber-500" /> : (isEmoji ? <span className="text-base leading-none">{cat.icon}</span> : <Icon name={cat.icon} size={16} />)}
-                      </div>
-                      <span className="truncate flex-1 text-left">
-                        {cat.name}
-                        {cat.isAdminOnly && authToken && (
-                          <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
-                            管
-                          </span>
-                        )}
-                      </span>
+                    <div className="flex items-center">
                       {hasChildren && (
-                        <ChevronDown size={14} className="text-slate-400" />
+                        <button
+                          onClick={() => {
+                            setCollapsedFolders(prev => {
+                              const newSet = new Set(prev);
+                              if (newSet.has(cat.id)) {
+                                newSet.delete(cat.id);
+                              } else {
+                                newSet.add(cat.id);
+                              }
+                              return newSet;
+                            });
+                          }}
+                          className="p-1 mr-1 text-slate-400 hover:text-blue-500"
+                        >
+                          {isCollapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
+                        </button>
                       )}
-                    </button>
+                      <button
+                        onClick={() => scrollToCategory(cat.id)}
+                        className={`flex-1 flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all group ${
+                          activeCategory === cat.id 
+                            ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium' 
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
+                        }`}
+                      >
+                        <div className={`p-1.5 rounded-lg transition-colors flex items-center justify-center ${activeCategory === cat.id ? 'bg-blue-100 dark:bg-blue-800' : 'bg-slate-100 dark:bg-slate-800'}`}>
+                          {isLocked ? <Lock size={16} className="text-amber-500" /> : (isEmoji ? <span className="text-base leading-none">{cat.icon}</span> : <Icon name={cat.icon} size={16} />)}
+                        </div>
+                        <span className="truncate flex-1 text-left">
+                          {cat.name}
+                          {cat.isAdminOnly && authToken && (
+                            <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
+                              管
+                            </span>
+                          )}
+                        </span>
+                      </button>
+                    </div>
                     
-                    {/* 子分类 - 默认展开 */}
-                    {hasChildren && (
-                      <div className="ml-6 space-y-1">
+                    {/* 子分类 - 只有未折叠时才显示 */}
+                    {!isCollapsed && hasChildren && (
+                      <div className="ml-9 space-y-1">
                         {subCategories.map(sub => {
                           const isSubLocked = sub.password && !unlockedCategoryIds.has(sub.id);
                           const isSubEmoji = sub.icon && sub.icon.length <= 4 && !/^[a-zA-Z]+$/.test(sub.icon);
