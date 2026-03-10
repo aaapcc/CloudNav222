@@ -420,8 +420,8 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                     <Trash2 size={14} />
                   </button>
                 </div>
-
-                {/* ========== 修改部分：子分类显示成一整行 ========== */}
+              </div>
+              {/* ========== 修改部分：子分类显示成一整行 ========== */}
                 {expandedFolders.has(cat.id) && (
                   <div className="w-full mt-2 space-y-2">
                     {categories
@@ -557,7 +557,6 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                   </div>
                 )}
                 {/* ========== 修改结束 ========== */}
-              </div>
             </div>
           );
           })}
