@@ -15,6 +15,7 @@ export interface Category {
   name: string;
   icon?: string;
   password?: string;
+  parentId?: string;        // 父分类ID，顶级分类没有此字段
   isVisible?: boolean;      // false = 全员隐藏
   isAdminOnly?: boolean;    // true = 仅管理员可见
 }

@@ -708,44 +708,67 @@ function App() {
                </button>
             </div>
 
-            {/* 左侧菜单过滤，先过滤出可见的分类，然后再渲染 */}
+            {/* 先渲染顶级分类 */}
             {categories
+              .filter(cat => !cat.parentId) // 只取顶级分类
               .filter(cat => {
-                // 如果是管理员（已登录），能看到"全员可见"和"仅管理员可见"的分类
-                if (authToken) {
-                  // 管理员也看不到"全员隐藏"的分类
-                  return cat.isVisible !== false;
-                }
-                // 如果是普通用户，只显示"全员可见"的分类
+                if (authToken) return cat.isVisible !== false;
                 return cat.isVisible !== false && !cat.isAdminOnly;
               })
               .map(cat => {
                 const isLocked = cat.password && !unlockedCategoryIds.has(cat.id);
                 const isEmoji = cat.icon && cat.icon.length <= 4 && !/^[a-zA-Z]+$/.test(cat.icon);
                 
+                // 找出该顶级分类下的子分类
+                const subCategories = categories.filter(sub => sub.parentId === cat.id);
+                
                 return (
-                  <button
-                    key={cat.id}
-                    onClick={() => scrollToCategory(cat.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all group ${
-                      activeCategory === cat.id 
-                        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium' 
-                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
-                    }`}
-                  >
-                    <div className={`p-1.5 rounded-lg transition-colors flex items-center justify-center ${activeCategory === cat.id ? 'bg-blue-100 dark:bg-blue-800' : 'bg-slate-100 dark:bg-slate-800'}`}>
-                      {isLocked ? <Lock size={16} className="text-amber-500" /> : (isEmoji ? <span className="text-base leading-none">{cat.icon}</span> : <Icon name={cat.icon} size={16} />)}
-                    </div>
-                    <span className="truncate flex-1 text-left">
-                      {cat.name}
-                      {cat.isAdminOnly && authToken && (
-                        <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
-                          管
-                        </span>
+                  <div key={cat.id} className="space-y-1">
+                    {/* 顶级分类按钮 */}
+                    <button
+                      onClick={() => scrollToCategory(cat.id)}
+                      className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all group ${
+                        activeCategory === cat.id 
+                          ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium' 
+                          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
+                      }`}
+                    >
+                      <div className={`p-1.5 rounded-lg transition-colors flex items-center justify-center ${activeCategory === cat.id ? 'bg-blue-100 dark:bg-blue-800' : 'bg-slate-100 dark:bg-slate-800'}`}>
+                        {isLocked ? <Lock size={16} className="text-amber-500" /> : (isEmoji ? <span className="text-base leading-none">{cat.icon}</span> : <Icon name={cat.icon} size={16} />)}
+                      </div>
+                      <span className="truncate flex-1 text-left">{cat.name}</span>
+                      {subCategories.length > 0 && (
+                        <ChevronDown size={14} className="text-slate-400" />
                       )}
-                    </span>
-                    {activeCategory === cat.id && <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>}
-                  </button>
+                    </button>
+                    
+                    {/* 子分类列表 */}
+                    {subCategories.length > 0 && (
+                      <div className="ml-8 space-y-1">
+                        {subCategories.map(sub => {
+                          const isSubLocked = sub.password && !unlockedCategoryIds.has(sub.id);
+                          const isSubEmoji = sub.icon && sub.icon.length <= 4 && !/^[a-zA-Z]+$/.test(sub.icon);
+                          
+                          return (
+                            <button
+                              key={sub.id}
+                              onClick={() => scrollToCategory(sub.id)}
+                              className={`w-full flex items-center gap-2 px-4 py-1.5 rounded-lg transition-all text-sm ${
+                                activeCategory === sub.id 
+                                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
+                                  : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
+                              }`}
+                            >
+                              <div className="w-4 h-4 flex items-center justify-center">
+                                {isSubLocked ? <Lock size={12} className="text-amber-500" /> : (isSubEmoji ? <span className="text-xs">{sub.icon}</span> : <Icon name={sub.icon} size={12} />)}
+                              </div>
+                              <span className="truncate flex-1 text-left">{sub.name}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 );
             })}
         </div>
@@ -921,70 +944,66 @@ function App() {
                 </section>
             )}
 
-            {/* 右侧内容过滤，先过滤出可见的分类，然后再渲染 */}
+            {/* 先过滤出可见的顶级分类 */}
             {categories
-                .filter(cat => {
-                  // 如果是管理员（已登录）
-                  if (authToken) {
-                    // 管理员也看不到"全员隐藏"的分类
-                    return cat.isVisible !== false;
-                  }
-                  // 如果是普通用户，只显示全员可见的分类
-                  return cat.isVisible !== false && !cat.isAdminOnly;
-                })
-                .map(cat => {
-                  let catLinks = searchResults.filter(l => l.categoryId === cat.id);
-                  const isLocked = cat.password && !unlockedCategoryIds.has(cat.id);
-                  
-                  if (searchQuery && searchMode === 'local' && catLinks.length === 0) return null;
+              .filter(cat => !cat.parentId)
+              .filter(cat => {
+                if (authToken) return cat.isVisible !== false;
+                return cat.isVisible !== false && !cat.isAdminOnly;
+              })
+              .map(cat => {
+                const subCategories = categories.filter(sub => sub.parentId === cat.id);
+                const catLinks = searchResults.filter(l => l.categoryId === cat.id);
+                const isLocked = cat.password && !unlockedCategoryIds.has(cat.id);
+                
+                if (searchQuery && searchMode === 'local' && catLinks.length === 0 && subCategories.length === 0) return null;
 
-                  return (
-                    <section key={cat.id} id={`cat-${cat.id}`} className="scroll-mt-24">
-                        <div className="flex items-center gap-2 mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
-                             <div className="text-slate-400">
-                                {cat.icon && cat.icon.length <= 4 && !/^[a-zA-Z]+$/.test(cat.icon) ? <span className="text-lg">{cat.icon}</span> : <Icon name={cat.icon} size={20} />}
-                             </div>
-                             <div className="flex items-center gap-2">
-                                <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200">
-                                  {cat.name}
-                                </h2>
-                                {cat.isAdminOnly && authToken && (
-                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
-                                    仅管理员
-                                  </span>
-                                )}
-                                {isLocked && <Lock size={16} className="text-amber-500" />}
-                              </div>
+                return (
+                  <section key={cat.id} id={`cat-${cat.id}`} className="scroll-mt-24">
+                    {/* 顶级分类标题 */}
+                    <div className="flex items-center gap-2 mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
+                      <div className="text-slate-400">
+                        {cat.icon && cat.icon.length <= 4 && !/^[a-zA-Z]+$/.test(cat.icon) ? <span className="text-lg">{cat.icon}</span> : <Icon name={cat.icon} size={20} />}
+                      </div>
+                      <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200">{cat.name}</h2>
+                      {isLocked && <Lock size={16} className="text-amber-500" />}
+                      {cat.isAdminOnly && authToken && (
+                        <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">管</span>
+                      )}
+                    </div>
+                    
+                    {/* 子分类内容 */}
+                    {subCategories.map(sub => {
+                      const subLinks = searchResults.filter(l => l.categoryId === sub.id);
+                      const isSubLocked = sub.password && !unlockedCategoryIds.has(sub.id);
+                      
+                      return (
+                        <div key={sub.id} id={`cat-${sub.id}`} className="mb-6">
+                          <div className="flex items-center gap-2 mb-3">
+                            <h3 className="text-md font-semibold text-slate-700 dark:text-slate-300">{sub.name}</h3>
+                            {isSubLocked && <Lock size={14} className="text-amber-500" />}
+                          </div>
+                          
+                          {isSubLocked ? (
+                            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4 text-center text-sm text-slate-400">
+                              请输入密码查看此目录
+                            </div>
+                          ) : (
+                            <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+                              {subLinks.map(link => renderLinkCard(link))}
+                            </div>
+                          )}
                         </div>
-                        
-                        {isLocked ? (
-                             <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 p-8 flex flex-col items-center justify-center text-center">
-                                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mb-4 text-amber-600 dark:text-amber-400">
-                                    <Lock size={24} />
-                                </div>
-                                <h3 className="text-slate-800 dark:text-slate-200 font-medium mb-1">私密目录</h3>
-                                <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">该分类已加密，需要验证密码才能查看内容</p>
-                                <button 
-                                    onClick={() => setCatAuthModalData(cat)}
-                                    className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition-colors"
-                                >
-                                    输入密码解锁
-                                </button>
-                             </div>
-                        ) : (
-                             <>
-                                {catLinks.length === 0 ? (
-                                    <div className="text-center py-8 text-slate-400 text-sm italic">
-                                        暂无链接
-                                    </div>
-                                ) : (
-                                    <div className={`grid gap-3 ${siteSettings.cardStyle === 'simple' ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'}`}>
-                                        {catLinks.map(link => renderLinkCard(link))}
-                                    </div>
-                                )}
-                             </>
-                        )}
-                    </section>
+                      );
+                    })}
+                    
+                    {/* 顶级分类自己的链接 */}
+                    {!isLocked && catLinks.length > 0 && (
+                      <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+                        {catLinks.map(link => renderLinkCard(link))}
+                      </div>
+                    )}
+                  </section>
                 );
             })}
             

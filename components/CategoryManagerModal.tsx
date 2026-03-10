@@ -41,6 +41,8 @@ const COMMON_ICONS = [
   { value: 'Shield', label: '安全' },
 ];
 
+const NO_PARENT_VALUE = 'no-parent';
+
 const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({ 
   isOpen, 
   onClose, 
@@ -57,6 +59,8 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
   const [newCatName, setNewCatName] = useState('');
   const [newCatIcon, setNewCatIcon] = useState('Folder');
   const [newCatPassword, setNewCatPassword] = useState('');
+  const [newCatParentId, setNewCatParentId] = useState<string>(NO_PARENT_VALUE);
+  const [editParentId, setEditParentId] = useState<string>(NO_PARENT_VALUE);
 
   // Merge State
   const [mergingCatId, setMergingCatId] = useState<string | null>(null);
@@ -79,6 +83,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
     setEditName(cat.name);
     setEditIcon(cat.icon || 'Folder');
     setEditPassword(cat.password || '');
+    setEditParentId((cat as any).parentId || NO_PARENT_VALUE);
     setMergingCatId(null);
   };
 
@@ -88,7 +93,8 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
         ...c, 
         name: editName.trim(),
         icon: editIcon.trim(),
-        password: editPassword.trim() || undefined
+        password: editPassword.trim() || undefined,
+        parentId: editParentId === NO_PARENT_VALUE ? undefined : editParentId
     } : c);
     onUpdateCategories(newCats);
     setEditingId(null);
@@ -100,7 +106,8 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
       id: Date.now().toString(),
       name: newCatName.trim(),
       icon: newCatIcon.trim() || 'Folder',
-      password: newCatPassword.trim() || undefined
+      password: newCatPassword.trim() || undefined,
+      parentId: newCatParentId === NO_PARENT_VALUE ? undefined : newCatParentId
     };
     onUpdateCategories([...categories, newCat]);
     setNewCatName('');
@@ -205,6 +212,27 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           placeholder="设置密码 (留空则不加密)"
                         />
                       </div>
+                      {/* ===== 新增：父分类选择 ===== */}
+                      <div className="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="text-slate-400">
+                          <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+                        </svg>
+                        <select
+                          value={editParentId}
+                          onChange={(e) => setEditParentId(e.target.value)}
+                          className="flex-1 p-1.5 px-2 text-xs rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
+                        >
+                          <option value={NO_PARENT_VALUE}>作为顶级分类</option>
+                          {categories
+                            .filter(c => c.id !== cat.id && !c.parentId) // 只显示顶级分类，且不能是自己
+                            .map(parent => (
+                              <option key={parent.id} value={parent.id}>
+                                {parent.name}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                      {/* ===== 新增结束 ===== */}
                     </div>
                   </div>
                 ) : mergingCatId === cat.id ? (
@@ -373,6 +401,27 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                    <Plus size={18} />
                  </button>
              </div>
+             {/* ===== 新增：添加时的父分类选择 ===== */}
+              <div className="flex items-center gap-2 mt-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="text-slate-400">
+                  <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+                </svg>
+                <select
+                  value={newCatParentId}
+                  onChange={(e) => setNewCatParentId(e.target.value)}
+                  className="flex-1 p-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value={NO_PARENT_VALUE}>作为顶级分类</option>
+                  {categories
+                    .filter(c => !c.parentId) // 只显示顶级分类
+                    .map(parent => (
+                      <option key={parent.id} value={parent.id}>
+                        {parent.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+              {/* ===== 新增结束 ===== */}
            </div>
         </div>
       </div>
