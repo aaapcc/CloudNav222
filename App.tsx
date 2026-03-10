@@ -793,30 +793,13 @@ function App() {
                 );
                 
                 const hasChildren = subCategories.length > 0;
+                // 默认是折叠的（collapsed 为 true）
                 const isCollapsed = collapsedFolders.has(cat.id);
 
                 return (
                   <div key={cat.id} className="space-y-1">
                     {/* 顶级分类 */}
-                    <div className="flex items-center">
-                      {hasChildren && (
-                        <button
-                          onClick={() => {
-                            setCollapsedFolders(prev => {
-                              const newSet = new Set(prev);
-                              if (newSet.has(cat.id)) {
-                                newSet.delete(cat.id);
-                              } else {
-                                newSet.add(cat.id);
-                              }
-                              return newSet;
-                            });
-                          }}
-                          className="p-1 mr-1 text-slate-400 hover:text-blue-500"
-                        >
-                          {isCollapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
-                        </button>
-                      )}
+                    <div className="flex items-center w-full">
                       <button
                         onClick={() => scrollToCategory(cat.id)}
                         className={`flex-1 flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all group ${
@@ -837,11 +820,31 @@ function App() {
                           )}
                         </span>
                       </button>
+                      
+                      {/* 箭头移到右侧 */}
+                      {hasChildren && (
+                        <button
+                          onClick={() => {
+                            setCollapsedFolders(prev => {
+                              const newSet = new Set(prev);
+                              if (newSet.has(cat.id)) {
+                                newSet.delete(cat.id);  // 如果已经折叠，就展开
+                              } else {
+                                newSet.add(cat.id);      // 如果已经展开，就折叠
+                              }
+                              return newSet;
+                            });
+                          }}
+                          className="p-2 ml-1 text-slate-400 hover:text-blue-500 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
+                        >
+                          {isCollapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
+                        </button>
+                      )}
                     </div>
                     
-                    {/* 子分类 - 只有未折叠时才显示 */}
+                    {/* 子分类 - 默认不显示（因为 isCollapsed 初始为 true） */}
                     {!isCollapsed && hasChildren && (
-                      <div className="ml-9 space-y-1">
+                      <div className="ml-12 space-y-1">
                         {subCategories.map(sub => {
                           const isSubLocked = sub.password && !unlockedCategoryIds.has(sub.id);
                           const isSubEmoji = sub.icon && sub.icon.length <= 4 && !/^[a-zA-Z]+$/.test(sub.icon);
