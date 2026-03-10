@@ -239,19 +239,9 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                   </div>
                 )}
                 
-                {/* 折叠/展开按钮（只有有子分类时才显示） */}
-                {categories.some(c => c.parentId === cat.id) && editingId !== cat.id && mergingCatId !== cat.id && (
-                  <button
-                    onClick={(e) => toggleFolder(cat.id, e)}
-                    className="p-0.5 text-slate-400 hover:text-blue-500"
-                  >
-                    {expandedFolders.has(cat.id) ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                  </button>
-                )}
-                
-                {/* 排序按钮（没有子分类时才显示） */}
-                {!categories.some(c => c.parentId === cat.id) && editingId !== cat.id && mergingCatId !== cat.id && (
-                  <div className="flex flex-col gap-1 mr-2 shrink-0">
+                {/* 上下箭头 - 所有分类都显示 */}
+                {editingId !== cat.id && mergingCatId !== cat.id && (
+                  <div className="flex flex-col gap-1 mr-1 shrink-0">
                     <button 
                       onClick={() => handleMove(index, 'up')}
                       disabled={index === 0}
@@ -267,6 +257,16 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                       <ArrowDown size={14} />
                     </button>
                   </div>
+                )}
+
+                {/* 折叠/展开按钮（只有有子分类时才显示） */}
+                {categories.some(c => c.parentId === cat.id) && editingId !== cat.id && mergingCatId !== cat.id && (
+                  <button
+                    onClick={(e) => toggleFolder(cat.id, e)}
+                    className="p-1 text-slate-400 hover:text-blue-500 shrink-0"
+                  >
+                    {expandedFolders.has(cat.id) ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                  </button>
                 )}
 
                 {/* 图标和文字区域 */}
@@ -417,11 +417,44 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                     <div className="ml-8 mt-2 space-y-2">
                       {categories
                         .filter(sub => sub.parentId === cat.id)
-                        .map(sub => (
-                          <div key={sub.id} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                            <span>{sub.name}</span>
-                          </div>
-                        ))}
+                        .map((sub, subIndex) => {
+                          const subCategoryIndex = categories.findIndex(c => c.id === sub.id);
+                          return (
+                            <div key={sub.id} className="flex items-center gap-2 p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                              {/* 子分类自己的上下箭头 */}
+                              <div className="flex flex-col gap-1 mr-1 shrink-0">
+                                <button 
+                                  onClick={() => handleMove(subCategoryIndex, 'up')}
+                                  disabled={subCategoryIndex === 0}
+                                  className="p-0.5 text-slate-400 hover:text-blue-500 disabled:opacity-30"
+                                >
+                                  <ArrowUp size={12} />
+                                </button>
+                                <button 
+                                  onClick={() => handleMove(subCategoryIndex, 'down')}
+                                  disabled={subCategoryIndex === categories.length - 1}
+                                  className="p-0.5 text-slate-400 hover:text-blue-500 disabled:opacity-30"
+                                >
+                                  <ArrowDown size={12} />
+                                </button>
+                              </div>
+                              
+                              {/* 子分类图标和名称 */}
+                              <div className="w-6 h-6 rounded bg-white dark:bg-slate-700 flex items-center justify-center text-slate-500">
+                                {sub.icon && sub.icon.length <= 4 && !/^[a-zA-Z]+$/.test(sub.icon) 
+                                  ? <span className="text-sm">{sub.icon}</span> 
+                                  : <Icon name={sub.icon} size={12} />
+                                }
+                              </div>
+                              <span className="flex-1 text-sm">{sub.name}</span>
+                              
+                              {/* 子分类的链接数量 */}
+                              <span className="text-xs text-slate-400 mr-2">
+                                {links.filter(l => l.categoryId === sub.id).length}个链接
+                              </span>
+                            </div>
+                          );
+                      })}
                     </div>
                   )}
               </div>
