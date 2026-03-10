@@ -207,14 +207,27 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
           {categories.map((cat, index) => (
             <div 
-              key={cat.id} 
-              className="flex flex-col p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg group gap-2 border border-slate-100 dark:border-slate-600"
-              draggable={editingId !== cat.id && mergingCatId !== cat.id}
-              onDragStart={() => handleDragStart(cat.id)}
-              onDragOver={handleDragOver}
-              onDragEnd={() => setDraggedItem(null)}
-              style={{ opacity: draggedItem === cat.id ? 0.5 : 1 }}
-            >
+                key={cat.id} 
+                className="flex flex-col p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg group gap-2 border border-slate-100 dark:border-slate-600"
+                draggable={editingId !== cat.id && mergingCatId !== cat.id}
+                onDragStart={(e) => {
+                  e.dataTransfer.setData('text/plain', cat.id);
+                  handleDragStart(cat.id);
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = 'move';
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const draggedId = e.dataTransfer.getData('text/plain');
+                  if (draggedId) {
+                    handleDrop(cat.id, cat.parentId);
+                  }
+                }}
+                onDragEnd={() => setDraggedItem(null)}
+                style={{ opacity: draggedItem === cat.id ? 0.5 : 1 }}
+              >
               
               {/* 第一行：拖拽手柄 + 排序按钮 + 图标 + 名称区域 + 操作按钮 */}
               <div className="flex items-start gap-2">
@@ -256,7 +269,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                   </div>
                 )}
 
-                                {/* 图标和文字区域 */}
+                {/* 图标和文字区域 */}
                 <div className="flex-1 min-w-0">
                   {editingId === cat.id ? (
                     // 编辑模式
@@ -399,7 +412,18 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                     </div>
                   )}
                 </div>
-                
+                  {/* 子分类列表 */}
+                  {expandedFolders.has(cat.id) && (
+                    <div className="ml-8 mt-2 space-y-2">
+                      {categories
+                        .filter(sub => sub.parentId === cat.id)
+                        .map(sub => (
+                          <div key={sub.id} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                            <span>{sub.name}</span>
+                          </div>
+                        ))}
+                    </div>
+                  )}
               </div>
             </div>
           ))}
