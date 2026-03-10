@@ -15,9 +15,11 @@ export interface Category {
   name: string;
   icon?: string;
   password?: string;
-  parentId?: string;        // 父分类ID，顶级分类没有此字段
-  isVisible?: boolean;      // false = 全员隐藏
-  isAdminOnly?: boolean;    // true = 仅管理员可见
+  parentId?: string;        // 父分类ID
+  level?: number;           // 分类层级（0=顶级，1=二级，2=三级...）
+  sortOrder?: number;       // 同级分类的排序顺序
+  isVisible?: boolean;
+  isAdminOnly?: boolean;
 }
 
 export interface SiteSettings {

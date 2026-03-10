@@ -4,7 +4,8 @@ import {
   Search, Plus, Upload, Moon, Sun, Menu, 
   Trash2, Edit2, Loader2, Cloud, CheckCircle2, AlertCircle,
   Pin, Settings, Lock, CloudCog, Github, GitFork, MoreVertical,
-  QrCode, Copy, LayoutGrid, List, Check, ExternalLink, ArrowRight
+  QrCode, Copy, LayoutGrid, List, Check, ExternalLink, ArrowRight,
+  ChevronRight, ChevronDown
 } from 'lucide-react';
 import { 
     LinkItem, Category, DEFAULT_CATEGORIES, INITIAL_LINKS, 
@@ -556,6 +557,67 @@ function App() {
       );
   };
 
+  // 👇 从这里开始添加
+  // 递归渲染分类树
+  const renderCategoryTree = (parentId?: string, level: number = 0) => {
+    const children = categories
+      .filter(cat => cat.parentId === parentId)
+      .filter(cat => {
+        if (authToken) return cat.isVisible !== false;
+        return cat.isVisible !== false && !cat.isAdminOnly;
+      })
+      .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+    if (children.length === 0) return null;
+
+    return children.map(cat => {
+      const hasChildren = categories.some(c => c.parentId === cat.id);
+      const isLocked = cat.password && !unlockedCategoryIds.has(cat.id);
+      const isEmoji = cat.icon && cat.icon.length <= 4 && !/^[a-zA-Z]+$/.test(cat.icon);
+      const [expanded, setExpanded] = useState(level < 2); // 默认展开前两级
+
+      return (
+        <div key={cat.id} className="space-y-1">
+          <button
+            onClick={() => scrollToCategory(cat.id)}
+            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all group ${
+              activeCategory === cat.id 
+                ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium' 
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
+            }`}
+            style={{ paddingLeft: `${level * 12 + 12}px` }}
+          >
+            {hasChildren && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpanded(!expanded);
+                }}
+                className="p-0.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded"
+              >
+                {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+              </button>
+            )}
+            <div className={`p-1.5 rounded-lg transition-colors flex items-center justify-center ${activeCategory === cat.id ? 'bg-blue-100 dark:bg-blue-800' : 'bg-slate-100 dark:bg-slate-800'}`}>
+              {isLocked ? <Lock size={16} className="text-amber-500" /> : (isEmoji ? <span className="text-base leading-none">{cat.icon}</span> : <Icon name={cat.icon} size={16} />)}
+            </div>
+            <span className="truncate flex-1 text-left">
+              {cat.name}
+              {cat.isAdminOnly && authToken && (
+                <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
+                  管
+                </span>
+              )}
+            </span>
+          </button>
+          
+          {expanded && renderCategoryTree(cat.id, level + 1)}
+        </div>
+      );
+    });
+  };
+  // 👆 到这里结束
+
   return (
     <div className="flex h-screen overflow-hidden text-slate-900 dark:text-slate-50">
       
@@ -719,7 +781,7 @@ function App() {
             </div>
 
             {/* 左侧菜单过滤，先过滤出可见的分类，然后再渲染 */}
-            {getTopLevelCategories
+            {renderCategoryTree
               .filter(cat => {
                 // 如果是管理员（已登录），能看到"全员可见"和"仅管理员可见"的分类
                 if (authToken) {
