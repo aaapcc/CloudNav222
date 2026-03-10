@@ -777,27 +777,25 @@ function App() {
             {/* 左侧菜单过滤，先过滤出可见的分类，然后再渲染 */}
             {getTopLevelCategories
               .filter(cat => {
-                // 如果是管理员（已登录），能看到"全员可见"和"仅管理员可见"的分类
-                if (authToken) {
-                  // 管理员也看不到"全员隐藏"的分类
-                  return cat.isVisible !== false;
-                }
-                // 如果是普通用户，只显示"全员可见"的分类
+                if (authToken) return cat.isVisible !== false;
                 return cat.isVisible !== false && !cat.isAdminOnly;
               })
               .map(cat => {
                 const isLocked = cat.password && !unlockedCategoryIds.has(cat.id);
                 const isEmoji = cat.icon && cat.icon.length <= 4 && !/^[a-zA-Z]+$/.test(cat.icon);
                 
-                // 获取当前顶级分类下的子分类
-                const subCategories = getSubCategories(cat.id).filter(sub => {
-                  if (authToken) return sub.isVisible !== false;
-                  return sub.isVisible !== false && !sub.isAdminOnly;
-                });
+                // 获取子分类
+                const subCategories = categories.filter(sub => 
+                  sub.parentId === cat.id && 
+                  (authToken ? sub.isVisible !== false : sub.isVisible !== false && !sub.isAdminOnly)
+                );
                 
+                // 默认展开二级目录
+                const hasChildren = subCategories.length > 0;
+
                 return (
                   <div key={cat.id} className="space-y-1">
-                    {/* 顶级分类按钮 */}
+                    {/* 顶级分类 */}
                     <button
                       onClick={() => scrollToCategory(cat.id)}
                       className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all group ${
@@ -817,11 +815,13 @@ function App() {
                           </span>
                         )}
                       </span>
-                      {activeCategory === cat.id && <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>}
+                      {hasChildren && (
+                        <ChevronDown size={14} className="text-slate-400" />
+                      )}
                     </button>
                     
-                    {/* 子分类列表 */}
-                    {subCategories.length > 0 && (
+                    {/* 子分类 - 默认展开 */}
+                    {hasChildren && (
                       <div className="ml-6 space-y-1">
                         {subCategories.map(sub => {
                           const isSubLocked = sub.password && !unlockedCategoryIds.has(sub.id);
