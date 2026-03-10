@@ -806,7 +806,7 @@ function App() {
                     )}
                   </div>
                 );
-            })}
+            });
         </div>
 
         {authToken && (
