@@ -210,29 +210,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
             // 找到这个分类在原始数组中的真实索引（用于上下移动）
             const realIndex = categories.findIndex(c => c.id === cat.id);
             return (
-            <div 
-                key={cat.id} 
-                className="flex flex-col p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg group gap-2 border border-slate-100 dark:border-slate-600"
-                draggable={editingId !== cat.id && mergingCatId !== cat.id}
-                onDragStart={(e) => {
-                  e.dataTransfer.setData('text/plain', cat.id);
-                  handleDragStart(cat.id);
-                }}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  e.dataTransfer.dropEffect = 'move';
-                }}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  const draggedId = e.dataTransfer.getData('text/plain');
-                  if (draggedId) {
-                    handleDrop(cat.id, cat.parentId);
-                  }
-                }}
-                onDragEnd={() => setDraggedItem(null)}
-                style={{ opacity: draggedItem === cat.id ? 0.5 : 1 }}
-              >
-              
+            <div key={cat.id} className="flex flex-col p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg group gap-2 border border-slate-100 dark:border-slate-600">
               {/* 第一行：拖拽手柄 + 排序按钮 + 图标 + 名称区域 + 操作按钮 */}
               <div className="flex items-start gap-2">
                 
@@ -416,51 +394,83 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                     </div>
                   )}
                 </div>
-                  {/* 子分类列表 */}
-                  {expandedFolders.has(cat.id) && (
-                    <div className="ml-8 mt-2 space-y-2">
-                      {categories
-                        .filter(sub => sub.parentId === cat.id)
-                        .map((sub, subIndex) => {
-                          const subCategoryIndex = categories.findIndex(c => c.id === sub.id);
-                          return (
-                            <div key={sub.id} className="flex items-center gap-2 p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                              {/* 子分类自己的上下箭头 */}
-                              <div className="flex flex-col gap-1 mr-1 shrink-0">
-                                <button 
-                                  onClick={() => handleMove(subCategoryIndex, 'up')}
-                                  disabled={subCategoryIndex === 0}
-                                  className="p-0.5 text-slate-400 hover:text-blue-500 disabled:opacity-30"
-                                >
-                                  <ArrowUp size={12} />
-                                </button>
-                                <button 
-                                  onClick={() => handleMove(subCategoryIndex, 'down')}
-                                  disabled={subCategoryIndex === categories.length - 1}
-                                  className="p-0.5 text-slate-400 hover:text-blue-500 disabled:opacity-30"
-                                >
-                                  <ArrowDown size={12} />
-                                </button>
-                              </div>
-                              
-                              {/* 子分类图标和名称 */}
-                              <div className="w-6 h-6 rounded bg-white dark:bg-slate-700 flex items-center justify-center text-slate-500">
-                                {sub.icon && sub.icon.length <= 4 && !/^[a-zA-Z]+$/.test(sub.icon) 
-                                  ? <span className="text-sm">{sub.icon}</span> 
-                                  : <Icon name={sub.icon} size={12} />
-                                }
-                              </div>
-                              <span className="flex-1 text-sm">{sub.name}</span>
-                              
-                              {/* 子分类的链接数量 */}
-                              <span className="text-xs text-slate-400 mr-2">
-                                {links.filter(l => l.categoryId === sub.id).length}个链接
-                              </span>
+                {/* 子分类列表 */}
+                {expandedFolders.has(cat.id) && (
+                  <div className="ml-8 mt-2 space-y-2">
+                    {categories
+                      .filter(sub => sub.parentId === cat.id)
+                      .map((sub, subIndex) => {
+                        const subCategoryIndex = categories.findIndex(c => c.id === sub.id);
+                        return (
+                          <div key={sub.id} className="flex items-center gap-2 p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                            {/* 子分类自己的上下箭头 */}
+                            <div className="flex flex-col gap-1 mr-1 shrink-0">
+                              <button 
+                                onClick={() => handleMove(subCategoryIndex, 'up')}
+                                disabled={subCategoryIndex === 0}
+                                className="p-0.5 text-slate-400 hover:text-blue-500 disabled:opacity-30"
+                              >
+                                <ArrowUp size={12} />
+                              </button>
+                              <button 
+                                onClick={() => handleMove(subCategoryIndex, 'down')}
+                                disabled={subCategoryIndex === categories.length - 1}
+                                className="p-0.5 text-slate-400 hover:text-blue-500 disabled:opacity-30"
+                              >
+                                <ArrowDown size={12} />
+                              </button>
                             </div>
-                          );
-                      })}
-                    </div>
-                  )}
+                            
+                            {/* 子分类图标和名称 */}
+                            <div className="w-6 h-6 rounded bg-white dark:bg-slate-700 flex items-center justify-center text-slate-500">
+                              {sub.icon && sub.icon.length <= 4 && !/^[a-zA-Z]+$/.test(sub.icon) 
+                                ? <span className="text-sm">{sub.icon}</span> 
+                                : <Icon name={sub.icon} size={12} />
+                              }
+                            </div>
+                            <span className="flex-1 text-sm">{sub.name}</span>
+                            
+                            {/* 子分类的链接数量 */}
+                            <span className="text-xs text-slate-400 mr-2">
+                              {links.filter(l => l.categoryId === sub.id).length}个链接
+                            </span>
+                            {/* 子目录操作按钮 */}
+                            <div className="flex items-center gap-1 ml-auto">
+                              <button onClick={() => startEdit(sub)} className="p-1 text-slate-400 hover:text-blue-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded" title="编辑">
+                                <Edit2 size={12} />
+                              </button>
+                              <button onClick={() => openMerge(sub.id)} className="p-1 text-slate-400 hover:text-purple-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded" title="合并">
+                                <Merge size={12} />
+                              </button>
+                              <button 
+                                onClick={() => { if(confirm(`确定删除"${sub.name}"分类吗？`)) onDeleteCategory(sub.id); }}
+                                className="p-1 text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded"
+                                title="删除"
+                              >
+                                <Trash2 size={12} />
+                              </button>
+                            </div>
+                          </div>
+                        );
+                    })}
+                  </div>
+                )}
+                {/* 操作按钮 */}
+                <div className="flex items-center gap-1 ml-auto">
+                  <button onClick={() => startEdit(cat)} className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded" title="编辑">
+                    <Edit2 size={14} />
+                  </button>
+                  <button onClick={() => openMerge(cat.id)} className="p-1.5 text-slate-400 hover:text-purple-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded" title="合并">
+                    <Merge size={14} />
+                  </button>
+                  <button 
+                    onClick={() => { if(confirm(`确定删除"${cat.name}"分类吗？该分类下的书签将移动到"常用推荐"。`)) onDeleteCategory(cat.id); }}
+                    className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded"
+                    title="删除"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
               </div>
             </div>
           );
