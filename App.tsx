@@ -557,8 +557,7 @@ function App() {
       );
   };
 
-  // 👇 从这里开始添加
-  // 递归渲染分类树
+  // 渲染分类树（不含useState）
   const renderCategoryTree = (parentId?: string, level: number = 0) => {
     const children = categories
       .filter(cat => cat.parentId === parentId)
@@ -574,7 +573,9 @@ function App() {
       const hasChildren = categories.some(c => c.parentId === cat.id);
       const isLocked = cat.password && !unlockedCategoryIds.has(cat.id);
       const isEmoji = cat.icon && cat.icon.length <= 4 && !/^[a-zA-Z]+$/.test(cat.icon);
-      const [expanded, setExpanded] = useState(level < 2); // 默认展开前两级
+      
+      // 不再使用useState，直接用level控制默认展开
+      const defaultExpanded = level < 2;
 
       return (
         <div key={cat.id} className="space-y-1">
@@ -588,15 +589,9 @@ function App() {
             style={{ paddingLeft: `${level * 12 + 12}px` }}
           >
             {hasChildren && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setExpanded(!expanded);
-                }}
-                className="p-0.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded"
-              >
-                {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-              </button>
+              <span className="p-0.5 text-slate-400">
+                {defaultExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+              </span>
             )}
             <div className={`p-1.5 rounded-lg transition-colors flex items-center justify-center ${activeCategory === cat.id ? 'bg-blue-100 dark:bg-blue-800' : 'bg-slate-100 dark:bg-slate-800'}`}>
               {isLocked ? <Lock size={16} className="text-amber-500" /> : (isEmoji ? <span className="text-base leading-none">{cat.icon}</span> : <Icon name={cat.icon} size={16} />)}
@@ -611,12 +606,11 @@ function App() {
             </span>
           </button>
           
-          {expanded && renderCategoryTree(cat.id, level + 1)}
+          {defaultExpanded && renderCategoryTree(cat.id, level + 1)}
         </div>
       );
     });
   };
-  // 👆 到这里结束
 
   return (
     <div className="flex h-screen overflow-hidden text-slate-900 dark:text-slate-50">
