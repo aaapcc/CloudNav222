@@ -256,8 +256,149 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                   </div>
                 )}
 
-                {/* 图标和文字区域（保持不变） */}
-                {/* ... 这里放你原有的图标和文字代码 ... */}
+                                {/* 图标和文字区域 */}
+                <div className="flex-1 min-w-0">
+                  {editingId === cat.id ? (
+                    // 编辑模式
+                    <div className="flex flex-col gap-2">
+                      <div className="flex gap-2">
+                        <div className="relative w-32 shrink-0">
+                          <select
+                            value={editIcon}
+                            onChange={(e) => setEditIcon(e.target.value)}
+                            className="w-full p-1.5 text-sm rounded border border-blue-500 dark:bg-slate-800 dark:text-white outline-none appearance-none"
+                          >
+                            {COMMON_ICONS.map(icon => (
+                              <option key={icon.value} value={icon.value}>{icon.label}</option>
+                            ))}
+                          </select>
+                          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                            <Icon name={editIcon} size={14} />
+                          </div>
+                        </div>
+                        <input 
+                          type="text" 
+                          value={editName}
+                          onChange={(e) => setEditName(e.target.value)}
+                          className="flex-1 p-1.5 px-2 text-sm rounded border border-blue-500 dark:bg-slate-800 dark:text-white outline-none"
+                          placeholder="分类名称"
+                          autoFocus
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Lock size={14} className="text-slate-400" />
+                        <input 
+                          type="text" 
+                          value={editPassword}
+                          onChange={(e) => setEditPassword(e.target.value)}
+                          className="flex-1 p-1.5 px-2 text-xs rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
+                          placeholder="设置密码 (留空则不加密)"
+                        />
+                      </div>
+                      {/* 父分类选择 */}
+                      <div className="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
+                          <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+                        </svg>
+                        <select
+                          value={editParentId}
+                          onChange={(e) => setEditParentId(e.target.value)}
+                          className="flex-1 p-1.5 px-2 text-xs rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
+                        >
+                          <option value={NO_PARENT_VALUE}>作为顶级分类</option>
+                          {categories
+                            .filter(c => c.id !== cat.id && !c.parentId)
+                            .map(parent => (
+                              <option key={parent.id} value={parent.id}>
+                                {parent.name}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                    </div>
+                  ) : mergingCatId === cat.id ? (
+                    // 合并模式
+                    <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 p-2 rounded">
+                      <span className="text-sm dark:text-slate-200 whitespace-nowrap">合并到 →</span>
+                      <select 
+                        value={targetMergeId}
+                        onChange={(e) => setTargetMergeId(e.target.value)}
+                        className="flex-1 text-sm p-1 rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                      >
+                        {categories.filter(c => c.id !== cat.id).map(c => (
+                          <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                      </select>
+                      <button onClick={executeMerge} className="text-xs bg-blue-600 text-white px-2 py-1 rounded">确认</button>
+                      <button onClick={() => setMergingCatId(null)} className="text-xs text-slate-500 px-2 py-1">取消</button>
+                    </div>
+                  ) : (
+                    // 正常显示模式
+                    <div className="flex items-center gap-3">
+                      {/* 图标 */}
+                      <div className="w-8 h-8 rounded bg-white dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-600 shrink-0">
+                        {cat.icon && cat.icon.length <= 4 && !/^[a-zA-Z]+$/.test(cat.icon) 
+                          ? <span className="text-lg">{cat.icon}</span> 
+                          : <Icon name={cat.icon} size={16} />
+                        }
+                      </div>
+                      
+                      {/* 文字信息 */}
+                      <div className="flex flex-col">
+                        {/* 分类名称 + 密码锁 */}
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium dark:text-slate-200 truncate">{cat.name}</span>
+                          {cat.password && <Lock size={12} className="text-amber-500 shrink-0" />}
+                        </div>
+                        
+                        {/* 链接数量 */}
+                        <span className="text-xs text-slate-400">{links.filter(l => l.categoryId === cat.id).length} 个链接</span>
+                        
+                        {/* 可见性下拉框 */}
+                        <div className="pt-2">
+                          <select
+                            value={
+                              (cat as any).isVisible === false ? "hidden" :
+                              (cat as any).isAdminOnly === true ? "admin" : "public"
+                            }
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              let isVisible = true;
+                              let isAdminOnly = false;
+                              
+                              if (value === "hidden") {
+                                isVisible = false;
+                                isAdminOnly = false;
+                              } else if (value === "admin") {
+                                isVisible = true;
+                                isAdminOnly = true;
+                              } else {
+                                isVisible = true;
+                                isAdminOnly = false;
+                              }
+                              
+                              const updatedCategories = categories.map(c => 
+                                c.id === cat.id ? { ...c, isVisible, isAdminOnly } : c
+                              );
+                              onUpdateCategories(updatedCategories);
+                            }}
+                            className="text-xs p-1 pr-6 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none appearance-none cursor-pointer"
+                            style={{
+                              backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                              backgroundPosition: 'right 0.25rem center',
+                              backgroundRepeat: 'no-repeat',
+                              backgroundSize: '1.2em 1.2em',
+                            }}
+                          >
+                            <option value="public" className="dark:bg-slate-800">全员可见</option>
+                            <option value="admin" className="dark:bg-slate-800">👑 仅管理员可见</option>
+                            <option value="hidden" className="dark:bg-slate-800">🚫 全员隐藏</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
                 
               </div>
             </div>
