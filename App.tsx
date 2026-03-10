@@ -567,7 +567,7 @@ function App() {
     return <div>数据加载错误</div>;
   }
   // 👆 到这里结束
-  
+
   return (
     <div className="flex h-screen overflow-hidden text-slate-900 dark:text-slate-50">
       
@@ -747,7 +747,7 @@ function App() {
                 });
                 
                 return (
-              .filter(cat => {
+                  categories.filter(cat => {
                 if (authToken) return cat.isVisible !== false;
                 return cat.isVisible !== false && !cat.isAdminOnly;
               })
