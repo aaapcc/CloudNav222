@@ -153,7 +153,7 @@ function App() {
           }
         });
         setCollapsedFolders(initialCollapsed);
-        
+
       } catch (e) {
         setLinks(INITIAL_LINKS);
         setCategories(DEFAULT_CATEGORIES);
@@ -866,7 +866,7 @@ function App() {
                     
                     {/* 子分类 - 默认不显示（因为 isCollapsed 初始为 true） */}
                     {!isCollapsed && hasChildren && (
-                      <div className="ml-12 space-y-1">
+                      <div className="ml-6 space-y-1">
                         {subCategories.map(sub => {
                           const isSubLocked = sub.password && !unlockedCategoryIds.has(sub.id);
                           const isSubEmoji = sub.icon && sub.icon.length <= 4 && !/^[a-zA-Z]+$/.test(sub.icon);

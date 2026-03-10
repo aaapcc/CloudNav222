@@ -423,15 +423,15 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                   </button>
                 </div>
 
-                {/* 子分类列表 */}
+                                {/* 子分类列表 */}
                 {expandedFolders.has(cat.id) && (
-                  <div className="ml-8 mt-2 space-y-2">
+                  <div className="w-full mt-2 space-y-2">
                     {categories
                       .filter(sub => sub.parentId === cat.id)
                       .map((sub, subIndex) => {
                         const subCategoryIndex = categories.findIndex(c => c.id === sub.id);
                         return (
-                          <div key={sub.id} className="w-full p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                          <div key={sub.id} className="w-full p-3 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
                             {/* 第一行：子分类基本信息 */}
                             <div className="flex items-center gap-2">
                               {/* 子分类自己的上下箭头 */}
@@ -452,35 +452,50 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                 </button>
                               </div>
                               
-                              {/* 子分类图标和名称 */}
-                              <div className="w-6 h-6 rounded bg-white dark:bg-slate-700 flex items-center justify-center text-slate-500">
+                              {/* 子分类图标 */}
+                              <div className="w-6 h-6 rounded bg-white dark:bg-slate-700 flex items-center justify-center text-slate-500 shrink-0">
                                 {sub.icon && sub.icon.length <= 4 && !/^[a-zA-Z]+$/.test(sub.icon) 
                                   ? <span className="text-sm">{sub.icon}</span> 
                                   : <Icon name={sub.icon} size={12} />
                                 }
                               </div>
-                              <span className="font-medium text-sm">{sub.name}</span>
                               
-                              {/* 子目录操作按钮 */}
-                              <div className="flex items-center gap-1 ml-auto">
-                                <button onClick={() => {
-                                  setEditingId(sub.id);
-                                  setEditName(sub.name);
-                                  setEditIcon(sub.icon || 'Folder');
-                                  setEditPassword(sub.password || '');
-                                  setEditParentId((sub as any).parentId || NO_PARENT_VALUE);
-                                }} className="p-1 text-slate-400 hover:text-blue-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded" title="编辑">
+                              {/* 子分类名称 */}
+                              <span className="font-medium text-sm truncate">{sub.name}</span>
+                              
+                              {/* 密码锁（如果有） */}
+                              {sub.password && <Lock size={10} className="text-amber-500 shrink-0" />}
+                              
+                              {/* 操作按钮 */}
+                              <div className="flex items-center gap-1 ml-auto shrink-0">
+                                <button 
+                                  onClick={() => {
+                                    setEditingId(sub.id);
+                                    setEditName(sub.name);
+                                    setEditIcon(sub.icon || 'Folder');
+                                    setEditPassword(sub.password || '');
+                                    setEditParentId((sub as any).parentId || NO_PARENT_VALUE);
+                                  }} 
+                                  className="p-1 text-slate-400 hover:text-blue-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded" 
+                                  title="编辑"
+                                >
                                   <Edit2 size={12} />
                                 </button>
-                                <button onClick={() => {
-                                  setMergingCatId(sub.id);
-                                  const firstTarget = categories.find(c => c.id !== sub.id);
-                                  if (firstTarget) setTargetMergeId(firstTarget.id);
-                                }} className="p-1 text-slate-400 hover:text-purple-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded" title="合并">
+                                <button 
+                                  onClick={() => {
+                                    setMergingCatId(sub.id);
+                                    const firstTarget = categories.find(c => c.id !== sub.id);
+                                    if (firstTarget) setTargetMergeId(firstTarget.id);
+                                  }} 
+                                  className="p-1 text-slate-400 hover:text-purple-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded" 
+                                  title="合并"
+                                >
                                   <Merge size={12} />
                                 </button>
                                 <button 
-                                  onClick={() => { if(confirm(`确定删除"${sub.name}"分类吗？`)) onDeleteCategory(sub.id); }}
+                                  onClick={() => { 
+                                    if(confirm(`确定删除"${sub.name}"分类吗？`)) onDeleteCategory(sub.id); 
+                                  }}
                                   className="p-1 text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded"
                                   title="删除"
                                 >
@@ -489,15 +504,11 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                               </div>
                             </div>
 
-                            {/* 第二行：链接数量 */}
-                            <div className="pl-12 mt-1">
+                            {/* 第二行：链接数量和可见性 */}
+                            <div className="flex items-center justify-between pl-8 mt-2">
                               <span className="text-xs text-slate-400">
                                 {links.filter(l => l.categoryId === sub.id).length} 个链接
                               </span>
-                            </div>
-
-                            {/* 第三行：可见性下拉框 */}
-                            <div className="pl-12 mt-1">
                               <select
                                 value={
                                   (sub as any).isVisible === false ? "hidden" :
@@ -524,7 +535,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                   );
                                   onUpdateCategories(updatedCategories);
                                 }}
-                                className="text-xs p-1 pr-5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white outline-none appearance-none cursor-pointer"
+                                className="text-xs p-1 pr-5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white outline-none appearance-none cursor-pointer w-28"
                                 style={{
                                   backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
                                   backgroundPosition: 'right 0.2rem center',
