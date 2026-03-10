@@ -205,7 +205,11 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
-          {categories.map((cat, index) => (
+          {/* 只显示顶级分类（没有 parentId 的） */}
+          {categories.filter(cat => !cat.parentId).map((cat, index) => {
+            // 找到这个分类在原始数组中的真实索引（用于上下移动）
+            const realIndex = categories.findIndex(c => c.id === cat.id);
+            return (
             <div 
                 key={cat.id} 
                 className="flex flex-col p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg group gap-2 border border-slate-100 dark:border-slate-600"
@@ -243,15 +247,15 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                 {editingId !== cat.id && mergingCatId !== cat.id && (
                   <div className="flex flex-col gap-1 mr-1 shrink-0">
                     <button 
-                      onClick={() => handleMove(index, 'up')}
-                      disabled={index === 0}
+                      onClick={() => handleMove(realIndex, 'up')}
+                      disabled={realIndex === 0}
                       className="p-0.5 text-slate-400 hover:text-blue-500 disabled:opacity-30"
                     >
                       <ArrowUp size={14} />
                     </button>
                     <button 
-                      onClick={() => handleMove(index, 'down')}
-                      disabled={index === categories.length - 1}
+                      onClick={() => handleMove(realIndex, 'down')}
+                      disabled={realIndex === categories.length - 1}
                       className="p-0.5 text-slate-400 hover:text-blue-500 disabled:opacity-30"
                     >
                       <ArrowDown size={14} />
