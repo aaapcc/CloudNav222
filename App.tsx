@@ -116,18 +116,7 @@ function App() {
   const [syncStatus, setSyncStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [authToken, setAuthToken] = useState<string>('');
 
-  // 初始化时，把所有有子分类的文件夹都设为折叠状态
-  const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(() => {
-    const initialCollapsed = new Set<string>();
-    categories.forEach(cat => {
-      // 如果这个分类有子分类，就把它加入折叠集合
-      const hasChildren = categories.some(c => c.parentId === cat.id);
-      if (hasChildren) {
-        initialCollapsed.add(cat.id);
-      }
-    });
-    return initialCollapsed;
-  });
+  const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(new Set());
 
   const mainRef = useRef<HTMLDivElement>(null);
   const isAutoScrollingRef = useRef(false);
@@ -154,6 +143,17 @@ function App() {
         setLinks(parsed.links || INITIAL_LINKS);
         setCategories(parsed.categories || DEFAULT_CATEGORIES);
         if (parsed.settings) setSiteSettings(prev => ({ ...prev, ...parsed.settings }));
+
+        // 设置默认折叠状态
+        const initialCollapsed = new Set<string>();
+        (parsed.categories || DEFAULT_CATEGORIES).forEach((cat: Category) => {
+          const hasChildren = (parsed.categories || DEFAULT_CATEGORIES).some((c: Category) => c.parentId === cat.id);
+          if (hasChildren) {
+            initialCollapsed.add(cat.id);
+          }
+        });
+        setCollapsedFolders(initialCollapsed);
+        
       } catch (e) {
         setLinks(INITIAL_LINKS);
         setCategories(DEFAULT_CATEGORIES);
@@ -245,6 +245,17 @@ function App() {
                     setCategories(data.categories || DEFAULT_CATEGORIES);
                     if (data.settings) setSiteSettings(prev => ({ ...prev, ...data.settings }));
                     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+
+                    // 数据加载完成后，设置默认折叠状态
+                    const initialCollapsed = new Set<string>();
+                    (data.categories || DEFAULT_CATEGORIES).forEach((cat: Category) => {
+                        const hasChildren = (data.categories || DEFAULT_CATEGORIES).some((c: Category) => c.parentId === cat.id);
+                        if (hasChildren) {
+                            initialCollapsed.add(cat.id);
+                        }
+                    });
+                    setCollapsedFolders(initialCollapsed);
+
                     return;
                 }
             } 
