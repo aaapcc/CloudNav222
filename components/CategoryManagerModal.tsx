@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, ArrowUp, ArrowDown, Trash2, Edit2, Plus, Check, Lock, Merge, Smile,ChevronRight, ChevronDown, GripVertical } from 'lucide-react';
 import { Category, LinkItem } from '../types';
@@ -169,29 +168,28 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
     onUpdateCategories(newCategories);
     setDraggedItem(null);
   };
-  // 👆 到这里结束
 
   const openMerge = (catId: string) => {
-      setMergingCatId(catId);
-      // Default target is first category that is not self
-      const firstTarget = categories.find(c => c.id !== catId);
-      if (firstTarget) setTargetMergeId(firstTarget.id);
+    setMergingCatId(catId);
+    // Default target is first category that is not self
+    const firstTarget = categories.find(c => c.id !== catId);
+    if (firstTarget) setTargetMergeId(firstTarget.id);
   };
 
   const executeMerge = () => {
-      if (!mergingCatId || !targetMergeId) return;
-      if (mergingCatId === targetMergeId) return;
+    if (!mergingCatId || !targetMergeId) return;
+    if (mergingCatId === targetMergeId) return;
 
-      if (!confirm('确定合并吗？合并后原分类将被删除。')) return;
+    if (!confirm('确定合并吗？合并后原分类将被删除。')) return;
 
-      // 1. Move all links
-      const newLinks = links.map(l => l.categoryId === mergingCatId ? { ...l, categoryId: targetMergeId } : l);
+    // 1. Move all links
+    const newLinks = links.map(l => l.categoryId === mergingCatId ? { ...l, categoryId: targetMergeId } : l);
 
-      // 2. Remove old category
-      const newCats = categories.filter(c => c.id !== mergingCatId);
+    // 2. Remove old category
+    const newCats = categories.filter(c => c.id !== mergingCatId);
 
-      onUpdateCategories(newCats, newLinks);
-      setMergingCatId(null);
+    onUpdateCategories(newCats, newLinks);
+    setMergingCatId(null);
   };
 
   return (
@@ -423,7 +421,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                   </button>
                 </div>
 
-                                {/* 子分类列表 */}
+                {/* ========== 修改部分：子分类显示成一整行 ========== */}
                 {expandedFolders.has(cat.id) && (
                   <div className="w-full mt-2 space-y-2">
                     {categories
@@ -431,8 +429,11 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                       .map((sub, subIndex) => {
                         const subCategoryIndex = categories.findIndex(c => c.id === sub.id);
                         return (
-                          <div key={sub.id} className="w-full p-3 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-                            {/* 第一行：子分类基本信息 */}
+                          <div 
+                            key={sub.id} 
+                            className="w-full p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
+                          >
+                            {/* 第一行：子分类基本信息 + 操作按钮 */}
                             <div className="flex items-center gap-2">
                               {/* 子分类自己的上下箭头 */}
                               <div className="flex flex-col gap-1 mr-1 shrink-0">
@@ -453,7 +454,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                               </div>
                               
                               {/* 子分类图标 */}
-                              <div className="w-6 h-6 rounded bg-white dark:bg-slate-700 flex items-center justify-center text-slate-500 shrink-0">
+                              <div className="w-6 h-6 rounded bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 shrink-0">
                                 {sub.icon && sub.icon.length <= 4 && !/^[a-zA-Z]+$/.test(sub.icon) 
                                   ? <span className="text-sm">{sub.icon}</span> 
                                   : <Icon name={sub.icon} size={12} />
@@ -461,12 +462,17 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                               </div>
                               
                               {/* 子分类名称 */}
-                              <span className="font-medium text-sm truncate">{sub.name}</span>
+                              <span className="font-medium text-sm dark:text-slate-200">{sub.name}</span>
                               
                               {/* 密码锁（如果有） */}
                               {sub.password && <Lock size={10} className="text-amber-500 shrink-0" />}
                               
-                              {/* 操作按钮 */}
+                              {/* 链接数量 - 显示在名称后面 */}
+                              <span className="text-xs text-slate-400 ml-2">
+                                {links.filter(l => l.categoryId === sub.id).length} 个链接
+                              </span>
+                              
+                              {/* 操作按钮 - 移到右边 */}
                               <div className="flex items-center gap-1 ml-auto shrink-0">
                                 <button 
                                   onClick={() => {
@@ -476,10 +482,10 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                     setEditPassword(sub.password || '');
                                     setEditParentId((sub as any).parentId || NO_PARENT_VALUE);
                                   }} 
-                                  className="p-1 text-slate-400 hover:text-blue-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded" 
+                                  className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-slate-200 dark:hover:bg-slate-700 rounded" 
                                   title="编辑"
                                 >
-                                  <Edit2 size={12} />
+                                  <Edit2 size={14} />
                                 </button>
                                 <button 
                                   onClick={() => {
@@ -487,28 +493,25 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                     const firstTarget = categories.find(c => c.id !== sub.id);
                                     if (firstTarget) setTargetMergeId(firstTarget.id);
                                   }} 
-                                  className="p-1 text-slate-400 hover:text-purple-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded" 
+                                  className="p-1.5 text-slate-400 hover:text-purple-500 hover:bg-slate-200 dark:hover:bg-slate-700 rounded" 
                                   title="合并"
                                 >
-                                  <Merge size={12} />
+                                  <Merge size={14} />
                                 </button>
                                 <button 
                                   onClick={() => { 
                                     if(confirm(`确定删除"${sub.name}"分类吗？`)) onDeleteCategory(sub.id); 
                                   }}
-                                  className="p-1 text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded"
+                                  className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-slate-700 rounded"
                                   title="删除"
                                 >
-                                  <Trash2 size={12} />
+                                  <Trash2 size={14} />
                                 </button>
                               </div>
                             </div>
 
-                            {/* 第二行：链接数量和可见性 */}
-                            <div className="flex items-center justify-between pl-8 mt-2">
-                              <span className="text-xs text-slate-400">
-                                {links.filter(l => l.categoryId === sub.id).length} 个链接
-                              </span>
+                            {/* 第二行：可见性下拉框（单独一行） */}
+                            <div className="flex items-center justify-end mt-2">
                               <select
                                 value={
                                   (sub as any).isVisible === false ? "hidden" :
@@ -553,6 +556,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                     })}
                   </div>
                 )}
+                {/* ========== 修改结束 ========== */}
               </div>
             </div>
           );
@@ -600,7 +604,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                         onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
                     />
                  </div>
-                 {/* ===== 新增：添加时的父分类选择 ===== */}
+                 {/* 添加时的父分类选择 */}
                   <div className="flex items-center gap-2 mt-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="text-slate-400">
                       <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
@@ -620,7 +624,6 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                         ))}
                     </select>
                   </div>
-                  {/* ===== 新增结束 ===== */}
                  <button 
                     onClick={handleAdd}
                     disabled={!newCatName.trim()}
