@@ -1080,6 +1080,13 @@ function App() {
                       </div>
                     ) : (
                       <>
+                        {/* 顶级分类自己的链接 */}
+                        {catLinks.length > 0 && (
+                          <div className={`grid gap-3 ${siteSettings.cardStyle === 'simple' ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'}`}>
+                            {catLinks.map(link => renderLinkCard(link))}
+                          </div>
+                        )}
+
                         {/* 子分类内容 */}
                         {subCategories.map(sub => {
                           const subLinks = searchResults.filter(l => l.categoryId === sub.id);
@@ -1128,13 +1135,6 @@ function App() {
                             </div>
                           );
                         })}
-                        
-                        {/* 顶级分类自己的链接 */}
-                        {catLinks.length > 0 && (
-                          <div className={`grid gap-3 ${siteSettings.cardStyle === 'simple' ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'}`}>
-                            {catLinks.map(link => renderLinkCard(link))}
-                          </div>
-                        )}
                         
                         {/* 如果顶级分类没有链接也没有子分类，显示暂无链接 */}
                         {catLinks.length === 0 && subCategories.length === 0 && (
