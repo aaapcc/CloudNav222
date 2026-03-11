@@ -273,7 +273,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                             .filter(c => c.id !== cat.id && !c.parentId)
                             .map(parent => (
                               <option key={parent.id} value={parent.id}>
-                                {parent.name}
+                                作为「{parent.name}」子分类
                               </option>
                             ))}
                         </select>
@@ -546,7 +546,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                           .filter(c => c.id !== sub.id && !c.parentId)
                                           .map(parent => (
                                             <option key={parent.id} value={parent.id}>
-                                              {parent.name}
+                                              作为「{parent.name}」子分类
                                             </option>
                                           ))}
                                       </select>
@@ -749,10 +749,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                     />
                  </div>
                  {/* 添加时的父分类选择 */}
-                  <div className="flex items-center gap-2 mt-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
-                      <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
-                    </svg>
+                  <div className="flex items-center gap-2">
                     <select
                       value={newCatParentId}
                       onChange={(e) => setNewCatParentId(e.target.value)}
@@ -763,7 +760,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                         .filter(c => !c.parentId)
                         .map(parent => (
                           <option key={parent.id} value={parent.id}>
-                            {parent.name}
+                            作为「{parent.name}」子分类
                           </option>
                         ))}
                     </select>
