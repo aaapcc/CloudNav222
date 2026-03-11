@@ -291,21 +291,40 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                       )}
                     </div>
                   ) :  mergingCatId === cat.id ? (
-                    // 合并模式
-                    <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 p-2 rounded">
-                      <span className="text-sm dark:text-slate-200 whitespace-nowrap">合并到 →</span>
-                      <select 
-                        value={targetMergeId}
-                        onChange={(e) => setTargetMergeId(e.target.value)}
-                        className="flex-1 text-sm p-1 rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
-                      >
-                        {categories.filter(c => c.id !== cat.id).map(c => (
-                          <option key={c.id} value={c.id}>{c.name}</option>
-                        ))}
-                      </select>
-                      <button onClick={executeMerge} className="text-xs bg-blue-600 text-white px-2 py-1 rounded">确认</button>
-                      <button onClick={() => setMergingCatId(null)} className="text-xs text-slate-500 px-2 py-1">取消</button>
-                    </div>
+                  // 合并模式
+                  <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 p-2 rounded">
+                    <span className="text-sm dark:text-slate-200 whitespace-nowrap">合并到 →</span>
+                    <select 
+                      value={targetMergeId}
+                      onChange={(e) => setTargetMergeId(e.target.value)}
+                      className="flex-1 text-sm p-1 rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                      style={{ maxHeight: '200px', overflowY: 'auto' }}
+                    >
+                      <option value="" disabled>请选择目标分类</option>
+                      {categories
+                        .filter(c => c.id !== cat.id) // 排除自身
+                        .filter(c => !c.parentId) // 先取顶级分类
+                        .map(topCat => {
+                          // 获取这个顶级分类下的所有子分类（排除自身）
+                          const children = categories.filter(c => c.parentId === topCat.id && c.id !== cat.id);
+                          
+                          return (
+                            <React.Fragment key={topCat.id}>
+                              {/* 顶级分类 */}
+                              <option value={topCat.id}>{topCat.name}</option>
+                              {/* 子分类 - 缩进显示 */}
+                              {children.map(child => (
+                                <option key={child.id} value={child.id} style={{ paddingLeft: '24px' }}>
+                                  └─ {child.name}
+                                </option>
+                              ))}
+                            </React.Fragment>
+                          );
+                        })}
+                    </select>
+                    <button onClick={executeMerge} className="text-xs bg-blue-600 text-white px-2 py-1 rounded">确认</button>
+                    <button onClick={() => setMergingCatId(null)} className="text-xs text-slate-500 px-2 py-1">取消</button>
+                  </div>
                   ) : (
                     // 正常显示模式
                     <div className="flex items-center gap-3">
