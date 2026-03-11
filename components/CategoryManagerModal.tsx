@@ -315,7 +315,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                               {/* 子分类 - 缩进显示 */}
                               {children.map(child => (
                                 <option key={child.id} value={child.id} style={{ paddingLeft: '24px' }}>
-                                  └─ {child.name}
+                                  └ {child.name}
                                 </option>
                               ))}
                             </React.Fragment>
@@ -686,7 +686,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                           {/* 子分类 - 缩进显示 */}
                                           {children.map(child => (
                                             <option key={child.id} value={child.id} style={{ paddingLeft: '24px' }}>
-                                              └─ {child.name}
+                                              └ {child.name}
                                             </option>
                                           ))}
                                         </React.Fragment>
