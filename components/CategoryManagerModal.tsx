@@ -475,24 +475,14 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                               {/* 操作按钮 - 移到右边 */}
                               <div className="flex items-center gap-1 ml-auto shrink-0">
                                 <button 
-                                  onClick={() => {
-                                    setEditingId(sub.id);
-                                    setEditName(sub.name);
-                                    setEditIcon(sub.icon || 'Folder');
-                                    setEditPassword(sub.password || '');
-                                    setEditParentId((sub as any).parentId || NO_PARENT_VALUE);
-                                  }} 
+                                  onClick={() => startEdit(sub)} 
                                   className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-slate-200 dark:hover:bg-slate-700 rounded" 
                                   title="编辑"
                                 >
                                   <Edit2 size={14} />
                                 </button>
                                 <button 
-                                  onClick={() => {
-                                    setMergingCatId(sub.id);
-                                    const firstTarget = categories.find(c => c.id !== sub.id);
-                                    if (firstTarget) setTargetMergeId(firstTarget.id);
-                                  }} 
+                                  onClick={() => openMerge(sub.id)} 
                                   className="p-1.5 text-slate-400 hover:text-purple-500 hover:bg-slate-200 dark:hover:bg-slate-700 rounded" 
                                   title="合并"
                                 >
