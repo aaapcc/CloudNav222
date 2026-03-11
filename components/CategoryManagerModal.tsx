@@ -578,6 +578,23 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                   </button>
                                 </div>
                               )}
+                              {/* 在这里添加子分类的合并模式显示 */}
+                              {mergingCatId === sub.id && (
+                                <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 p-2 rounded mt-2">
+                                  <span className="text-sm dark:text-slate-200 whitespace-nowrap">合并到 →</span>
+                                  <select 
+                                    value={targetMergeId}
+                                    onChange={(e) => setTargetMergeId(e.target.value)}
+                                    className="flex-1 text-sm p-1 rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                                  >
+                                    {categories.filter(c => c.id !== sub.id).map(c => (
+                                      <option key={c.id} value={c.id}>{c.name}</option>
+                                    ))}
+                                  </select>
+                                  <button onClick={executeMerge} className="text-xs bg-blue-600 text-white px-2 py-1 rounded">确认</button>
+                                  <button onClick={() => setMergingCatId(null)} className="text-xs text-slate-500 px-2 py-1">取消</button>
+                                </div>
+                              )}
                             </div>
 
                             {/* 第二行：可见性下拉框 */}
