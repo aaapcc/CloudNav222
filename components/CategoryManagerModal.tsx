@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ArrowUp, ArrowDown, Trash2, Edit2, Plus, Check, Lock, Merge, Smile,ChevronRight, ChevronDown, GripVertical } from 'lucide-react';
+import { X, ArrowUp, ArrowDown, Trash2, Edit2, Plus, Check, Lock, Merge, Smile, ChevronRight, ChevronDown } from 'lucide-react';
 import { Category, LinkItem } from '../types';
 import Icon from './Icon';
 
@@ -63,7 +63,6 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
   const [editParentId, setEditParentId] = useState<string>(NO_PARENT_VALUE);
 
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());  // 记录展开的文件夹
-  const [draggedItem, setDraggedItem] = useState<string | null>(null);            // 正在拖拽的分类
 
   // Merge State
   const [mergingCatId, setMergingCatId] = useState<string | null>(null);
@@ -141,34 +140,6 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
     }, [] as string[]);
   };
 
-  // 拖拽相关函数
-  const handleDragStart = (catId: string) => {
-    setDraggedItem(catId);
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = (targetId: string, targetParentId?: string) => {
-    if (!draggedItem || draggedItem === targetId) return;
-    
-    // 防止把父分类拖到子分类下面
-    const allChildren = getAllChildrenIds(draggedItem);
-    if (allChildren.includes(targetId)) return;
-    
-    // 更新分类的 parentId
-    const newCategories = categories.map(c => {
-      if (c.id === draggedItem) {
-        return { ...c, parentId: targetParentId };
-      }
-      return c;
-    });
-    
-    onUpdateCategories(newCategories);
-    setDraggedItem(null);
-  };
-
   const openMerge = (catId: string) => {
     setMergingCatId(catId);
     // Default target is first category that is not self
@@ -211,13 +182,6 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
             <div key={cat.id} className="flex flex-col p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg group gap-2 border border-slate-100 dark:border-slate-600">
               {/* 第一行：拖拽手柄 + 排序按钮 + 图标 + 名称区域 + 操作按钮 */}
               <div className="flex items-start gap-2">
-                
-                {/* 拖拽手柄 */}
-                {editingId !== cat.id && mergingCatId !== cat.id && (
-                  <div className="cursor-move text-slate-400 hover:text-blue-500 mt-1">
-                    <GripVertical size={16} />
-                  </div>
-                )}
                 
                 {/* 上下箭头 - 所有分类都显示 */}
                 {editingId !== cat.id && mergingCatId !== cat.id && (
