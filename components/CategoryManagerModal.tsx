@@ -563,6 +563,49 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                       <span className="text-xs text-slate-400">
                                         {links.filter(l => l.categoryId === sub.id).length} 个链接
                                       </span>
+                                      {/* 第二行：可见性下拉框 */}
+                                      {editingId !== sub.id && mergingCatId !== sub.id && (
+                                        <div className="flex items-center justify-end mt-2 pl-12">
+                                          <select
+                                            value={
+                                              (sub as any).isVisible === false ? "hidden" :
+                                              (sub as any).isAdminOnly === true ? "admin" : "public"
+                                            }
+                                            onChange={(e) => {
+                                              const value = e.target.value;
+                                              let isVisible = true;
+                                              let isAdminOnly = false;
+                                              
+                                              if (value === "hidden") {
+                                                isVisible = false;
+                                                isAdminOnly = false;
+                                              } else if (value === "admin") {
+                                                isVisible = true;
+                                                isAdminOnly = true;
+                                              } else {
+                                                isVisible = true;
+                                                isAdminOnly = false;
+                                              }
+                                              
+                                              const updatedCategories = categories.map(c => 
+                                                c.id === sub.id ? { ...c, isVisible, isAdminOnly } : c
+                                              );
+                                              onUpdateCategories(updatedCategories);
+                                            }}
+                                            className="text-xs p-1 pr-5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white outline-none appearance-none cursor-pointer w-28"
+                                            style={{
+                                              backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                                              backgroundPosition: 'right 0.2rem center',
+                                              backgroundRepeat: 'no-repeat',
+                                              backgroundSize: '1em 1em',
+                                            }}
+                                          >
+                                            <option value="public">全员可见</option>
+                                            <option value="admin">👑 仅管理员</option>
+                                            <option value="hidden">🚫 隐藏</option>
+                                          </select>
+                                        </div>
+                                      )}
                                     </div>
                                   </div>
                                 )}
@@ -596,85 +639,43 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                   </button>
                                 </div>
                               )}
-                              {/* 在这里添加子分类的合并模式显示 */}
-                              {mergingCatId === sub.id && (
-                                <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 p-2 rounded mt-2">
-                                  <span className="text-sm dark:text-slate-200 whitespace-nowrap">合并到 →</span>
-                                  <select 
-                                    value={targetMergeId}
-                                    onChange={(e) => setTargetMergeId(e.target.value)}
-                                    className="flex-1 text-sm p-1 rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
-                                    style={{ maxHeight: '200px', overflowY: 'auto' }}
-                                  >
-                                    <option value="" disabled>请选择目标分类</option>
-                                    {categories
-                                      .filter(c => c.id !== sub.id) // 排除自身
-                                      .filter(c => !c.parentId) // 先取顶级分类
-                                      .map(topCat => {
-                                        // 获取这个顶级分类下的所有子分类（排除自身）
-                                        const children = categories.filter(c => c.parentId === topCat.id && c.id !== sub.id);
-                                        
-                                        return (
-                                          <optgroup key={topCat.id} label={topCat.name}>
-                                            {/* 顶级分类本身作为选项 */}
-                                            <option value={topCat.id}>{topCat.name}</option>
-                                            {/* 子分类选项，带缩进 */}
-                                            {children.map(child => (
-                                              <option key={child.id} value={child.id} style={{ paddingLeft: '20px' }}>
-                                                └─ {child.name}
-                                              </option>
-                                            ))}
-                                          </optgroup>
-                                        );
-                                      })}
-                                  </select>
-                                  <button onClick={executeMerge} className="text-xs bg-blue-600 text-white px-2 py-1 rounded">确认</button>
-                                  <button onClick={() => setMergingCatId(null)} className="text-xs text-slate-500 px-2 py-1">取消</button>
-                                </div>
-                              )}
                             </div>
-
-                            {/* 第二行：可见性下拉框 */}
-                            {editingId !== sub.id && mergingCatId !== sub.id && (
-                              <div className="flex items-center justify-end mt-2 pl-12">
-                                <select
-                                  value={
-                                    (sub as any).isVisible === false ? "hidden" :
-                                    (sub as any).isAdminOnly === true ? "admin" : "public"
-                                  }
-                                  onChange={(e) => {
-                                    const value = e.target.value;
-                                    let isVisible = true;
-                                    let isAdminOnly = false;
-                                    
-                                    if (value === "hidden") {
-                                      isVisible = false;
-                                      isAdminOnly = false;
-                                    } else if (value === "admin") {
-                                      isVisible = true;
-                                      isAdminOnly = true;
-                                    } else {
-                                      isVisible = true;
-                                      isAdminOnly = false;
-                                    }
-                                    
-                                    const updatedCategories = categories.map(c => 
-                                      c.id === sub.id ? { ...c, isVisible, isAdminOnly } : c
-                                    );
-                                    onUpdateCategories(updatedCategories);
-                                  }}
-                                  className="text-xs p-1 pr-5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white outline-none appearance-none cursor-pointer w-28"
-                                  style={{
-                                    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                                    backgroundPosition: 'right 0.2rem center',
-                                    backgroundRepeat: 'no-repeat',
-                                    backgroundSize: '1em 1em',
-                                  }}
+                            {/* 在这里添加子分类的合并模式显示 */}
+                            {mergingCatId === sub.id && (
+                              <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 p-2 rounded mt-2">
+                                <span className="text-sm dark:text-slate-200 whitespace-nowrap">合并到 →</span>
+                                <select 
+                                  value={targetMergeId}
+                                  onChange={(e) => setTargetMergeId(e.target.value)}
+                                  className="flex-1 text-sm p-1 rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                                  style={{ maxHeight: '200px', overflowY: 'auto' }}
                                 >
-                                  <option value="public">全员可见</option>
-                                  <option value="admin">👑 仅管理员</option>
-                                  <option value="hidden">🚫 隐藏</option>
+                                  <option value="" disabled>请选择目标分类</option>
+                                  {categories
+                                    .filter(c => c.id !== sub.id) // 排除自身
+                                    .sort((a, b) => {
+                                      // 按是否有父分类排序：顶级分类在前，子分类在后
+                                      if (!a.parentId && b.parentId) return -1;
+                                      if (a.parentId && !b.parentId) return 1;
+                                      return 0;
+                                    })
+                                    .map(c => {
+                                      // 判断是否是子分类（有parentId）
+                                      const isChild = !!c.parentId;
+                                      
+                                      return (
+                                        <option 
+                                          key={c.id} 
+                                          value={c.id}
+                                          style={{ paddingLeft: isChild ? '24px' : '8px' }}
+                                        >
+                                          {isChild ? '└─ ' : ''}{c.name}
+                                        </option>
+                                      );
+                                    })}
                                 </select>
+                                <button onClick={executeMerge} className="text-xs bg-blue-600 text-white px-2 py-1 rounded">确认</button>
+                                <button onClick={() => setMergingCatId(null)} className="text-xs text-slate-500 px-2 py-1">取消</button>
                               </div>
                             )}
                           </div>
