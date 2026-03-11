@@ -290,11 +290,11 @@ const LinkModal: React.FC<LinkModalProps> = ({ isOpen, onClose, onSave, categori
                             })}
                     </select>
                 </div>
-                <div className="flex items-end pb-1">
+                <div className="flex items-end">
                     <button
                         type="button"
                         onClick={() => setPinned(!pinned)}
-                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border transition-all h-[42px] ${
+                        className={`flex items-center gap-2 px-4 py-2.5 rounded border transition-all h-[39px] ${
                             pinned 
                             ? 'bg-blue-100 border-blue-200 text-blue-600 dark:bg-blue-900/40 dark:border-blue-800 dark:text-blue-300' 
                             : 'bg-slate-50 border-slate-200 text-slate-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-400'
