@@ -1082,7 +1082,7 @@ function App() {
                       <>
                         {/* 顶级分类自己的链接 */}
                         {catLinks.length > 0 && (
-                          <div className={`grid gap-3 ${siteSettings.cardStyle === 'simple' ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 mb-6'}`}>
+                          <div className={`grid gap-3 ${siteSettings.cardStyle === 'simple' ? 'mb-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6' : 'mb-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'}`}>
                             {catLinks.map(link => renderLinkCard(link))}
                           </div>
                         )}
