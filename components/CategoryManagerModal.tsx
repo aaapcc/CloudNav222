@@ -180,8 +180,24 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
             const realIndex = categories.findIndex(c => c.id === cat.id);
             return (
             <div key={cat.id} className="flex flex-col p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg group gap-2 border border-slate-100 dark:border-slate-600">
-              {/* 第一行：拖拽手柄 + 排序按钮 + 图标 + 名称区域 + 操作按钮 */}
+              {/* 第一行：左侧固定区域 + 排序按钮 + 图标 + 名称区域 + 操作按钮 */}
               <div className="flex items-start gap-2">
+                
+                {/* 左侧固定宽度区域：用于显示展开箭头或留白 */}
+                <div className="w-6 shrink-0 flex justify-center mt-1">
+                  {categories.some(c => c.parentId === cat.id) && editingId !== cat.id && mergingCatId !== cat.id ? (
+                    // 有子分类：显示展开/折叠按钮
+                    <button
+                      onClick={(e) => toggleFolder(cat.id, e)}
+                      className="text-slate-400 hover:text-blue-500"
+                    >
+                      {expandedFolders.has(cat.id) ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                    </button>
+                  ) : (
+                    // 没有子分类：留出空白占位，保持对齐
+                    editingId !== cat.id && mergingCatId !== cat.id && <div className="w-4"></div>
+                  )}
+                </div>
                 
                 {/* 上下箭头 - 所有分类都显示 */}
                 {editingId !== cat.id && mergingCatId !== cat.id && (
@@ -201,16 +217,6 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                       <ArrowDown size={14} />
                     </button>
                   </div>
-                )}
-
-                {/* 折叠/展开按钮（只有有子分类时才显示） */}
-                {categories.some(c => c.parentId === cat.id) && editingId !== cat.id && mergingCatId !== cat.id && (
-                  <button
-                    onClick={(e) => toggleFolder(cat.id, e)}
-                    className="p-1 text-slate-400 hover:text-blue-500 shrink-0"
-                  >
-                    {expandedFolders.has(cat.id) ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                  </button>
                 )}
 
                 {/* 图标和文字区域 */}
@@ -705,7 +711,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                  </div>
                  {/* 添加时的父分类选择 */}
                   <div className="flex items-center gap-2 mt-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
                       <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
                     </svg>
                     <select
