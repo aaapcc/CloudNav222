@@ -263,13 +263,31 @@ const LinkModal: React.FC<LinkModalProps> = ({ isOpen, onClose, onSave, categori
                 <div className="flex-1">
                     <label className="block text-sm font-medium mb-1 dark:text-slate-300">分类</label>
                     <select
-                    value={categoryId}
-                    onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full p-2 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                        value={categoryId}
+                        onChange={(e) => setCategoryId(e.target.value)}
+                        className="w-full p-2 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                        style={{ maxHeight: '200px', overflowY: 'auto' }}
                     >
-                    {categories.map(cat => (
-                        <option key={cat.id} value={cat.id}>{cat.name}</option>
-                    ))}
+                        <option value="" disabled>请选择目标分类</option>
+                        {categories
+                            .filter(cat => !cat.parentId) // 先取顶级分类
+                            .map(topCat => {
+                                // 获取这个顶级分类下的所有子分类
+                                const children = categories.filter(c => c.parentId === topCat.id);
+                                
+                                return (
+                                    <React.Fragment key={topCat.id}>
+                                        {/* 顶级分类 */}
+                                        <option value={topCat.id}>{topCat.name}</option>
+                                        {/* 子分类 - 缩进显示 */}
+                                        {children.map(child => (
+                                            <option key={child.id} value={child.id} style={{ paddingLeft: '24px' }}>
+                                                └ {child.name}
+                                            </option>
+                                        ))}
+                                    </React.Fragment>
+                                );
+                            })}
                     </select>
                 </div>
                 <div className="flex items-end pb-1">

@@ -833,7 +833,7 @@ function App() {
                                 {sub.name}
                                 {/* 新增：二级分类的「管」图标 */}
                                 {sub.isAdminOnly && authToken && (
-                                  <span className="inline-flex items-center px-1 py-0.5 rounded text-[8px] font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
+                                  <span className="inline-flex items-center px-1 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
                                     管
                                   </span>
                                 )}
