@@ -395,7 +395,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                               backgroundSize: '1.2em 1.2em',
                             }}
                           >
-                            <option value="public" className="dark:bg-slate-800">全员可见</option>
+                            <option value="public" className="dark:bg-slate-800">👥 全员可见</option>
                             <option value="admin" className="dark:bg-slate-800">👑 仅管理员可见</option>
                             <option value="hidden" className="dark:bg-slate-800">🚫 全员隐藏</option>
                           </select>
@@ -645,7 +645,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                               backgroundSize: '1em 1em',
                                             }}
                                           >
-                                            <option value="public">全员可见</option>
+                                            <option value="public">👥 全员可见</option>
                                             <option value="admin">👑 仅管理员</option>
                                             <option value="hidden">🚫 隐藏</option>
                                           </select>
