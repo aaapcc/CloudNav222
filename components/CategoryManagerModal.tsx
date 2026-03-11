@@ -199,8 +199,8 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                   )}
                 </div>
                 
-                {/* 上下箭头 - 所有分类都显示 */}
-                {editingId !== cat.id && mergingCatId !== cat.id && (
+                {/* 上下箭头 - 所有分类都显示（合并模式下也显示） */}
+                {editingId !== cat.id && (
                   <div className="flex flex-col gap-1 mr-1 shrink-0">
                     <button 
                       onClick={() => handleMove(realIndex, 'up')}
@@ -393,22 +393,24 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                   )}
                 </div>
 
-                {/* 操作按钮 */}
-                <div className="flex items-center gap-1 ml-auto">
-                  <button onClick={() => startEdit(cat)} className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded" title="编辑">
-                    <Edit2 size={14} />
-                  </button>
-                  <button onClick={() => openMerge(cat.id)} className="p-1.5 text-slate-400 hover:text-purple-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded" title="合并">
-                    <Merge size={14} />
-                  </button>
-                  <button 
-                    onClick={() => { if(confirm(`确定删除"${cat.name}"分类吗？该分类下的书签将移动到"常用推荐"。`)) onDeleteCategory(cat.id); }}
-                    className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded"
-                    title="删除"
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                </div>
+                {/* 操作按钮 - 只在非编辑且非合并模式下显示 */}
+                {editingId !== cat.id && mergingCatId !== cat.id && (
+                  <div className="flex items-center gap-1 ml-auto">
+                    <button onClick={() => startEdit(cat)} className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded" title="编辑">
+                      <Edit2 size={14} />
+                    </button>
+                    <button onClick={() => openMerge(cat.id)} className="p-1.5 text-slate-400 hover:text-purple-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded" title="合并">
+                      <Merge size={14} />
+                    </button>
+                    <button 
+                      onClick={() => { if(confirm(`确定删除"${cat.name}"分类吗？该分类下的书签将移动到"常用推荐"。`)) onDeleteCategory(cat.id); }}
+                      className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded"
+                      title="删除"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                )}
               </div>
                 {/* 子分类列表 */}
                 {expandedFolders.has(cat.id) && (
