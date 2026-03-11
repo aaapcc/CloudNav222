@@ -421,7 +421,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                   </button>
                 </div>
               </div>
-                              {/* 子分类列表 */}
+                {/* 子分类列表 */}
                 {expandedFolders.has(cat.id) && (
                   <div className="w-full mt-2 space-y-2">
                     {categories
@@ -436,18 +436,66 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                             {/* 第一行：子分类基本信息 + 操作按钮 - 完全仿照顶级分类 */}
                             <div className="flex items-start gap-2">
                               
-                              {/* 上下箭头 - 使用 handleMove 函数 */}
+                              {/* 上下箭头 - 子分类移动 */}
                               <div className="flex flex-col gap-1 mr-1 shrink-0">
                                 <button 
-                                  onClick={() => handleMove(subCategoryIndex, 'up')}
-                                  disabled={subCategoryIndex === 0}
+                                  onClick={() => {
+                                    // 找出当前父分类下的所有子分类
+                                    const siblings = categories.filter(c => c.parentId === cat.id);
+                                    const currentIndex = siblings.findIndex(s => s.id === sub.id);
+                                    
+                                    if (currentIndex > 0) {
+                                      // 和上一个子分类交换位置
+                                      const newCategories = [...categories];
+                                      const prevSibling = siblings[currentIndex - 1];
+                                      
+                                      // 找到这两个分类在数组中的真实位置
+                                      const currentPos = newCategories.findIndex(c => c.id === sub.id);
+                                      const prevPos = newCategories.findIndex(c => c.id === prevSibling.id);
+                                      
+                                      // 交换它们的位置
+                                      [newCategories[currentPos], newCategories[prevPos]] = 
+                                      [newCategories[prevPos], newCategories[currentPos]];
+                                      
+                                      onUpdateCategories(newCategories);
+                                    }
+                                  }}
+                                  disabled={(() => {
+                                    const siblings = categories.filter(c => c.parentId === cat.id);
+                                    const currentIndex = siblings.findIndex(s => s.id === sub.id);
+                                    return currentIndex === 0;
+                                  })()}
                                   className="p-0.5 text-slate-400 hover:text-blue-500 disabled:opacity-30"
                                 >
                                   <ArrowUp size={14} />
                                 </button>
                                 <button 
-                                  onClick={() => handleMove(subCategoryIndex, 'down')}
-                                  disabled={subCategoryIndex === categories.length - 1}
+                                  onClick={() => {
+                                    // 找出当前父分类下的所有子分类
+                                    const siblings = categories.filter(c => c.parentId === cat.id);
+                                    const currentIndex = siblings.findIndex(s => s.id === sub.id);
+                                    
+                                    if (currentIndex < siblings.length - 1) {
+                                      // 和下一个子分类交换位置
+                                      const newCategories = [...categories];
+                                      const nextSibling = siblings[currentIndex + 1];
+                                      
+                                      // 找到这两个分类在数组中的真实位置
+                                      const currentPos = newCategories.findIndex(c => c.id === sub.id);
+                                      const nextPos = newCategories.findIndex(c => c.id === nextSibling.id);
+                                      
+                                      // 交换它们的位置
+                                      [newCategories[currentPos], newCategories[nextPos]] = 
+                                      [newCategories[nextPos], newCategories[currentPos]];
+                                      
+                                      onUpdateCategories(newCategories);
+                                    }
+                                  }}
+                                  disabled={(() => {
+                                    const siblings = categories.filter(c => c.parentId === cat.id);
+                                    const currentIndex = siblings.findIndex(s => s.id === sub.id);
+                                    return currentIndex === siblings.length - 1;
+                                  })()}
                                   className="p-0.5 text-slate-400 hover:text-blue-500 disabled:opacity-30"
                                 >
                                   <ArrowDown size={14} />
