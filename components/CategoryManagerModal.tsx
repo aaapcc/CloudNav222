@@ -278,14 +278,26 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                             ))}
                         </select>
                       </div>
-                      {/* 编辑模式下的保存按钮 */}
+                      {/* 编辑模式下的保存和取消按钮 */}
                       {editingId === cat.id && (
-                        <div className="flex justify-end mt-2">
+                        <div className="flex justify-end gap-2 mt-2">
                           <button 
                             onClick={saveEdit}
                             className="px-3 py-1 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-colors flex items-center gap-1"
                           >
                             <Check size={14} /> 保存
+                          </button>
+                          <button 
+                            onClick={() => {
+                              setEditingId(null);
+                              setEditName('');
+                              setEditIcon('Folder');
+                              setEditPassword('');
+                              setEditParentId(NO_PARENT_VALUE);
+                            }}
+                            className="px-3 py-1 bg-slate-400 text-white text-sm rounded-lg hover:bg-slate-500 transition-colors flex items-center gap-1"
+                          >
+                            <X size={14} /> 取消
                           </button>
                         </div>
                       )}
@@ -551,13 +563,25 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                           ))}
                                       </select>
                                     </div>
-                                    {/* 子分类编辑模式下的保存按钮 */}
-                                    <div className="flex justify-end mt-2">
+                                    {/* 子分类编辑模式下的保存和取消按钮 */}
+                                    <div className="flex justify-end gap-2 mt-2">
                                       <button 
                                         onClick={saveEdit}
                                         className="px-3 py-1 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-colors flex items-center gap-1"
                                       >
                                         <Check size={14} /> 保存
+                                      </button>
+                                      <button 
+                                        onClick={() => {
+                                          setEditingId(null);
+                                          setEditName('');
+                                          setEditIcon('Folder');
+                                          setEditPassword('');
+                                          setEditParentId(NO_PARENT_VALUE);
+                                        }}
+                                        className="px-3 py-1 bg-slate-400 text-white text-sm rounded-lg hover:bg-slate-500 transition-colors flex items-center gap-1"
+                                      >
+                                        <X size={14} /> 取消
                                       </button>
                                     </div>
                                   </div>
