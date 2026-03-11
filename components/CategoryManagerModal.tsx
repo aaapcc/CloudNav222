@@ -356,7 +356,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                               );
                               onUpdateCategories(updatedCategories);
                             }}
-                            className="text-xs p-1 pr-6 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none appearance-none cursor-pointer"
+                            className="text-xs p-1 pr-6 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none appearance-none cursor-pointer"
                             style={{
                               backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
                               backgroundPosition: 'right 0.25rem center',
@@ -565,7 +565,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                       </span>
                                       {/* 第二行：可见性下拉框 */}
                                       {editingId !== sub.id && mergingCatId !== sub.id && (
-                                        <div className="flex items-center justify-end mt-2 pl-12">
+                                        <div className="pt-2">
                                           <select
                                             value={
                                               (sub as any).isVisible === false ? "hidden" :
@@ -653,24 +653,22 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                   <option value="" disabled>请选择目标分类</option>
                                   {categories
                                     .filter(c => c.id !== sub.id) // 排除自身
-                                    .sort((a, b) => {
-                                      // 按是否有父分类排序：顶级分类在前，子分类在后
-                                      if (!a.parentId && b.parentId) return -1;
-                                      if (a.parentId && !b.parentId) return 1;
-                                      return 0;
-                                    })
-                                    .map(c => {
-                                      // 判断是否是子分类（有parentId）
-                                      const isChild = !!c.parentId;
+                                    .filter(c => !c.parentId) // 先取顶级分类
+                                    .map(topCat => {
+                                      // 获取这个顶级分类下的所有子分类（排除自身）
+                                      const children = categories.filter(c => c.parentId === topCat.id && c.id !== sub.id);
                                       
                                       return (
-                                        <option 
-                                          key={c.id} 
-                                          value={c.id}
-                                          style={{ paddingLeft: isChild ? '24px' : '8px' }}
-                                        >
-                                          {isChild ? '└─ ' : ''}{c.name}
-                                        </option>
+                                        <React.Fragment key={topCat.id}>
+                                          {/* 顶级分类 */}
+                                          <option value={topCat.id}>{topCat.name}</option>
+                                          {/* 子分类 - 缩进显示 */}
+                                          {children.map(child => (
+                                            <option key={child.id} value={child.id} style={{ paddingLeft: '24px' }}>
+                                              └─ {child.name}
+                                            </option>
+                                          ))}
+                                        </React.Fragment>
                                       );
                                     })}
                                 </select>
