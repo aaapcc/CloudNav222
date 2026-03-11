@@ -604,10 +604,29 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                     value={targetMergeId}
                                     onChange={(e) => setTargetMergeId(e.target.value)}
                                     className="flex-1 text-sm p-1 rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                                    style={{ maxHeight: '200px', overflowY: 'auto' }}
                                   >
-                                    {categories.filter(c => c.id !== sub.id).map(c => (
-                                      <option key={c.id} value={c.id}>{c.name}</option>
-                                    ))}
+                                    <option value="" disabled>请选择目标分类</option>
+                                    {categories
+                                      .filter(c => c.id !== sub.id) // 排除自身
+                                      .filter(c => !c.parentId) // 先取顶级分类
+                                      .map(topCat => {
+                                        // 获取这个顶级分类下的所有子分类（排除自身）
+                                        const children = categories.filter(c => c.parentId === topCat.id && c.id !== sub.id);
+                                        
+                                        return (
+                                          <optgroup key={topCat.id} label={topCat.name}>
+                                            {/* 顶级分类本身作为选项 */}
+                                            <option value={topCat.id}>{topCat.name}</option>
+                                            {/* 子分类选项，带缩进 */}
+                                            {children.map(child => (
+                                              <option key={child.id} value={child.id} style={{ paddingLeft: '20px' }}>
+                                                └─ {child.name}
+                                              </option>
+                                            ))}
+                                          </optgroup>
+                                        );
+                                      })}
                                   </select>
                                   <button onClick={executeMerge} className="text-xs bg-blue-600 text-white px-2 py-1 rounded">确认</button>
                                   <button onClick={() => setMergingCatId(null)} className="text-xs text-slate-500 px-2 py-1">取消</button>
