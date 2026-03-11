@@ -781,9 +781,7 @@ function App() {
                         <span className="truncate flex-1 text-left">
                           {cat.name}
                           {cat.isAdminOnly && authToken && (
-                            <span className="ml-1.5 inline-flex items-center px-1 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
-                              管
-                            </span>
+                            <span className="ml-1.5 inline-flex items-center px-1 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">管</span>
                           )}
                         </span>
                       </button>
@@ -833,9 +831,7 @@ function App() {
                                 {sub.name}
                                 {/* 新增：二级分类的「管」图标 */}
                                 {sub.isAdminOnly && authToken && (
-                                  <span className="inline-flex items-center px-1 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
-                                    管
-                                  </span>
+                                  <span className="inline-flex items-center px-1 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">管</span>
                                 )}
                               </span>
                             </button>
@@ -1055,9 +1051,7 @@ function App() {
                           {cat.name}
                         </h2>
                         {cat.isAdminOnly && authToken && (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
-                            仅管理员
-                          </span>
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">仅管理员</span>
                         )}
                         {isLocked && <Lock size={16} className="text-amber-500" />}
                       </div>
@@ -1099,14 +1093,14 @@ function App() {
                                   {sub.name}
                                 </h3>
                                 {sub.isAdminOnly && authToken && (
-                                  <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">管</span>
+                                  <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">仅管理员</span>
                                 )}
                                 {isSubLocked && <Lock size={14} className="text-amber-500" />}
                               </div>
                               
                               {/* 子分类密码验证界面 */}
                               {isSubLocked ? (
-                                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-8 flex flex-col items-center justify-center text-center">
+                                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 p-8 flex flex-col items-center justify-center text-center">
                                   <div className="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mb-3 text-amber-600 dark:text-amber-400">
                                     <Lock size={20} />
                                   </div>
