@@ -421,131 +421,213 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                   </button>
                 </div>
               </div>
-              {/* 子分类列表 */}
-              {expandedFolders.has(cat.id) && (
-                <div className="w-full mt-2 space-y-2">
-                  {categories
-                    .filter(sub => sub.parentId === cat.id)
-                    .map((sub, subIndex) => {
-                      const subCategoryIndex = categories.findIndex(c => c.id === sub.id);
-                      return (
-                        <div 
-                          key={sub.id} 
-                          className="w-full p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
-                        >
-                          {/* 第一行：子分类基本信息 + 操作按钮 */}
-                          <div className="flex items-center gap-2">
-                            {/* 子分类自己的上下箭头 - 修复1：使用正确的索引 */}
-                            <div className="flex flex-col gap-1 mr-1 shrink-0">
-                              <button 
-                                onClick={() => handleMove(subCategoryIndex, 'up')}
-                                disabled={subCategoryIndex === 0}
-                                className="p-0.5 text-slate-400 hover:text-blue-500 disabled:opacity-30"
-                              >
-                                <ArrowUp size={12} />
-                              </button>
-                              <button 
-                                onClick={() => handleMove(subCategoryIndex, 'down')}
-                                disabled={subCategoryIndex === categories.length - 1}
-                                className="p-0.5 text-slate-400 hover:text-blue-500 disabled:opacity-30"
-                              >
-                                <ArrowDown size={12} />
-                              </button>
-                            </div>
-                            
-                            {/* 子分类图标 */}
-                            <div className="w-6 h-6 rounded bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 shrink-0">
-                              {sub.icon && sub.icon.length <= 4 && !/^[a-zA-Z]+$/.test(sub.icon) 
-                                ? <span className="text-sm">{sub.icon}</span> 
-                                : <Icon name={sub.icon} size={12} />
-                              }
-                            </div>
-                            
-                            {/* 子分类名称 */}
-                            <span className="font-medium text-sm dark:text-slate-200">{sub.name}</span>
-                            
-                            {/* 密码锁（如果有） */}
-                            {sub.password && <Lock size={10} className="text-amber-500 shrink-0" />}
-                            
-                            {/* 链接数量 - 显示在名称后面 */}
-                            <span className="text-xs text-slate-400 ml-2">
-                              {links.filter(l => l.categoryId === sub.id).length} 个链接
-                            </span>
-                            
-                            {/* 操作按钮 - 修复2：使用正确的函数 */}
-                            <div className="flex items-center gap-1 ml-auto shrink-0">
-                              <button 
-                                onClick={() => startEdit(sub)}
-                                className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-slate-200 dark:hover:bg-slate-700 rounded" 
-                                title="编辑"
-                              >
-                                <Edit2 size={14} />
-                              </button>
-                              <button 
-                                onClick={() => openMerge(sub.id)}
-                                className="p-1.5 text-slate-400 hover:text-purple-500 hover:bg-slate-200 dark:hover:bg-slate-700 rounded" 
-                                title="合并"
-                              >
-                                <Merge size={14} />
-                              </button>
-                              <button 
-                                onClick={() => { 
-                                  if(confirm(`确定删除"${sub.name}"分类吗？`)) onDeleteCategory(sub.id); 
-                                }}
-                                className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-slate-700 rounded"
-                                title="删除"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          </div>
+                              {/* 子分类列表 */}
+                {expandedFolders.has(cat.id) && (
+                  <div className="w-full mt-2 space-y-2">
+                    {categories
+                      .filter(sub => sub.parentId === cat.id)
+                      .map((sub, subIndex) => {
+                        const subCategoryIndex = categories.findIndex(c => c.id === sub.id);
+                        return (
+                          <div 
+                            key={sub.id} 
+                            className="w-full p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700"
+                          >
+                            {/* 第一行：子分类基本信息 + 操作按钮 - 完全仿照顶级分类 */}
+                            <div className="flex items-start gap-2">
+                              
+                              {/* 上下箭头 - 使用 handleMove 函数 */}
+                              <div className="flex flex-col gap-1 mr-1 shrink-0">
+                                <button 
+                                  onClick={() => handleMove(subCategoryIndex, 'up')}
+                                  disabled={subCategoryIndex === 0}
+                                  className="p-0.5 text-slate-400 hover:text-blue-500 disabled:opacity-30"
+                                >
+                                  <ArrowUp size={14} />
+                                </button>
+                                <button 
+                                  onClick={() => handleMove(subCategoryIndex, 'down')}
+                                  disabled={subCategoryIndex === categories.length - 1}
+                                  className="p-0.5 text-slate-400 hover:text-blue-500 disabled:opacity-30"
+                                >
+                                  <ArrowDown size={14} />
+                                </button>
+                              </div>
 
-                          {/* 第二行：可见性下拉框（单独一行） */}
-                          <div className="flex items-center justify-end mt-2">
-                            <select
-                              value={
-                                (sub as any).isVisible === false ? "hidden" :
-                                (sub as any).isAdminOnly === true ? "admin" : "public"
-                              }
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                let isVisible = true;
-                                let isAdminOnly = false;
-                                
-                                if (value === "hidden") {
-                                  isVisible = false;
-                                  isAdminOnly = false;
-                                } else if (value === "admin") {
-                                  isVisible = true;
-                                  isAdminOnly = true;
-                                } else {
-                                  isVisible = true;
-                                  isAdminOnly = false;
-                                }
-                                
-                                const updatedCategories = categories.map(c => 
-                                  c.id === sub.id ? { ...c, isVisible, isAdminOnly } : c
-                                );
-                                onUpdateCategories(updatedCategories);
-                              }}
-                              className="text-xs p-1 pr-5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white outline-none appearance-none cursor-pointer w-28"
-                              style={{
-                                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                                backgroundPosition: 'right 0.2rem center',
-                                backgroundRepeat: 'no-repeat',
-                                backgroundSize: '1em 1em',
-                              }}
-                            >
-                              <option value="public">全员可见</option>
-                              <option value="admin">👑 仅管理员</option>
-                              <option value="hidden">🚫 隐藏</option>
-                            </select>
+                              {/* 图标和名称区域 - 完全仿照顶级分类 */}
+                              <div className="flex-1 min-w-0">
+                                {editingId === sub.id ? (
+                                  // 子分类编辑模式 - 和顶级分类保持一致
+                                  <div className="flex flex-col gap-2">
+                                    <div className="flex gap-2">
+                                      <div className="relative w-32 shrink-0">
+                                        <select
+                                          value={editIcon}
+                                          onChange={(e) => setEditIcon(e.target.value)}
+                                          className="w-full p-1.5 text-sm rounded border border-blue-500 dark:bg-slate-800 dark:text-white outline-none appearance-none"
+                                        >
+                                          {COMMON_ICONS.map(icon => (
+                                            <option key={icon.value} value={icon.value}>{icon.label}</option>
+                                          ))}
+                                        </select>
+                                        <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                                          <Icon name={editIcon} size={14} />
+                                        </div>
+                                      </div>
+                                      <input 
+                                        type="text" 
+                                        value={editName}
+                                        onChange={(e) => setEditName(e.target.value)}
+                                        className="flex-1 p-1.5 px-2 text-sm rounded border border-blue-500 dark:bg-slate-800 dark:text-white outline-none"
+                                        placeholder="分类名称"
+                                        autoFocus
+                                      />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <Lock size={14} className="text-slate-400" />
+                                      <input 
+                                        type="text" 
+                                        value={editPassword}
+                                        onChange={(e) => setEditPassword(e.target.value)}
+                                        className="flex-1 p-1.5 px-2 text-xs rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
+                                        placeholder="设置密码 (留空则不加密)"
+                                      />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
+                                        <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+                                      </svg>
+                                      <select
+                                        value={editParentId}
+                                        onChange={(e) => setEditParentId(e.target.value)}
+                                        className="flex-1 p-1.5 px-2 text-xs rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
+                                      >
+                                        <option value={NO_PARENT_VALUE}>作为顶级分类</option>
+                                        {categories
+                                          .filter(c => c.id !== sub.id && !c.parentId)
+                                          .map(parent => (
+                                            <option key={parent.id} value={parent.id}>
+                                              {parent.name}
+                                            </option>
+                                          ))}
+                                      </select>
+                                    </div>
+                                    {/* 子分类编辑模式下的保存按钮 */}
+                                    <div className="flex justify-end mt-2">
+                                      <button 
+                                        onClick={saveEdit}
+                                        className="px-3 py-1 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-colors flex items-center gap-1"
+                                      >
+                                        <Check size={14} /> 保存
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  // 子分类正常显示模式
+                                  <div className="flex items-center gap-3">
+                                    {/* 图标 */}
+                                    <div className="w-6 h-6 rounded bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 shrink-0">
+                                      {sub.icon && sub.icon.length <= 4 && !/^[a-zA-Z]+$/.test(sub.icon) 
+                                        ? <span className="text-sm">{sub.icon}</span> 
+                                        : <Icon name={sub.icon} size={12} />
+                                      }
+                                    </div>
+                                    
+                                    {/* 文字信息 */}
+                                    <div className="flex flex-col">
+                                      {/* 分类名称 + 密码锁 */}
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-medium dark:text-slate-200">{sub.name}</span>
+                                        {sub.password && <Lock size={10} className="text-amber-500 shrink-0" />}
+                                      </div>
+                                      
+                                      {/* 链接数量 */}
+                                      <span className="text-xs text-slate-400">
+                                        {links.filter(l => l.categoryId === sub.id).length} 个链接
+                                      </span>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* 操作按钮 - 完全仿照顶级分类 */}
+                              {editingId !== sub.id && mergingCatId !== sub.id && (
+                                <div className="flex items-center gap-1 ml-auto shrink-0">
+                                  <button 
+                                    onClick={() => startEdit(sub)}
+                                    className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-slate-200 dark:hover:bg-slate-700 rounded" 
+                                    title="编辑"
+                                  >
+                                    <Edit2 size={14} />
+                                  </button>
+                                  <button 
+                                    onClick={() => openMerge(sub.id)}
+                                    className="p-1.5 text-slate-400 hover:text-purple-500 hover:bg-slate-200 dark:hover:bg-slate-700 rounded" 
+                                    title="合并"
+                                  >
+                                    <Merge size={14} />
+                                  </button>
+                                  <button 
+                                    onClick={() => { 
+                                      if(confirm(`确定删除"${sub.name}"分类吗？`)) onDeleteCategory(sub.id); 
+                                    }}
+                                    className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-slate-700 rounded"
+                                    title="删除"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* 第二行：可见性下拉框 */}
+                            {editingId !== sub.id && mergingCatId !== sub.id && (
+                              <div className="flex items-center justify-end mt-2 pl-12">
+                                <select
+                                  value={
+                                    (sub as any).isVisible === false ? "hidden" :
+                                    (sub as any).isAdminOnly === true ? "admin" : "public"
+                                  }
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    let isVisible = true;
+                                    let isAdminOnly = false;
+                                    
+                                    if (value === "hidden") {
+                                      isVisible = false;
+                                      isAdminOnly = false;
+                                    } else if (value === "admin") {
+                                      isVisible = true;
+                                      isAdminOnly = true;
+                                    } else {
+                                      isVisible = true;
+                                      isAdminOnly = false;
+                                    }
+                                    
+                                    const updatedCategories = categories.map(c => 
+                                      c.id === sub.id ? { ...c, isVisible, isAdminOnly } : c
+                                    );
+                                    onUpdateCategories(updatedCategories);
+                                  }}
+                                  className="text-xs p-1 pr-5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white outline-none appearance-none cursor-pointer w-28"
+                                  style={{
+                                    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                                    backgroundPosition: 'right 0.2rem center',
+                                    backgroundRepeat: 'no-repeat',
+                                    backgroundSize: '1em 1em',
+                                  }}
+                                >
+                                  <option value="public">全员可见</option>
+                                  <option value="admin">👑 仅管理员</option>
+                                  <option value="hidden">🚫 隐藏</option>
+                                </select>
+                              </div>
+                            )}
                           </div>
-                        </div>
-                      );
-                  })}
-                </div>
-              )}
+                        );
+                    })}
+                  </div>
+                )}
             </div>
           );
           })}
