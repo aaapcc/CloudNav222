@@ -1183,9 +1183,12 @@ function App() {
                       {hasChildren && !isLocked && (
                         <button
                           onClick={() => setDetailCategoryId(cat.id)}
-                          className="text-blue-600 dark:text-blue-400 text-sm"
+                          className="text-blue-600 dark:text-blue-400 text-sm flex items-center gap-1"
                         >
-                          更多 >
+                          <span>更多</span>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                          </svg>
                         </button>
                       )}
                     </div>
