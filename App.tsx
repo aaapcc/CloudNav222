@@ -1024,7 +1024,7 @@ function App() {
           </div>
 
           <div className="flex items-center gap-2 ml-3">
-            {/* 模式切换按钮 - 仅登录用户显示，且在移动端也显示 */}
+            {/* 模式切换按钮 - 仅登录用户显示 */}
             {authToken && (
               <div className="flex bg-slate-100 dark:bg-slate-700 rounded-lg p-1">
                 <button 
@@ -1057,7 +1057,7 @@ function App() {
             </button>
 
             {!authToken && (
-                <button onClick={() => setIsAuthOpen(true)} className="hidden sm:flex items-center gap-2 bg-slate-200 dark:bg-slate-700 px-3 py-1.5 rounded-full text-xs font-medium">
+                <button onClick={() => setIsAuthOpen(true)} className="flex items-center gap-2 bg-slate-200 dark:bg-slate-700 px-3 py-1.5 rounded-full text-xs font-medium">
                     <Cloud size={14} /> 登录
                 </button>
             )}
