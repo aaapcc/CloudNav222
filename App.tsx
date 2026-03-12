@@ -1089,6 +1089,9 @@ function App() {
                           return (
                             <div key={sub.id} id={`cat-${sub.id}`} className="mb-6">
                               <div className="flex items-center gap-2 mb-3">
+                                <div className="text-slate-400">
+                                  {cat.icon && cat.icon.length <= 4 && !/^[a-zA-Z]+$/.test(cat.icon) ? <span className="text-lg">{cat.icon}</span> : <Icon name={cat.icon} size={18} />}
+                                </div>
                                 <h3 className="text-md font-semibold text-slate-700 dark:text-slate-300">
                                   {sub.name}
                                 </h3>
