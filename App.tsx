@@ -544,10 +544,13 @@ function App() {
       
       const isSimple = siteSettings.cardStyle === 'simple';
       
-      // 使用普通的 let 变量，而不是 useRef
+      // 使用普通的 let 变量
       let longPressTimer: NodeJS.Timeout | null = null;
       
       const handleTouchStart = (e: React.TouchEvent, link: LinkItem) => {
+        // 阻止浏览器默认长按菜单
+        e.preventDefault();
+        
         longPressTimer = setTimeout(() => {
           // 触发长按菜单
           let x = e.touches[0].clientX;
@@ -561,7 +564,7 @@ function App() {
           if (navigator.vibrate) {
             navigator.vibrate(50);
           }
-        }, 500); // 长按500ms触发
+        }, 500);
       };
       
       const handleTouchEnd = () => {
