@@ -543,6 +543,40 @@ function App() {
       ) : link.title.charAt(0);
       
       const isSimple = siteSettings.cardStyle === 'simple';
+      
+      // 添加长按计时器
+      const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+      
+      const handleTouchStart = (e: React.TouchEvent, link: LinkItem) => {
+        longPressTimer.current = setTimeout(() => {
+          // 触发长按菜单
+          let x = e.touches[0].clientX;
+          let y = e.touches[0].clientY;
+          // 边界调整
+          if (x + 180 > window.innerWidth) x = window.innerWidth - 190;
+          if (y + 220 > window.innerHeight) y = window.innerHeight - 230;
+          setContextMenu({ x, y, link });
+          
+          // 轻微震动（如果设备支持）
+          if (navigator.vibrate) {
+            navigator.vibrate(50);
+          }
+        }, 500); // 长按500ms触发
+      };
+      
+      const handleTouchEnd = () => {
+        if (longPressTimer.current) {
+          clearTimeout(longPressTimer.current);
+          longPressTimer.current = null;
+        }
+      };
+      
+      const handleTouchMove = () => {
+        if (longPressTimer.current) {
+          clearTimeout(longPressTimer.current);
+          longPressTimer.current = null;
+        }
+      };
 
       return (
         <a
@@ -555,12 +589,16 @@ function App() {
                 e.stopPropagation();
                 let x = e.clientX;
                 let y = e.clientY;
-                // Boundary adjustment
                 if (x + 180 > window.innerWidth) x = window.innerWidth - 190;
                 if (y + 220 > window.innerHeight) y = window.innerHeight - 230;
                 setContextMenu({ x, y, link });
                 return false;
             }}
+            // 移动端长按事件
+            onTouchStart={(e) => handleTouchStart(e, link)}
+            onTouchEnd={handleTouchEnd}
+            onTouchMove={handleTouchMove}
+            onTouchCancel={handleTouchEnd}
             className={`group relative flex flex-col ${isSimple ? 'p-2' : 'p-3'} bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-lg hover:border-blue-200 dark:hover:border-slate-600 hover:-translate-y-0.5 transition-all duration-200 hover:bg-blue-50 dark:hover:bg-slate-750`}
             title={link.description || link.url}
         >
