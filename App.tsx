@@ -944,6 +944,19 @@ function App() {
             </div>
         </div>
         )}
+
+        {/* 未登录时显示简单的登录提示 */}
+        {!authToken && (
+          <div className="flex sm:hidden p-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 shrink-0">
+            <button
+              onClick={() => setIsAuthOpen(true)}
+              className="w-full flex items-center justify-center gap-2 py-2 text-xs text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 transition-all"
+            >
+              <Lock size={14} />
+              <span>点击登录管理</span>
+            </button>
+          </div>
+        )}
       </aside>
 
       <main 
@@ -1057,7 +1070,7 @@ function App() {
             </button>
 
             {!authToken && (
-                <button onClick={() => setIsAuthOpen(true)} className="flex items-center gap-2 bg-slate-200 dark:bg-slate-700 px-3 py-1.5 rounded-full text-xs font-medium">
+                <button onClick={() => setIsAuthOpen(true)} className="hidden sm:flex items-center gap-2 bg-slate-200 dark:bg-slate-700 px-3 py-1.5 rounded-full text-xs font-medium">
                     <Cloud size={14} /> 登录
                 </button>
             )}
