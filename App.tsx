@@ -953,7 +953,7 @@ function App() {
               className="w-full flex items-center justify-center gap-2 py-2 text-xs text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 transition-all"
             >
               <Lock size={14} />
-              <span>点击登录管理</span>
+              <span>登录</span>
             </button>
           </div>
         )}
