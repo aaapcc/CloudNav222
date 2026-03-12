@@ -1093,7 +1093,7 @@ function App() {
                                   {sub.name}
                                 </h3>
                                 {sub.isAdminOnly && authToken && (
-                                  <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">仅管理员</span>
+                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">仅管理员</span>
                                 )}
                                 {isSubLocked && <Lock size={14} className="text-amber-500" />}
                               </div>
