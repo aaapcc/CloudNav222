@@ -1051,7 +1051,7 @@ function App() {
                           {cat.name}
                         </h2>
                         {cat.isAdminOnly && authToken && (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">仅管理员</span>
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">管</span>
                         )}
                         {isLocked && <Lock size={16} className="text-amber-500" />}
                       </div>
@@ -1102,7 +1102,7 @@ function App() {
                                   {sub.name}
                                 </h3>
                                 {sub.isAdminOnly && authToken && (
-                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">仅管理员</span>
+                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">管</span>
                                 )}
                                 {isSubLocked && <Lock size={14} className="text-amber-500" />}
                               </div>
