@@ -61,23 +61,31 @@ const SearchSettingsModal: React.FC<SearchSettingsModalProps> = ({
   };
 
   const fetchIconFromUrl = (targetUrl: string) => {
-    if (!targetUrl) return;
+    console.log('fetchIconFromUrl called with:', targetUrl); // 调试用
+    
+    if (!targetUrl) {
+        console.log('URL is empty'); // 调试用
+        return;
+    }
+    
     try {
         let normalizedUrl = targetUrl;
         if (!targetUrl.startsWith('http')) {
             normalizedUrl = 'https://' + targetUrl;
         }
+        console.log('Normalized URL:', normalizedUrl); // 调试用
         
         // 提取域名
         const urlObj = new URL(normalizedUrl);
         const domain = urlObj.hostname;
+        console.log('Extracted domain:', domain); // 调试用
         
         // 使用 faviconextractor.com 获取图标
         const newIcon = `https://www.faviconextractor.com/favicon/${domain}?larger=true`;
+        console.log('New icon URL:', newIcon); // 调试用
         
-        setIconUrl(newIcon);
+        setNewIcon(newIcon);
     } catch (e) {
-        // invalid url
         console.error('Failed to extract domain:', e);
     }
 };
