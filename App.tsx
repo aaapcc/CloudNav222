@@ -957,9 +957,9 @@ function App() {
             </button>
 
             {/* Redesigned Search Bar */}
-            <div className="relative w-full max-w-xl hidden sm:flex items-center gap-3">
+            <div className="relative w-full max-w-xl flex items-center gap-3">
                 {/* Search Mode Toggle (Pill) */}
-                <div className="bg-slate-100 dark:bg-slate-700 p-1 rounded-full flex items-center shrink-0">
+                <div className="bg-slate-100 dark:bg-slate-700 p-1 rounded-full hidden sm:flex items-center shrink-0">
                     <button
                         onClick={() => setSearchMode('local')}
                         className={`px-3 py-1.5 text-sm font-medium rounded-full transition-all ${
