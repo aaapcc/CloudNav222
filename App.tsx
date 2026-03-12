@@ -29,8 +29,6 @@ const WEBDAV_CONFIG_KEY = 'cloudnav_webdav_config';
 const AI_CONFIG_KEY = 'cloudnav_ai_config';
 const SEARCH_ENGINES_KEY = 'cloudnav_search_engines';
 
-const [detailCategoryId, setDetailCategoryId] = useState<string | null>(null);
-
 function App() {
   // --- State ---
   const [links, setLinks] = useState<LinkItem[]>([]);
@@ -119,6 +117,8 @@ function App() {
   const [authToken, setAuthToken] = useState<string>('');
 
   const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(new Set());
+
+  const [detailCategoryId, setDetailCategoryId] = useState<string | null>(null);
 
   const mainRef = useRef<HTMLDivElement>(null);
   const isAutoScrollingRef = useRef(false);
