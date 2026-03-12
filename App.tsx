@@ -772,13 +772,15 @@ function App() {
             
             <div className="flex items-center justify-between pt-4 pb-2 px-4">
                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">分类目录</span>
-               <button 
-                  onClick={() => { if(!authToken) setIsAuthOpen(true); else setIsCatManagerOpen(true); }}
-                  className="p-1 text-slate-400 hover:text-blue-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded"
-                  title="管理分类"
-               >
-                  <Settings size={14} />
-               </button>
+               {authToken && (
+                 <button 
+                    onClick={() => { if(!authToken) setIsAuthOpen(true); else setIsCatManagerOpen(true); }}
+                    className="p-1 text-slate-400 hover:text-blue-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded"
+                    title="管理分类"
+                 >
+                    <Settings size={14} />
+                 </button>
+               )}
             </div>
 
             {/* 左侧菜单过滤，先过滤出可见的分类，然后再渲染 */}
@@ -884,7 +886,7 @@ function App() {
 
         {authToken && (
         <div className="p-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 shrink-0">
-            <div className="grid grid-cols-3 gap-2 mb-2">
+            <div className="grid grid-cols-4 gap-2 mb-2">
                 <button 
                     onClick={() => { if(!authToken) setIsAuthOpen(true); else setIsImportModalOpen(true); }}
                     className="flex flex-col items-center justify-center gap-1 p-2 text-xs text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600 transition-all"
@@ -909,6 +911,27 @@ function App() {
                     <Settings size={14} />
                     <span>设置</span>
                 </button>
+                {/* 新增：退出登录按钮 */}
+                <button 
+                    onClick={() => {
+                        if (confirm('确定要退出登录吗？')) {
+                            setAuthToken('');
+                            localStorage.removeItem(AUTH_KEY);
+                            setSyncStatus('idle');
+                            // 可选：刷新页面或跳转
+                            window.location.reload();
+                        }
+                    }}
+                    className="flex flex-col items-center justify-center gap-1 p-2 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800 transition-all"
+                    title="退出登录"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" x2="9" y1="12" y2="12" />
+                    </svg>
+                    <span>退出</span>
+                </button>
             </div>
             
             <div className="flex items-center justify-between text-xs px-2 mt-2">
@@ -916,7 +939,7 @@ function App() {
                  {syncStatus === 'saving' && <Loader2 className="animate-spin w-3 h-3 text-blue-500" />}
                  {syncStatus === 'saved' && <CheckCircle2 className="w-3 h-3 text-green-500" />}
                  {syncStatus === 'error' && <AlertCircle className="w-3 h-3 text-red-500" />}
-                 {authToken ? <span className="text-green-600">已同步</span> : <span className="text-amber-500">离线</span>}
+                 <span className="text-green-600">已同步</span>
                </div>
             </div>
         </div>
