@@ -544,11 +544,11 @@ function App() {
       
       const isSimple = siteSettings.cardStyle === 'simple';
       
-      // 添加长按计时器
-      const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+      // 使用普通的 let 变量，而不是 useRef
+      let longPressTimer: NodeJS.Timeout | null = null;
       
       const handleTouchStart = (e: React.TouchEvent, link: LinkItem) => {
-        longPressTimer.current = setTimeout(() => {
+        longPressTimer = setTimeout(() => {
           // 触发长按菜单
           let x = e.touches[0].clientX;
           let y = e.touches[0].clientY;
@@ -565,16 +565,16 @@ function App() {
       };
       
       const handleTouchEnd = () => {
-        if (longPressTimer.current) {
-          clearTimeout(longPressTimer.current);
-          longPressTimer.current = null;
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
         }
       };
       
       const handleTouchMove = () => {
-        if (longPressTimer.current) {
-          clearTimeout(longPressTimer.current);
-          longPressTimer.current = null;
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
         }
       };
 
