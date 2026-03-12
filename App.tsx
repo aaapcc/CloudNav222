@@ -1001,22 +1001,33 @@ function App() {
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="hidden md:flex bg-slate-100 dark:bg-slate-700 rounded-lg p-1 mr-2">
+            {/* 模式切换按钮 - 仅登录用户显示，且在移动端也显示 */}
+            {authToken && (
+              <div className="flex bg-slate-100 dark:bg-slate-700 rounded-lg p-1">
                 <button 
-                    onClick={() => authToken && updateData(links, categories, { ...siteSettings, cardStyle: 'simple' })}
-                    title="简约模式"
-                    className={`p-1.5 rounded transition-all ${siteSettings.cardStyle === 'simple' ? 'bg-white dark:bg-slate-600 shadow text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                  onClick={() => updateData(links, categories, { ...siteSettings, cardStyle: 'simple' })}
+                  title="简约模式"
+                  className={`p-1.5 rounded transition-all ${
+                    siteSettings.cardStyle === 'simple' 
+                      ? 'bg-white dark:bg-slate-600 shadow text-blue-600' 
+                      : 'text-slate-400 hover:text-slate-600'
+                  }`}
                 >
-                    <LayoutGrid size={16} />
+                  <LayoutGrid size={16} />
                 </button>
                 <button 
-                    onClick={() => authToken && updateData(links, categories, { ...siteSettings, cardStyle: 'detailed' })}
-                    title="详情模式"
-                    className={`p-1.5 rounded transition-all ${siteSettings.cardStyle === 'detailed' ? 'bg-white dark:bg-slate-600 shadow text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                  onClick={() => updateData(links, categories, { ...siteSettings, cardStyle: 'detailed' })}
+                  title="详情模式"
+                  className={`p-1.5 rounded transition-all ${
+                    siteSettings.cardStyle === 'detailed' 
+                      ? 'bg-white dark:bg-slate-600 shadow text-blue-600' 
+                      : 'text-slate-400 hover:text-slate-600'
+                  }`}
                 >
-                    <List size={16} />
+                  <List size={16} />
                 </button>
-            </div>
+              </div>
+            )}
 
             <button onClick={toggleTheme} className="p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
               {darkMode ? <Sun size={18} /> : <Moon size={18} />}
