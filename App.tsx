@@ -781,7 +781,7 @@ function App() {
                         <span className="truncate flex-1 text-left">
                           {cat.name}
                           {cat.isAdminOnly && authToken && (
-                            <span className="ml-1.5 inline-flex items-center px-1 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">管</span>
+                            <span className="ml-1.5 inline-flex items-center px-1 rounded text-[10px] font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">管</span>
                           )}
                         </span>
                       </button>
