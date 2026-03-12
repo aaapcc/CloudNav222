@@ -548,7 +548,7 @@ function App() {
       let longPressTimer: NodeJS.Timeout | null = null;
       
       const handleTouchStart = (e: React.TouchEvent, link: LinkItem) => {
-        // 强力阻止浏览器默认长按菜单
+        // 强力阻止浏览器默认行为
         e.preventDefault();
         e.stopPropagation();
         
@@ -566,53 +566,74 @@ function App() {
             navigator.vibrate(50);
           }
         }, 500);
-        
-        return false; // 返回 false 进一步增强阻止效果
       };
       
-      const handleTouchEnd = () => {
+      const handleTouchEnd = (e: React.TouchEvent) => {
+        // 阻止默认行为
+        e.preventDefault();
+        e.stopPropagation();
+        
         if (longPressTimer) {
           clearTimeout(longPressTimer);
           longPressTimer = null;
         }
       };
       
-      const handleTouchMove = () => {
+      const handleTouchMove = (e: React.TouchEvent) => {
+        // 阻止默认行为
+        e.preventDefault();
+        e.stopPropagation();
+        
         if (longPressTimer) {
           clearTimeout(longPressTimer);
           longPressTimer = null;
+        }
+      };
+      
+      const handleTouchCancel = (e: React.TouchEvent) => {
+        // 阻止默认行为
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
+      };
+      
+      const handleClick = (e: React.MouseEvent) => {
+        // 阻止默认行为（防止任何可能的默认点击行为）
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // 如果没有触发长按菜单，则正常打开链接
+        if (!longPressTimer) {
+          window.open(link.url, '_blank');
         }
       };
 
       return (
-        <a
-          key={link.id}
-          href={link.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          onContextMenu={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              let x = e.clientX;
-              let y = e.clientY;
-              if (x + 180 > window.innerWidth) x = window.innerWidth - 190;
-              if (y + 220 > window.innerHeight) y = window.innerHeight - 230;
-              setContextMenu({ x, y, link });
-              return false;
-          }}
-          // 移动端长按事件 - 添加返回值
-          onTouchStart={(e) => {
-              handleTouchStart(e, link);
-              return false;
-          }}
-          onTouchEnd={handleTouchEnd}
-          onTouchMove={handleTouchMove}
-          onTouchCancel={handleTouchEnd}
-          // 添加以下属性增强阻止效果
-          onTouchCancelCapture={(e) => e.preventDefault()}
-          className={`group relative flex flex-col ${isSimple ? 'p-2' : 'p-3'} bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-lg hover:border-blue-200 dark:hover:border-slate-600 hover:-translate-y-0.5 transition-all duration-200 hover:bg-blue-50 dark:hover:bg-slate-750`}
-          title={link.description || link.url}
-      >
+        <div
+            key={link.id}
+            onClick={handleClick}
+            onContextMenu={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                let x = e.clientX;
+                let y = e.clientY;
+                if (x + 180 > window.innerWidth) x = window.innerWidth - 190;
+                if (y + 220 > window.innerHeight) y = window.innerHeight - 230;
+                setContextMenu({ x, y, link });
+                return false;
+            }}
+            // 移动端长按事件
+            onTouchStart={(e) => handleTouchStart(e, link)}
+            onTouchEnd={handleTouchEnd}
+            onTouchMove={handleTouchMove}
+            onTouchCancel={handleTouchCancel}
+            className={`cursor-pointer group relative flex flex-col ${isSimple ? 'p-2' : 'p-3'} bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-lg hover:border-blue-200 dark:hover:border-slate-600 hover:-translate-y-0.5 transition-all duration-200 hover:bg-blue-50 dark:hover:bg-slate-750`}
+            title={link.description || link.url}
+        >
             <div className={`flex items-center gap-3 ${isSimple ? '' : 'mb-1.5'} pr-6`}>
                 <div className={`${isSimple ? 'w-6 h-6 text-xs' : 'w-8 h-8 text-sm'} rounded-lg bg-slate-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold uppercase shrink-0 overflow-hidden`}>
                     {iconDisplay}
@@ -626,7 +647,7 @@ function App() {
                     {link.description || <span className="opacity-0">.</span>}
                 </div>
             )}
-        </a>
+        </div>
       );
   };
 
