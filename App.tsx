@@ -1075,10 +1075,16 @@ function App() {
                     ) : (
                       <>
                         {/* 顶级分类自己的链接 */}
-                        {catLinks.length > 0 && (
+                        {catLinks.length > 0 ? (
                           <div className={`grid gap-3 ${siteSettings.cardStyle === 'simple' ? 'mb-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6' : 'mb-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'}`}>
                             {catLinks.map(link => renderLinkCard(link))}
                           </div>
+                        ) : (
+                          !isLocked && subCategories.length > 0 && (
+                            <div className="text-center py-2 text-slate-400 text-sm italic mb-4">
+                              暂无链接
+                            </div>
+                          )
                         )}
 
                         {/* 子分类内容 */}
@@ -1090,7 +1096,7 @@ function App() {
                             <div key={sub.id} id={`cat-${sub.id}`} className="mb-6">
                               <div className="flex items-center gap-2 mb-3">
                                 <div className="text-slate-400">
-                                  {cat.icon && cat.icon.length <= 4 && !/^[a-zA-Z]+$/.test(cat.icon) ? <span className="text-lg">{cat.icon}</span> : <Icon name={cat.icon} size={18} />}
+                                  {sub.icon && sub.icon.length <= 4 && !/^[a-zA-Z]+$/.test(sub.icon) ? <span className="text-lg">{sub.icon}</span> : <Icon name={sub.icon} size={18} />}
                                 </div>
                                 <h3 className="text-md font-semibold text-slate-700 dark:text-slate-300">
                                   {sub.name}
