@@ -544,19 +544,11 @@ function App() {
       
       const isSimple = siteSettings.cardStyle === 'simple';
       
-      // 使用普通的 let 变量
+      // 使用普通的 let 变量，而不是 useRef
       let longPressTimer: NodeJS.Timeout | null = null;
-      let isLongPress = false; // 标记是否是长按
       
       const handleTouchStart = (e: React.TouchEvent, link: LinkItem) => {
-        // 阻止浏览器默认长按菜单
-        e.preventDefault();
-        e.stopPropagation();
-        
-        isLongPress = false; // 重置长按标记
-        
         longPressTimer = setTimeout(() => {
-          isLongPress = true; // 标记为长按
           // 触发长按菜单
           let x = e.touches[0].clientX;
           let y = e.touches[0].clientY;
@@ -569,56 +561,29 @@ function App() {
           if (navigator.vibrate) {
             navigator.vibrate(50);
           }
-        }, 500);
+        }, 500); // 长按500ms触发
       };
       
-      const handleTouchEnd = (e: React.TouchEvent, link: LinkItem) => {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        if (longPressTimer) {
-          clearTimeout(longPressTimer);
-          longPressTimer = null;
-        }
-        
-        // 如果是短按（没有触发长按），则打开链接
-        if (!isLongPress) {
-          window.open(link.url, '_blank');
-        }
-        
-        // 重置长按标记
-        isLongPress = false;
-      };
-      
-      const handleTouchMove = (e: React.TouchEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        
+      const handleTouchEnd = () => {
         if (longPressTimer) {
           clearTimeout(longPressTimer);
           longPressTimer = null;
         }
       };
       
-      const handleTouchCancel = (e: React.TouchEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        
+      const handleTouchMove = () => {
         if (longPressTimer) {
           clearTimeout(longPressTimer);
           longPressTimer = null;
         }
-      };
-      
-      const handleClick = (e: React.MouseEvent) => {
-        // 对于鼠标事件，我们不阻止默认行为，让浏览器处理
-        // 但如果是触屏设备模拟的点击，我们已经通过 touch 事件处理了
       };
 
       return (
-        <div
+        <a
             key={link.id}
-            onClick={handleClick}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
             onContextMenu={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -631,10 +596,10 @@ function App() {
             }}
             // 移动端长按事件
             onTouchStart={(e) => handleTouchStart(e, link)}
-            onTouchEnd={(e) => handleTouchEnd(e, link)}
+            onTouchEnd={handleTouchEnd}
             onTouchMove={handleTouchMove}
-            onTouchCancel={handleTouchCancel}
-            className={`cursor-pointer group relative flex flex-col ${isSimple ? 'p-2' : 'p-3'} bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-lg hover:border-blue-200 dark:hover:border-slate-600 hover:-translate-y-0.5 transition-all duration-200 hover:bg-blue-50 dark:hover:bg-slate-750`}
+            onTouchCancel={handleTouchEnd}
+            className={`group relative flex flex-col ${isSimple ? 'p-2' : 'p-3'} bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-lg hover:border-blue-200 dark:hover:border-slate-600 hover:-translate-y-0.5 transition-all duration-200 hover:bg-blue-50 dark:hover:bg-slate-750`}
             title={link.description || link.url}
         >
             <div className={`flex items-center gap-3 ${isSimple ? '' : 'mb-1.5'} pr-6`}>
@@ -650,7 +615,7 @@ function App() {
                     {link.description || <span className="opacity-0">.</span>}
                 </div>
             )}
-        </div>
+        </a>
       );
   };
 
