@@ -38,6 +38,25 @@
           transition: opacity 0.2s, visibility 0.2s;
           pointer-events: none;
       }
+      /* 禁用所有元素的长按菜单 */
+      * {
+        -webkit-touch-callout: none !important;
+        -webkit-user-select: none !important;
+        user-select: none !important;
+      }
+      /* 允许输入框可以选中文本 */
+      input, textarea {
+        -webkit-user-select: auto !important;
+        user-select: auto !important;
+      }
+      /* 禁用图片保存菜单 */
+      img {
+        -webkit-touch-callout: none !important;
+        pointer-events: none;
+      }
+      a img {
+        pointer-events: none;
+      }
     </style>
   <script type="importmap">
 {
@@ -53,7 +72,6 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
 </head>
   <body class="bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 transition-colors duration-300">
     <div id="root"></div>
