@@ -1159,13 +1159,13 @@ function App() {
                                       返回首页
                                   </button>
                                   <div className="text-sm text-slate-500">
-                                      当前查看：{cat.name}
+                                      当前：{catLinks.length} 个链接 · {subCategories.length} 个子分类
                                   </div>
                               </div>
 
                               {/* 分类标题 */}
-                              <div className="flex items-center gap-3 pb-4 border-b border-slate-200 dark:border-slate-700">
-                                  <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                              <div className="flex items-center gap-1">
+                                  <div className="w-8 h-8 flex items-center justify-center">
                                       {cat.icon && cat.icon.length <= 4 && !/^[a-zA-Z]+$/.test(cat.icon) 
                                           ? <span className="text-xl">{cat.icon}</span> 
                                           : <Icon name={cat.icon} size={24} />
@@ -1175,9 +1175,6 @@ function App() {
                                       <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
                                           {cat.name}
                                       </h1>
-                                      <p className="text-sm text-slate-500 mt-1">
-                                          {catLinks.length} 个链接 · {subCategories.length} 个子分类
-                                      </p>
                                   </div>
                                   {cat.isAdminOnly && authToken && (
                                       <span className="ml-auto px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
@@ -1206,7 +1203,6 @@ function App() {
                                       {/* 顶级分类自己的链接 */}
                                       {catLinks.length > 0 && (
                                           <div>
-                                              <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-4">本分类链接</h2>
                                               <div className={`grid gap-3 ${siteSettings.cardStyle === 'simple' ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'}`}>
                                                   {catLinks.map(link => renderLinkCard(link))}
                                               </div>
@@ -1335,7 +1331,7 @@ function App() {
                                           {hasChildren && !isLocked && (
                                               <button
                                                   onClick={() => setDetailCategoryId(cat.id)}
-                                                  className="flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                                                  className="flex items-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                                               >
                                                   <span>更多</span>
                                                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
