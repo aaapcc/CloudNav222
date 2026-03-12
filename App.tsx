@@ -1039,12 +1039,14 @@ function App() {
                 </button>
             )}
 
-            <button
-              onClick={() => { if(!authToken) setIsAuthOpen(true); else { setEditingLink(undefined); setIsModalOpen(true); }}}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-full text-sm font-medium shadow-lg shadow-blue-500/30"
-            >
-              <Plus size={16} /> <span className="hidden sm:inline">添加</span>
-            </button>
+            {authToken && (
+              <button
+                onClick={() => { if(!authToken) setIsAuthOpen(true); else { setEditingLink(undefined); setIsModalOpen(true); }}}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-full text-sm font-medium shadow-lg shadow-blue-500/30"
+              >
+                <Plus size={16} /> <span className="hidden sm:inline">添加</span>
+              </button>
+            )}
           </div>
         </header>
 
