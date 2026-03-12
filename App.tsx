@@ -1000,7 +1000,7 @@ function App() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ml-3">
             {/* 模式切换按钮 - 仅登录用户显示，且在移动端也显示 */}
             {authToken && (
               <div className="flex bg-slate-100 dark:bg-slate-700 rounded-lg p-1">
