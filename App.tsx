@@ -1008,113 +1008,126 @@ function App() {
           className="flex-1 flex flex-col h-full bg-slate-50 dark:bg-slate-900 overflow-y-auto relative scroll-smooth"
       >
           <header className="h-16 px-4 lg:px-8 flex items-center justify-between bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shrink-0">
-              <div className="flex items-center gap-4 flex-1">
-                  <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 -ml-2 text-slate-600 dark:text-slate-300">
-                      <Menu size={24} />
-                  </button>
+            <div className="flex items-center gap-4 flex-1">
+              <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 -ml-2 text-slate-600 dark:text-slate-300">
+                <Menu size={24} />
+              </button>
 
-                  {/* Redesigned Search Bar */}
-                  <div className="relative w-full max-w-xl flex items-center gap-3">
-                      {/* Search Mode Toggle (Pill) */}
-                      <div className="bg-slate-100 dark:bg-slate-700 p-1 rounded-full flex items-center shrink-0">
-                          <button
-                              onClick={() => setSearchMode('local')}
-                              className={`px-3 py-1.5 text-sm font-medium rounded-full transition-all ${
-                                  searchMode === 'local' 
-                                  ? 'bg-white dark:bg-slate-600 text-slate-900 dark:text-white shadow-sm' 
-                                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
-                              }`}
-                          >
-                              站内
-                          </button>
-                          <button
-                              onClick={() => setSearchMode('external')}
-                              className={`px-3 py-1.5 text-sm font-medium rounded-full transition-all ${
-                                  searchMode === 'external' 
-                                  ? 'bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm' 
-                                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
-                              }`}
-                          >
-                              站外
-                          </button>
-                      </div>
-
-                      {/* Settings Gear (Visible only for External) */}
-                      {searchMode === 'external' && (
-                          <button 
-                              onClick={() => setIsSearchSettingsOpen(true)}
-                              className="p-2 text-slate-400 hover:text-blue-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors animate-in fade-in slide-in-from-left-2 duration-200"
-                              title="管理搜索引擎"
-                          >
-                              <Settings size={18} />
-                          </button>
-                      )}
-
-                      {/* Search Input */}
-                      <form onSubmit={handleSearchSubmit} className="flex-1 relative flex items-center group">
-                          <input
-                              ref={searchInputRef}
-                              type="text"
-                              placeholder={searchMode === 'local' ? "搜索书签..." : `在 ${activeExternalEngine?.name} 搜索...`}
-                              value={searchQuery}
-                              onChange={(e) => setSearchQuery(e.target.value)}
-                              className="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-700/50 hover:bg-white dark:hover:bg-slate-700 border border-transparent hover:border-slate-200 dark:hover:border-slate-600 rounded-full text-sm dark:text-white placeholder-slate-400 outline-none transition-all focus:bg-white dark:focus:bg-slate-700 focus:ring-2 focus:ring-blue-500/50"
-                          />
-                          <div className="absolute left-3 text-slate-400 pointer-events-none flex items-center gap-2">
-                              {searchMode === 'local' ? (
-                                  <Search size={16} />
-                              ) : activeExternalEngine?.icon?.startsWith('http') ? (
-                                  <img src={activeExternalEngine.icon} className="w-4 h-4 rounded-full object-cover" />
-                              ) : (
-                                  <Search size={16} />
-                              )}
-                          </div>
-                          
-                          {/* Visual Indicator for Search */}
-                          {searchQuery && (
-                              <button type="submit" className="absolute right-2 p-1.5 bg-blue-100 dark:bg-blue-900/40 text-blue-600 rounded-full hover:bg-blue-200 transition-colors">
-                                  <ArrowRight size={14} />
-                              </button>
-                          )}
-                      </form>
-                  </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                  <div className="hidden md:flex bg-slate-100 dark:bg-slate-700 rounded-lg p-1 mr-2">
-                      <button 
-                          onClick={() => authToken && updateData(links, categories, { ...siteSettings, cardStyle: 'simple' })}
-                          title="简约模式"
-                          className={`p-1.5 rounded transition-all ${siteSettings.cardStyle === 'simple' ? 'bg-white dark:bg-slate-600 shadow text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+              {/* Redesigned Search Bar */}
+              <div className="relative w-full max-w-xl flex items-center gap-3">
+                  {/* Search Mode Toggle (Pill) */}
+                  <div className="bg-slate-100 dark:bg-slate-700 p-1 rounded-full hidden sm:flex items-center shrink-0">
+                      <button
+                          onClick={() => setSearchMode('local')}
+                          className={`px-3 py-1.5 text-sm font-medium rounded-full transition-all ${
+                              searchMode === 'local' 
+                              ? 'bg-white dark:bg-slate-600 text-slate-900 dark:text-white shadow-sm' 
+                              : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                          }`}
                       >
-                          <LayoutGrid size={16} />
+                          站内
                       </button>
-                      <button 
-                          onClick={() => authToken && updateData(links, categories, { ...siteSettings, cardStyle: 'detailed' })}
-                          title="详情模式"
-                          className={`p-1.5 rounded transition-all ${siteSettings.cardStyle === 'detailed' ? 'bg-white dark:bg-slate-600 shadow text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                      <button
+                          onClick={() => setSearchMode('external')}
+                          className={`px-3 py-1.5 text-sm font-medium rounded-full transition-all ${
+                              searchMode === 'external' 
+                              ? 'bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm' 
+                              : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                          }`}
                       >
-                          <List size={16} />
+                          站外
                       </button>
                   </div>
 
-                  <button onClick={toggleTheme} className="p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
-                      {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-                  </button>
-
-                  {!authToken && (
-                      <button onClick={() => setIsAuthOpen(true)} className="hidden sm:flex items-center gap-2 bg-slate-200 dark:bg-slate-700 px-3 py-1.5 rounded-full text-xs font-medium">
-                          <Cloud size={14} /> 登录
+                  {/* Settings Gear (Visible only for External) */}
+                  {searchMode === 'external' && (
+                      <button 
+                          onClick={() => setIsSearchSettingsOpen(true)}
+                          className="p-2 text-slate-400 hover:text-blue-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors animate-in fade-in slide-in-from-left-2 duration-200"
+                          title="管理搜索引擎"
+                      >
+                          <Settings size={18} />
                       </button>
                   )}
 
-                  <button
-                      onClick={() => { if(!authToken) setIsAuthOpen(true); else { setEditingLink(undefined); setIsModalOpen(true); }}}
-                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-full text-sm font-medium shadow-lg shadow-blue-500/30"
-                  >
-                      <Plus size={16} /> <span className="hidden sm:inline">添加</span>
-                  </button>
+                  {/* Search Input */}
+                  <form onSubmit={handleSearchSubmit} className="flex-1 relative flex items-center group">
+                      <input
+                          ref={searchInputRef}
+                          type="text"
+                          placeholder={searchMode === 'local' ? "搜索书签..." : `在 ${activeExternalEngine?.name} 搜索...`}
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-700/50 hover:bg-white dark:hover:bg-slate-700 border border-transparent hover:border-slate-200 dark:hover:border-slate-600 rounded-full text-sm dark:text-white placeholder-slate-400 outline-none transition-all focus:bg-white dark:focus:bg-slate-700 focus:ring-2 focus:ring-blue-500/50"
+                      />
+                      <div className="absolute left-3 text-slate-400 pointer-events-none flex items-center gap-2">
+                          {searchMode === 'local' ? (
+                              <Search size={16} />
+                          ) : activeExternalEngine?.icon?.startsWith('http') ? (
+                              <img src={activeExternalEngine.icon} className="w-4 h-4 rounded-full object-cover" />
+                          ) : (
+                              <Search size={16} />
+                          )}
+                      </div>
+                      
+                      {/* Visual Indicator for Search */}
+                      {searchQuery && (
+                          <button type="submit" className="absolute right-2 p-1.5 bg-blue-100 dark:bg-blue-900/40 text-blue-600 rounded-full hover:bg-blue-200 transition-colors">
+                              <ArrowRight size={14} />
+                          </button>
+                      )}
+                  </form>
               </div>
+            </div>
+
+            <div className="flex items-center gap-2 ml-3">
+              {/* 模式切换按钮 - 仅登录用户显示 */}
+              {authToken && (
+                <div className="flex bg-slate-100 dark:bg-slate-700 rounded-lg p-1">
+                  <button 
+                    onClick={() => updateData(links, categories, { ...siteSettings, cardStyle: 'simple' })}
+                    title="简约模式"
+                    className={`p-1.5 rounded transition-all ${
+                      siteSettings.cardStyle === 'simple' 
+                        ? 'bg-white dark:bg-slate-600 shadow text-blue-600' 
+                        : 'text-slate-400 hover:text-slate-600'
+                    }`}
+                  >
+                    <LayoutGrid size={16} />
+                  </button>
+                  <button 
+                    onClick={() => updateData(links, categories, { ...siteSettings, cardStyle: 'detailed' })}
+                    title="详情模式"
+                    className={`p-1.5 rounded transition-all ${
+                      siteSettings.cardStyle === 'detailed' 
+                        ? 'bg-white dark:bg-slate-600 shadow text-blue-600' 
+                        : 'text-slate-400 hover:text-slate-600'
+                    }`}
+                  >
+                    <List size={16} />
+                  </button>
+                </div>
+              )}
+
+              <button onClick={toggleTheme} className="p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
+                {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+              </button>
+
+              {!authToken && (
+                  <button onClick={() => setIsAuthOpen(true)} className="hidden sm:flex items-center gap-2 bg-slate-200 dark:bg-slate-700 px-3 py-1.5 rounded-full text-xs font-medium">
+                      <Cloud size={14} /> 登录
+                  </button>
+              )}
+
+              {authToken && (
+                <button
+                  onClick={() => { if(!authToken) setIsAuthOpen(true); else { setEditingLink(undefined); setIsModalOpen(true); }}}
+                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-full text-sm font-medium shadow-lg shadow-blue-500/30"
+                >
+                  <Plus size={16} /> <span className="hidden sm:inline">添加</span>
+                </button>
+              )}
+            </div>
           </header>
 
           <div className="p-4 lg:p-8 space-y-8">
