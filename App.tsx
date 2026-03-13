@@ -131,6 +131,12 @@ function App() {
   useEffect(() => {
     if (categoryId) {
       setDetailCategoryId(categoryId);
+      // 当进入分类详情页时，滚动到顶部
+      setTimeout(() => {
+        if (mainRef.current) {
+          mainRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 100); // 稍微延迟一下，确保内容已经渲染
     } else {
       setDetailCategoryId(null);
     }
@@ -543,11 +549,23 @@ function App() {
   // 处理更多按钮点击 - 使用路由跳转
   const handleMoreClick = (catId: string) => {
     navigate(`/cat/${catId}`);
+    // 立即滚动到顶部
+    setTimeout(() => {
+      if (mainRef.current) {
+        mainRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 50);
   };
 
   // 处理返回首页 - 使用路由跳转
   const handleBackToHome = () => {
     navigate('/');
+    // 返回首页时也滚动到顶部
+    setTimeout(() => {
+      if (mainRef.current) {
+        mainRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 50);
   };
 
   // --- Render Components ---
