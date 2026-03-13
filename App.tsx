@@ -1167,132 +1167,135 @@ function App() {
                     const isLocked = cat.password && !unlockedCategoryIds.has(cat.id);
                     
                     return (
-                      {/* 返回首页按钮 - 使用路由跳转 */}
-                      <div className="flex items-center gap-3">
-                          <button
-                              onClick={() => navigate('/')}
-                              className="flex items-center gap-1 px-2.5 py-1.5 text-sm bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                          >
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                  <path d="M19 12H5M12 19l-7-7 7-7"/>
-                              </svg>
-                              返回首页
-                          </button>
-                          <div className="text-sm text-slate-500">
-                              当前分类：{catLinks.length} 个链接 · {subCategories.length} 个子分类
-                          </div>
-                      </div>
+                        <div className="space-y-6">
+                            {/* 返回首页按钮 - 使用路由跳转 */}
+                            <div className="flex items-center gap-3">
+                                <button
+                                    onClick={() => navigate('/')}
+                                    className="flex items-center gap-1 px-2.5 py-1.5 text-sm bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                                    </svg>
+                                    返回首页
+                                </button>
+                                <div className="text-sm text-slate-500">
+                                    当前分类：{catLinks.length} 个链接 · {subCategories.length} 个子分类
+                                </div>
+                            </div>
 
-                      {/* 分类标题 */}
-                      <div className="flex items-center gap-1">
-                          <div className="w-8 h-8 flex items-center justify-center">
-                              {cat.icon && cat.icon.length <= 4 && !/^[a-zA-Z]+$/.test(cat.icon) 
-                                  ? <span className="text-xl">{cat.icon}</span> 
-                                  : <Icon name={cat.icon} size={24} />
-                              }
-                          </div>
-                          <div>
-                              <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
-                                  {cat.name}
-                              </h1>
-                          </div>
-                          {cat.isAdminOnly && authToken && (
-                              <span className="ml-auto px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
-                                  仅管理员
-                              </span>
-                          )}
-                      </div>
-                      
-                      {/* 密码验证 */}
-                      {isLocked ? (
-                          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 p-12 flex flex-col items-center justify-center text-center">
-                              <div className="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mb-4 text-amber-600 dark:text-amber-400">
-                                  <Lock size={32} />
-                              </div>
-                              <h3 className="text-xl text-slate-800 dark:text-slate-200 font-medium mb-2">私密目录</h3>
-                              <p className="text-slate-500 dark:text-slate-400 mb-6">该分类已加密，需要验证密码才能查看内容</p>
-                              <button 
-                                  onClick={() => setCatAuthModalData(cat)}
-                                  className="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition-colors"
-                              >
-                                  输入密码解锁
-                              </button>
-                          </div>
-                      ) : (
-                          <div className="space-y-8">
-                              {/* 顶级分类自己的链接 */}
-                              {catLinks.length > 0 && (
-                                  <div>
-                                      <div className={`grid gap-3 ${siteSettings.cardStyle === 'simple' ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'}`}>
-                                          {catLinks.map(link => renderLinkCard(link))}
-                                      </div>
-                                  </div>
-                              )}
+                            {/* 分类标题 */}
+                            <div className="flex items-center gap-1">
+                                <div className="w-8 h-8 flex items-center justify-center">
+                                    {cat.icon && cat.icon.length <= 4 && !/^[a-zA-Z]+$/.test(cat.icon) 
+                                        ? <span className="text-xl">{cat.icon}</span> 
+                                        : <Icon name={cat.icon} size={24} />
+                                    }
+                                </div>
+                                <div>
+                                    <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
+                                        {cat.name}
+                                    </h1>
+                                </div>
+                                {cat.isAdminOnly && authToken && (
+                                    <span className="ml-auto px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
+                                        仅管理员
+                                    </span>
+                                )}
+                            </div>
+                            
+                            {/* 密码验证 */}
+                            {isLocked ? (
+                                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 p-12 flex flex-col items-center justify-center text-center">
+                                    <div className="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mb-4 text-amber-600 dark:text-amber-400">
+                                        <Lock size={32} />
+                                    </div>
+                                    <h3 className="text-xl text-slate-800 dark:text-slate-200 font-medium mb-2">私密目录</h3>
+                                    <p className="text-slate-500 dark:text-slate-400 mb-6">该分类已加密，需要验证密码才能查看内容</p>
+                                    <button 
+                                        onClick={() => setCatAuthModalData(cat)}
+                                        className="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition-colors"
+                                    >
+                                        输入密码解锁
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="space-y-8">
+                                    {/* 顶级分类自己的链接 */}
+                                    {catLinks.length > 0 && (
+                                        <div>
+                                            <div className={`grid gap-3 ${siteSettings.cardStyle === 'simple' ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'}`}>
+                                                {catLinks.map(link => renderLinkCard(link))}
+                                            </div>
+                                        </div>
+                                    )}
 
-                              {/* 子分类 */}
-                              {subCategories.map(sub => {
-                                  const subLinks = searchResults.filter(l => l.categoryId === sub.id);
-                                  const isSubLocked = sub.password && !unlockedCategoryIds.has(sub.id);
-                                  
-                                  return (
-                                      <div key={sub.id}>
-                                          <div className="flex items-center gap-2 mb-4">
-                                              <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                                                  {sub.icon && sub.icon.length <= 4 && !/^[a-zA-Z]+$/.test(sub.icon) 
-                                                      ? <span className="text-lg">{sub.icon}</span> 
-                                                      : <Icon name={sub.icon} size={18} />
-                                                  }
-                                              </div>
-                                              <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-300">
-                                                  {sub.name}
-                                              </h2>
-                                              {sub.isAdminOnly && authToken && (
-                                                  <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">管</span>
-                                              )}
-                                              {isSubLocked && <Lock size={14} className="text-amber-500" />}
-                                          </div>
-                                          
-                                          {isSubLocked ? (
-                                              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 p-8 flex flex-col items-center justify-center text-center">
-                                                  <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mb-3 text-amber-600 dark:text-amber-400">
-                                                      <Lock size={24} />
-                                                  </div>
-                                                  <h4 className="text-slate-800 dark:text-slate-200 font-medium mb-1">私密目录</h4>
-                                                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">该子分类已加密，需要验证密码才能查看内容</p>
-                                                  <button 
-                                                      onClick={() => setCatAuthModalData(sub)}
-                                                      className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition-colors"
-                                                  >
-                                                      输入密码解锁
-                                                  </button>
-                                              </div>
-                                          ) : (
-                                              <>
-                                                  {subLinks.length === 0 ? (
-                                                      <div className="text-center py-6 text-slate-400 text-sm italic bg-slate-50 dark:bg-slate-800/50 rounded-lg">
-                                                          暂无链接
-                                                      </div>
-                                                  ) : (
-                                                      <div className={`grid gap-3 ${siteSettings.cardStyle === 'simple' ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'}`}>
-                                                          {subLinks.map(link => renderLinkCard(link))}
-                                                      </div>
-                                                  )}
-                                              </>
-                                          )}
-                                      </div>
-                                  );
-                              })}
-                              
-                              {/* 如果没有内容 */}
-                              {catLinks.length === 0 && subCategories.length === 0 && (
-                                  <div className="text-center py-12 text-slate-400 text-sm italic">
-                                      暂无内容
-                                  </div>
-                              )}
-                          </div>
-                      )}
-                  
+                                    {/* 子分类 */}
+                                    {subCategories.map(sub => {
+                                        const subLinks = searchResults.filter(l => l.categoryId === sub.id);
+                                        const isSubLocked = sub.password && !unlockedCategoryIds.has(sub.id);
+                                        
+                                        return (
+                                            <div key={sub.id}>
+                                                <div className="flex items-center gap-2 mb-4">
+                                                    <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                                                        {sub.icon && sub.icon.length <= 4 && !/^[a-zA-Z]+$/.test(sub.icon) 
+                                                            ? <span className="text-lg">{sub.icon}</span> 
+                                                            : <Icon name={sub.icon} size={18} />
+                                                        }
+                                                    </div>
+                                                    <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-300">
+                                                        {sub.name}
+                                                    </h2>
+                                                    {sub.isAdminOnly && authToken && (
+                                                        <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-200 dark:border-purple-800">管</span>
+                                                    )}
+                                                    {isSubLocked && <Lock size={14} className="text-amber-500" />}
+                                                </div>
+                                                
+                                                {isSubLocked ? (
+                                                    <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 p-8 flex flex-col items-center justify-center text-center">
+                                                        <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mb-3 text-amber-600 dark:text-amber-400">
+                                                            <Lock size={24} />
+                                                        </div>
+                                                        <h4 className="text-slate-800 dark:text-slate-200 font-medium mb-1">私密目录</h4>
+                                                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">该子分类已加密，需要验证密码才能查看内容</p>
+                                                        <button 
+                                                            onClick={() => setCatAuthModalData(sub)}
+                                                            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition-colors"
+                                                        >
+                                                            输入密码解锁
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <>
+                                                        {subLinks.length === 0 ? (
+                                                            <div className="text-center py-6 text-slate-400 text-sm italic bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                                                                暂无链接
+                                                            </div>
+                                                        ) : (
+                                                            <div className={`grid gap-3 ${siteSettings.cardStyle === 'simple' ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'}`}>
+                                                                {subLinks.map(link => renderLinkCard(link))}
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                    
+                                    {/* 如果没有内容 */}
+                                    {catLinks.length === 0 && subCategories.length === 0 && (
+                                        <div className="text-center py-12 text-slate-400 text-sm italic">
+                                            暂无内容
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     );
+
+                        <div className="h-20"></div>
                 })()
             ) : (
                 /* 首页内容 */
@@ -1481,7 +1484,6 @@ function App() {
                     <div className="h-20"></div>
                 </>
             )}
-            <div class="h-20"></div>
           </div>
       </main>
 
