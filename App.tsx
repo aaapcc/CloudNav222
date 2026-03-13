@@ -1310,6 +1310,9 @@ function App() {
                                     )}
                                 </div>
                             )}
+
+                            {/* 在最后添加底部留白 */}
+                            <div className="h-20"></div>
                         </div>
                     );
                 })()
@@ -1500,7 +1503,6 @@ function App() {
                     <div className="h-20"></div>
                 </>
             )}
-            <div className="h-20"></div>
           </div>
       </main>
 
