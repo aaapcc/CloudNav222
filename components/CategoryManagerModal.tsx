@@ -245,7 +245,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                 <div className="flex-1 min-w-0">
                   {editingId === cat.id ? (
                     // 编辑模式
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-2">
                       {/* 第一行：图标选择器（单独一行） */}
                       <div className="relative w-full">
                         <select
@@ -303,6 +303,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           className="flex-1 p-2 text-sm rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
                           placeholder="设置密码 (留空则不加密)"
                         />
+                        <span class="text-xs text-slate-400">密码</span>
                       </div>
                       
                       {/* 第五行：父分类选择 */}
@@ -447,7 +448,6 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           </select>
                         </div>
                       </div>
-                      <span className="text-xs text-slate-400 ml-2">ID: {cat.id}</span>
                     </div>
                   )}
                 </div>
