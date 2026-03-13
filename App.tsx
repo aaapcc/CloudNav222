@@ -1328,7 +1328,7 @@ function App() {
                                               </div>
                                           </div>
                                           
-                                          {hasChildren && !isLocked && (
+                                          {!isLocked && (
                                               <button
                                                   onClick={() => setDetailCategoryId(cat.id)}
                                                   className="flex items-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
