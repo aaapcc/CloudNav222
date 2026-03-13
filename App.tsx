@@ -1294,8 +1294,6 @@ function App() {
                             )}
                         </div>
                     );
-
-                        <div className="h-20"></div>
                 })()
             ) : (
                 /* 首页内容 */
@@ -1484,6 +1482,7 @@ function App() {
                     <div className="h-20"></div>
                 </>
             )}
+            <div className="h-20"></div>
           </div>
       </main>
 
