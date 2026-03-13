@@ -77,7 +77,7 @@ export interface SearchEngine {
 export const DEFAULT_SEARCH_ENGINES: SearchEngine[] = [
     { id: 'local', name: '站内', url: '', icon: 'Search' },
     { id: 'baidu', name: '百度', url: 'https://www.baidu.com/s?wd=', icon: 'https://www.faviconextractor.com/favicon/www.baidu.com?larger=true' },
-    { id: 'bing', name: '必应', url: 'https://www.bing.com/search?q=', icon: 'https://www.faviconextractor.com/favicon/www.bing.comlarger=true' },
+    { id: 'bing', name: '必应', url: 'https://www.bing.com/search?q=', icon: 'https://www.faviconextractor.com/favicon/www.bing.com?larger=true' },
     { id: 'google', name: 'Google', url: 'https://www.google.com/search?q=', icon: 'https://www.faviconextractor.com/favicon/www.google.com?larger=true' },
     { id: 'bilibili', name: 'B站', url: 'https://search.bilibili.com/all?keyword=', icon: 'https://www.faviconextractor.com/favicon/www.bilibili.com?larger=true' },
 ];
