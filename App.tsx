@@ -548,7 +548,7 @@ function App() {
 
   // 处理更多按钮点击 - 使用路由跳转
   const handleMoreClick = (catId: string) => {
-    navigate(`/cat/${catId}`);
+    navigate(`/category/${catId}`);
     // 立即滚动到顶部
     setTimeout(() => {
       if (mainRef.current) {
