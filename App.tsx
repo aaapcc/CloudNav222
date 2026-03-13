@@ -1463,11 +1463,6 @@ function App() {
                                   </div>
                                 )}
                                 
-                                {catLinks.length === 0 && subCategories.length === 0 && (
-                                  <div className="text-center py-8 text-slate-400 text-sm italic">
-                                    暂无链接
-                                  </div>
-                                )}
                               </>
                             )}
                           </section>
