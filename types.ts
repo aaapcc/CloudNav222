@@ -63,10 +63,8 @@ export const DEFAULT_CATEGORIES: Category[] = [
 
 export const INITIAL_LINKS: LinkItem[] = [
   { id: '1', title: 'GitHub', url: 'https://github.com', categoryId: 'dev', createdAt: Date.now(), description: '代码托管平台', pinned: true },
-  { id: '2', title: 'React', url: 'https://react.dev', categoryId: 'dev', createdAt: Date.now(), description: '构建Web用户界面的库' },
-  { id: '3', title: 'Tailwind CSS', url: 'https://tailwindcss.com', categoryId: 'design', createdAt: Date.now(), description: '原子化CSS框架' },
-  { id: '4', title: 'ChatGPT', url: 'https://chat.openai.com', categoryId: 'ai', createdAt: Date.now(), description: 'OpenAI聊天机器人', pinned: true },
-  { id: '5', title: 'Gemini', url: 'https://gemini.google.com', categoryId: 'ai', createdAt: Date.now(), description: 'Google DeepMind AI' },
+  { id: '2', title: 'ChatGPT', url: 'https://chat.openai.com', categoryId: 'ai', createdAt: Date.now(), description: 'OpenAI聊天机器人', pinned: true },
+  { id: '3', title: 'Gemini', url: 'https://gemini.google.com', categoryId: 'ai', createdAt: Date.now(), description: 'Google DeepMind AI' },
 ];
 
 export interface SearchEngine {
@@ -78,9 +76,8 @@ export interface SearchEngine {
 
 export const DEFAULT_SEARCH_ENGINES: SearchEngine[] = [
     { id: 'local', name: '站内', url: '', icon: 'Search' },
-    { id: 'google', name: 'Google', url: 'https://www.google.com/search?q=', icon: 'https://www.google.com/favicon.ico' },
-    { id: 'bing', name: '必应', url: 'https://www.bing.com/search?q=', icon: 'https://www.bing.com/favicon.ico' },
-    { id: 'baidu', name: '百度', url: 'https://www.baidu.com/s?wd=', icon: 'https://www.baidu.com/favicon.ico' },
-    { id: 'github', name: 'GitHub', url: 'https://github.com/search?q=', icon: 'https://github.com/favicon.ico' },
-    { id: 'bilibili', name: 'B站', url: 'https://search.bilibili.com/all?keyword=', icon: 'https://www.bilibili.com/favicon.ico' },
+    { id: 'baidu', name: '百度', url: 'https://www.baidu.com/s?wd=', icon: 'https://www.faviconextractor.com/favicon/www.baidu.com?larger=true' },
+    { id: 'bing', name: '必应', url: 'https://www.bing.com/search?q=', icon: 'https://www.faviconextractor.com/favicon/www.bing.comlarger=true' },
+    { id: 'google', name: 'Google', url: 'https://www.google.com/search?q=', icon: 'https://www.faviconextractor.com/favicon/www.google.com?larger=true' },
+    { id: 'bilibili', name: 'B站', url: 'https://search.bilibili.com/all?keyword=', icon: 'https://www.faviconextractor.com/favicon/www.bilibili.com?larger=true' },
 ];
