@@ -1288,7 +1288,7 @@ function App() {
                                                 ) : (
                                                     <>
                                                         {subLinks.length === 0 ? (
-                                                            <div className="text-center py-6 text-slate-400 text-sm italic bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                                                            <div className="text-center py-6 text-slate-400 text-sm italic">
                                                                 暂无链接
                                                             </div>
                                                         ) : (
