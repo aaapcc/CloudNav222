@@ -61,6 +61,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
 
   const [newCatParentId, setNewCatParentId] = useState<string>(NO_PARENT_VALUE);
   const [editParentId, setEditParentId] = useState<string>(NO_PARENT_VALUE);
+  const [editId, setEditId] = useState(''); // 新增：编辑时的ID
 
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());  // 记录展开的文件夹
 
@@ -89,20 +90,37 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
     setEditIcon(cat.icon || 'Folder');
     setEditPassword(cat.password || '');
     setEditParentId((cat as any).parentId || NO_PARENT_VALUE);
+    setEditId(cat.id); // 把原有的ID填进去
     setMergingCatId(null);
   };
 
   const saveEdit = () => {
     if (!editingId || !editName.trim()) return;
+    
+    // 如果修改了 ID，需要检查是否与其他分类冲突
+    if (editId !== editingId) {
+      const existingCategory = categories.find(c => c.id === editId);
+      if (existingCategory) {
+        alert('该 ID 已存在，请使用其他 ID');
+        return;
+      }
+    }
+    
     const newCats = categories.map(c => c.id === editingId ? { 
         ...c, 
-        id: editId || c.id, // 如果输入了新ID则使用，否则保持原样
+        id: editId, // 使用新的 ID
         name: editName.trim(),
         icon: editIcon.trim(),
         password: editPassword.trim() || undefined,
         parentId: editParentId === NO_PARENT_VALUE ? undefined : editParentId
     } : c);
-    onUpdateCategories(newCats);
+    
+    // 如果 ID 变了，还需要更新所有链接的 categoryId
+    const newLinks = links.map(l => 
+      l.categoryId === editingId ? { ...l, categoryId: editId } : l
+    );
+    
+    onUpdateCategories(newCats, newLinks);
     setEditingId(null);
   };
 
@@ -263,6 +281,22 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           placeholder="设置密码 (留空则不加密)"
                         />
                       </div>
+                      {/* 新增：ID 编辑字段 */}
+                      <div className="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-400">
+                          <circle cx="12" cy="12" r="10"/>
+                          <line x1="12" y1="8" x2="12" y2="16"/>
+                          <line x1="8" y1="12" x2="16" y2="12"/>
+                        </svg>
+                        <input
+                          type="text"
+                          value={editId}
+                          onChange={(e) => setEditId(e.target.value)}
+                          className="flex-1 p-1.5 px-2 text-xs rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
+                          placeholder="分类ID (用于URL，例如: dev)"
+                        />
+                        <span className="text-xs text-slate-400">/cat/分类ID</span>
+                      </div>
                       {/* 父分类选择 */}
                       <div className="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
@@ -282,22 +316,6 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                               </option>
                             ))}
                         </select>
-                      </div>
-
-                      {/* 新增：ID 字段 */}
-                      <div className="flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-400">
-                          <circle cx="12" cy="12" r="10"/>
-                          <line x1="12" y1="8" x2="12" y2="16"/>
-                          <line x1="8" y1="12" x2="16" y2="12"/>
-                        </svg>
-                        <input
-                          type="text"
-                          value={editId}
-                          onChange={(e) => setEditId(e.target.value)}
-                          className="flex-1 p-1.5 px-2 text-xs rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
-                          placeholder="分类ID (用于URL，例如: dev)"
-                        />
                       </div>
 
                       {/* 编辑模式下的保存和取消按钮 */}
