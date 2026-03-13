@@ -68,6 +68,9 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
   const [mergingCatId, setMergingCatId] = useState<string | null>(null);
   const [targetMergeId, setTargetMergeId] = useState<string>('');
 
+  const [editId, setEditId] = useState('');
+  const [newCatId, setNewCatId] = useState('');
+
   if (!isOpen) return null;
 
   const handleMove = (index: number, direction: 'up' | 'down') => {
@@ -93,6 +96,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
     if (!editingId || !editName.trim()) return;
     const newCats = categories.map(c => c.id === editingId ? { 
         ...c, 
+        id: editId || c.id, // 如果输入了新ID则使用，否则保持原样
         name: editName.trim(),
         icon: editIcon.trim(),
         password: editPassword.trim() || undefined,
@@ -105,6 +109,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
   const handleAdd = () => {
     if (!newCatName.trim()) return;
     const newCat: Category = {
+      id: newCatId.trim() || Date.now().toString(), // 如果输入了ID则使用，否则自动生成
       id: Date.now().toString(),
       name: newCatName.trim(),
       icon: newCatIcon.trim() || 'Folder',
@@ -278,6 +283,23 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                             ))}
                         </select>
                       </div>
+
+                      {/* 新增：ID 字段 */}
+                      <div className="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-400">
+                          <circle cx="12" cy="12" r="10"/>
+                          <line x1="12" y1="8" x2="12" y2="16"/>
+                          <line x1="8" y1="12" x2="16" y2="12"/>
+                        </svg>
+                        <input
+                          type="text"
+                          value={editId}
+                          onChange={(e) => setEditId(e.target.value)}
+                          className="flex-1 p-1.5 px-2 text-xs rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
+                          placeholder="分类ID (用于URL，例如: dev)"
+                        />
+                      </div>
+
                       {/* 编辑模式下的保存和取消按钮 */}
                       {editingId === cat.id && (
                         <div className="flex justify-end gap-2 mt-2">
@@ -401,6 +423,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           </select>
                         </div>
                       </div>
+                      <span className="text-xs text-slate-400 ml-2">ID: {cat.id}</span>
                     </div>
                   )}
                 </div>
@@ -760,6 +783,23 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                     className="flex-1 p-2 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                  />
              </div>
+
+             {/* 新增：ID 输入 */}
+              <div className="flex items-center gap-2 mt-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-400">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="16"/>
+                  <line x1="8" y1="12" x2="16" y2="12"/>
+                </svg>
+                <input
+                  type="text"
+                  value={newCatId}
+                  onChange={(e) => setNewCatId(e.target.value)}
+                  placeholder="分类ID (可选，留空则自动生成)"
+                  className="flex-1 p-2 text-sm rounded-lg border ..."
+                />
+              </div>
+
              <div className="flex gap-2">
                  <div className="flex-1 relative">
                     <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />

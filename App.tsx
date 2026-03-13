@@ -1455,7 +1455,7 @@ function App() {
                                     还有 {subCategories.length - 2} 个子分类，点击
                                     <button
                                       onClick={() => handleMoreClick(cat.id)}
-                                      className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mx-1 underline-offset-2 hover:underline transition-colors"
+                                      className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mx-1 underline-offset-2 hover:underline italic transition-colors"
                                     >
                                       「更多」
                                     </button>
