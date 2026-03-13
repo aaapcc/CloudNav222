@@ -130,6 +130,7 @@ function App() {
 
   // 新增：监听URL参数变化，同步 detailCategoryId
   useEffect(() => {
+    console.log('URL categoryId changed:', categoryId);
     if (categoryId) {
       setDetailCategoryId(categoryId);
     } else {
