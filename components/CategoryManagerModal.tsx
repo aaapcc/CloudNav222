@@ -245,7 +245,8 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                 <div className="flex-1 min-w-0">
                   {editingId === cat.id ? (
                     // 编辑模式
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-3">
+                      {/* 第一行：图标和名称 */}
                       <div className="flex gap-2">
                         <div className="relative w-32 shrink-0">
                           <select
@@ -270,17 +271,8 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           autoFocus
                         />
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Lock size={14} className="text-slate-400" />
-                        <input 
-                          type="text" 
-                          value={editPassword}
-                          onChange={(e) => setEditPassword(e.target.value)}
-                          className="flex-1 p-1.5 px-2 text-xs rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
-                          placeholder="设置密码 (留空则不加密)"
-                        />
-                      </div>
-                      {/* 新增：ID 编辑字段 */}
+                      
+                      {/* 第二行：分类ID */}
                       <div className="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-400">
                           <circle cx="12" cy="12" r="10"/>
@@ -294,9 +286,21 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           className="flex-1 p-1.5 px-2 text-xs rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
                           placeholder="分类ID (用于URL，例如: dev)"
                         />
-                        <span className="text-xs text-slate-400">/cat/分类ID</span>
                       </div>
-                      {/* 父分类选择 */}
+                      
+                      {/* 第三行：密码 */}
+                      <div className="flex items-center gap-2">
+                        <Lock size={14} className="text-slate-400" />
+                        <input 
+                          type="text" 
+                          value={editPassword}
+                          onChange={(e) => setEditPassword(e.target.value)}
+                          className="flex-1 p-1.5 px-2 text-xs rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
+                          placeholder="设置密码 (留空则不加密)"
+                        />
+                      </div>
+                      
+                      {/* 第四行：父分类选择 */}
                       <div className="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
                           <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
@@ -316,30 +320,28 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                             ))}
                         </select>
                       </div>
-
-                      {/* 编辑模式下的保存和取消按钮 */}
-                      {editingId === cat.id && (
-                        <div className="flex justify-end gap-2 mt-2">
-                          <button 
-                            onClick={saveEdit}
-                            className="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors flex items-center gap-1"
-                          >
-                            <Check size={14} /> 保存
-                          </button>
-                          <button 
-                            onClick={() => {
-                              setEditingId(null);
-                              setEditName('');
-                              setEditIcon('Folder');
-                              setEditPassword('');
-                              setEditParentId(NO_PARENT_VALUE);
-                            }}
-                            className="px-3 py-1 bg-slate-400 text-white text-sm rounded hover:bg-slate-500 transition-colors flex items-center gap-1"
-                          >
-                            <X size={14} /> 取消
-                          </button>
-                        </div>
-                      )}
+                      
+                      {/* 第五行：保存和取消按钮 */}
+                      <div className="flex justify-end gap-2 mt-2">
+                        <button 
+                          onClick={saveEdit}
+                          className="px-3 py-1 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-colors flex items-center gap-1"
+                        >
+                          <Check size={14} /> 保存
+                        </button>
+                        <button 
+                          onClick={() => {
+                            setEditingId(null);
+                            setEditName('');
+                            setEditIcon('Folder');
+                            setEditPassword('');
+                            setEditParentId(NO_PARENT_VALUE);
+                          }}
+                          className="px-3 py-1 bg-slate-400 text-white text-sm rounded-lg hover:bg-slate-500 transition-colors flex items-center gap-1"
+                        >
+                          <X size={14} /> 取消
+                        </button>
+                      </div>
                     </div>
                   ) :  mergingCatId === cat.id ? (
                   // 合并模式
