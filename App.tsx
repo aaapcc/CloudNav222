@@ -1451,11 +1451,15 @@ function App() {
                                 
                                 {/* 修改2：让「还有 X 个子分类」的文字可点击进入详情页 */}
                                 {subCategories.length > 2 && (
-                                  <div 
-                                    onClick={() => handleMoreClick(cat.id)}
-                                    className="text-center py-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer italic border-t border-slate-100 dark:border-slate-800 pt-4 transition-colors"
-                                  >
-                                    还有 {subCategories.length - 2} 个子分类，点击「更多」查看全部
+                                  <div className="text-center py-2 text-sm text-slate-400 italic border-t border-slate-100 dark:border-slate-800 pt-4">
+                                    还有 {subCategories.length - 2} 个子分类，点击
+                                    <button
+                                      onClick={() => handleMoreClick(cat.id)}
+                                      className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mx-1 underline-offset-2 hover:underline transition-colors"
+                                    >
+                                      「更多」
+                                    </button>
+                                    查看全部
                                   </div>
                                 )}
                                 
