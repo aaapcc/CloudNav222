@@ -264,9 +264,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                       
                       {/* 第二行：名称输入框（带图标预览） */}
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 shrink-0">
-                          <Icon name={editIcon} size={14} />
-                        </div>
+                        <Icon name={editIcon} size={14} />
                         <input 
                           type="text" 
                           value={editName}
