@@ -246,33 +246,38 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                   {editingId === cat.id ? (
                     // 编辑模式
                     <div className="flex flex-col gap-3">
-                      {/* 第一行：图标和名称 */}
-                      <div className="flex gap-2">
-                        <div className="relative w-32 shrink-0">
-                          <select
-                            value={editIcon}
-                            onChange={(e) => setEditIcon(e.target.value)}
-                            className="w-full p-1.5 text-sm rounded border border-blue-500 dark:bg-slate-800 dark:text-white outline-none appearance-none"
-                          >
-                            {COMMON_ICONS.map(icon => (
-                              <option key={icon.value} value={icon.value}>{icon.label}</option>
-                            ))}
-                          </select>
-                          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-                            <Icon name={editIcon} size={14} />
-                          </div>
+                      {/* 第一行：图标选择器（单独一行） */}
+                      <div className="relative w-full">
+                        <select
+                          value={editIcon}
+                          onChange={(e) => setEditIcon(e.target.value)}
+                          className="w-full p-2 text-sm rounded border border-blue-500 dark:bg-slate-800 dark:text-white outline-none appearance-none"
+                        >
+                          {COMMON_ICONS.map(icon => (
+                            <option key={icon.value} value={icon.value}>{icon.label}</option>
+                          ))}
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                          <Icon name={editIcon} size={16} />
+                        </div>
+                      </div>
+                      
+                      {/* 第二行：名称输入框（带图标预览） */}
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 shrink-0">
+                          <Icon name={editIcon} size={14} />
                         </div>
                         <input 
                           type="text" 
                           value={editName}
                           onChange={(e) => setEditName(e.target.value)}
-                          className="flex-1 p-1.5 px-2 text-sm rounded border border-blue-500 dark:bg-slate-800 dark:text-white outline-none"
+                          className="flex-1 p-2 text-sm rounded border border-blue-500 dark:bg-slate-800 dark:text-white outline-none"
                           placeholder="分类名称"
                           autoFocus
                         />
                       </div>
                       
-                      {/* 第二行：分类ID */}
+                      {/* 第三行：分类ID */}
                       <div className="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-400">
                           <circle cx="12" cy="12" r="10"/>
@@ -283,24 +288,24 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           type="text"
                           value={editId}
                           onChange={(e) => setEditId(e.target.value)}
-                          className="flex-1 p-1.5 px-2 text-xs rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
+                          className="flex-1 p-2 text-sm rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
                           placeholder="分类ID (用于URL，例如: dev)"
                         />
                       </div>
                       
-                      {/* 第三行：密码 */}
+                      {/* 第四行：密码 */}
                       <div className="flex items-center gap-2">
                         <Lock size={14} className="text-slate-400" />
                         <input 
                           type="text" 
                           value={editPassword}
                           onChange={(e) => setEditPassword(e.target.value)}
-                          className="flex-1 p-1.5 px-2 text-xs rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
+                          className="flex-1 p-2 text-sm rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
                           placeholder="设置密码 (留空则不加密)"
                         />
                       </div>
                       
-                      {/* 第四行：父分类选择 */}
+                      {/* 第五行：父分类选择 */}
                       <div className="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
                           <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
@@ -308,7 +313,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                         <select
                           value={editParentId}
                           onChange={(e) => setEditParentId(e.target.value)}
-                          className="flex-1 p-1.5 px-2 text-xs rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
+                          className="flex-1 p-2 text-sm rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
                         >
                           <option value={NO_PARENT_VALUE}>作为顶级分类</option>
                           {categories
@@ -321,11 +326,11 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                         </select>
                       </div>
                       
-                      {/* 第五行：保存和取消按钮 */}
+                      {/* 第六行：保存和取消按钮 */}
                       <div className="flex justify-end gap-2 mt-2">
                         <button 
                           onClick={saveEdit}
-                          className="px-3 py-1 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-colors flex items-center gap-1"
+                          className="px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-colors flex items-center gap-1"
                         >
                           <Check size={14} /> 保存
                         </button>
@@ -337,7 +342,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                             setEditPassword('');
                             setEditParentId(NO_PARENT_VALUE);
                           }}
-                          className="px-3 py-1 bg-slate-400 text-white text-sm rounded-lg hover:bg-slate-500 transition-colors flex items-center gap-1"
+                          className="px-4 py-2 bg-slate-400 text-white text-sm rounded-lg hover:bg-slate-500 transition-colors flex items-center gap-1"
                         >
                           <X size={14} /> 取消
                         </button>
