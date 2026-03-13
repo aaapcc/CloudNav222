@@ -273,6 +273,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           placeholder="分类名称"
                           autoFocus
                         />
+                        <span class="text-xs text-slate-400">分类名称</span>
                       </div>
                       
                       {/* 第三行：分类ID */}
@@ -289,6 +290,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           className="flex-1 p-2 text-sm rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
                           placeholder="分类ID (用于URL，例如: dev)"
                         />
+                        <span class="text-xs text-slate-400">/cat/分类ID</span>
                       </div>
                       
                       {/* 第四行：密码 */}
@@ -328,7 +330,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                       <div className="flex justify-end gap-2 mt-2">
                         <button 
                           onClick={saveEdit}
-                          className="px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-colors flex items-center gap-1"
+                          className="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors flex items-center gap-1"
                         >
                           <Check size={14} /> 保存
                         </button>
@@ -340,7 +342,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                             setEditPassword('');
                             setEditParentId(NO_PARENT_VALUE);
                           }}
-                          className="px-4 py-2 bg-slate-400 text-white text-sm rounded-lg hover:bg-slate-500 transition-colors flex items-center gap-1"
+                          className="px-3 py-1 bg-slate-400 text-white text-sm rounded hover:bg-slate-500 transition-colors flex items-center gap-1"
                         >
                           <X size={14} /> 取消
                         </button>
