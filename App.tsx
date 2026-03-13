@@ -1173,7 +1173,7 @@ function App() {
                               {/* 返回首页按钮 - 使用路由跳转 */}
                               <div className="flex items-center gap-3">
                                   <button
-                                      onClick={handleBackToHome}
+                                      onClick={() => navigate('/')}
                                       className="flex items-center gap-1 px-2.5 py-1.5 text-sm bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                                   >
                                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1353,7 +1353,7 @@ function App() {
                                           
                                           {!isLocked && (
                                               <button
-                                                  onClick={() => handleMoreClick(cat.id)}
+                                                  onClick={() => navigate(`/cat/${cat.id}`)}
                                                   className="flex items-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                                               >
                                                   <span>更多</span>
