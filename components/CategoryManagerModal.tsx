@@ -322,7 +322,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                         <div className="flex justify-end gap-2 mt-2">
                           <button 
                             onClick={saveEdit}
-                            className="px-3 py-1 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-colors flex items-center gap-1"
+                            className="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors flex items-center gap-1"
                           >
                             <Check size={14} /> 保存
                           </button>
@@ -334,7 +334,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                               setEditPassword('');
                               setEditParentId(NO_PARENT_VALUE);
                             }}
-                            className="px-3 py-1 bg-slate-400 text-white text-sm rounded-lg hover:bg-slate-500 transition-colors flex items-center gap-1"
+                            className="px-3 py-1 bg-slate-400 text-white text-sm rounded hover:bg-slate-500 transition-colors flex items-center gap-1"
                           >
                             <X size={14} /> 取消
                           </button>
@@ -802,19 +802,21 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
              </div>
 
              {/* 新增：ID 输入 */}
-              <div className="flex items-center gap-2 mt-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-400">
-                  <circle cx="12" cy="12" r="10"/>
-                  <line x1="12" y1="8" x2="12" y2="16"/>
-                  <line x1="8" y1="12" x2="16" y2="12"/>
-                </svg>
-                <input
-                  type="text"
-                  value={newCatId}
-                  onChange={(e) => setNewCatId(e.target.value)}
-                  placeholder="分类ID (可选，留空则自动生成)"
-                  className="flex-1 p-2 text-sm rounded-lg border ..."
-                />
+              <div className="flex items-center gap-2">
+                <div class="flex-1 relative">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                  </svg>
+                  <input
+                    type="text"
+                    value={newCatId}
+                    onChange={(e) => setNewCatId(e.target.value)}
+                    placeholder="分类ID (可选，留空则自动生成)"
+                    className="w-full pl-8 p-2 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                </div>
               </div>
 
              <div className="flex gap-2">
