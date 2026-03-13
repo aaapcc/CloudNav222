@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom'; // 新增：路由相关
 import { 
   Search, Plus, Upload, Moon, Sun, Menu, 
   Trash2, Edit2, Loader2, Cloud, CheckCircle2, AlertCircle,
@@ -30,6 +30,9 @@ const AI_CONFIG_KEY = 'cloudnav_ai_config';
 const SEARCH_ENGINES_KEY = 'cloudnav_search_engines';
 
 function App() {
+  const navigate = useNavigate(); // 新增：用于页面跳转
+  const { categoryId } = useParams<{ categoryId: string }>(); // 新增：获取URL参数
+
   // --- State ---
   const [links, setLinks] = useState<LinkItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -124,6 +127,15 @@ function App() {
   const isAutoScrollingRef = useRef(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const contextMenuRef = useRef<HTMLDivElement>(null);
+
+  // 新增：监听URL参数变化，同步 detailCategoryId
+  useEffect(() => {
+    if (categoryId) {
+      setDetailCategoryId(categoryId);
+    } else {
+      setDetailCategoryId(null);
+    }
+  }, [categoryId]);
 
   // 安全地获取顶级分类
   const getTopLevelCategories = useMemo(() => {
@@ -528,6 +540,16 @@ function App() {
   const activeExternalEngine = useMemo(() => {
       return externalEngines.find(e => e.id === activeEngineId) || externalEngines[0];
   }, [externalEngines, activeEngineId]);
+
+  // 处理更多按钮点击 - 使用路由跳转
+  const handleMoreClick = (catId: string) => {
+    navigate(`/cat/${catId}`);
+  };
+
+  // 处理返回首页 - 使用路由跳转
+  const handleBackToHome = () => {
+    navigate('/');
+  };
 
   // --- Render Components ---
 
@@ -1147,10 +1169,10 @@ function App() {
                       
                       return (
                           <div className="space-y-6">
-                              {/* 返回首页按钮 */}
+                              {/* 返回首页按钮 - 使用路由跳转 */}
                               <div className="flex items-center gap-3">
                                   <button
-                                      onClick={() => setDetailCategoryId(null)}
+                                      onClick={handleBackToHome}
                                       className="flex items-center gap-1 px-2.5 py-1.5 text-sm bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                                   >
                                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1330,11 +1352,11 @@ function App() {
                                           
                                           {!isLocked && (
                                               <button
-                                                  onClick={() => setDetailCategoryId(cat.id)}
+                                                  onClick={() => handleMoreClick(cat.id)}
                                                   className="flex items-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                                               >
                                                   <span>更多</span>
-                                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right" aria-hidden="true">
+                                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="m9 18 6-6-6-6"></path>
                                                   </svg>
                                               </button>
