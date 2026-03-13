@@ -61,7 +61,6 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
 
   const [newCatParentId, setNewCatParentId] = useState<string>(NO_PARENT_VALUE);
   const [editParentId, setEditParentId] = useState<string>(NO_PARENT_VALUE);
-  const [editId, setEditId] = useState(''); // 新增：编辑时的ID
 
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());  // 记录展开的文件夹
 
