@@ -546,6 +546,7 @@ function notify(title, message) {
         
         .empty { text-align: center; padding: 20px; color: var(--muted); font-size: 12px; }
         .loading { display: flex; justify-content: center; padding: 40px; color: var(--accent); font-size: 12px; }
+        .ml-4 { margin-left: 16px; }
     </style>
 </head>
 <body>
