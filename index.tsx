@@ -2,16 +2,22 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
+import NotFound from './NotFound'; // 导入 404 组件
 
-// 定义路由配置
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
+    errorElement: <NotFound />, // 当路由出错时显示 NotFound
   },
   {
     path: '/category/:categoryId',
     element: <App />,
+    errorElement: <NotFound />,
+  },
+  {
+    path: '*', // 匹配所有未定义的路径
+    element: <NotFound />,
   },
 ]);
 

@@ -1174,7 +1174,21 @@ function App() {
                 /* 分类详情页 - 替换首页内容 */
                 (() => {
                     const cat = categories.find(c => c.id === detailCategoryId);
-                    if (!cat) return null;
+                    if (!cat) {
+                      // 如果分类不存在，返回 404 信息
+                      return (
+                        <div className="text-center py-20">
+                          <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-4">分类不存在</h2>
+                          <p className="text-slate-500 dark:text-slate-400 mb-8">您访问的分类ID可能已被修改或删除</p>
+                          <button
+                            onClick={handleBackToHome}
+                            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                          >
+                            返回首页
+                          </button>
+                        </div>
+                      );
+                    }
                     
                     const subCategories = getSubCategories(cat.id).filter(sub => {
                         if (authToken) return sub.isVisible !== false;
