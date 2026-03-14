@@ -566,178 +566,90 @@ function notify(title, message) {
   apiBase: "${domain}",
   password: "${password}"
 };
-const CACHE_KEY = 'cloudnav_data';
 
-// --- 核心改动：连接与自关闭逻辑 (参考 115) ---
-let port = null;
-try {
-    // 1. 建立长连接
-    port = chrome.runtime.connect({ name: 'cloudnav_sidebar' });
+console.log("CloudNav Sidebar 开始初始化", CONFIG);
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM 已加载");
     
-    // 2. 获取当前窗口ID并发送给后台，建立绑定关系
-    chrome.windows.getCurrent((win) => {
-        if (win && port) {
-            port.postMessage({ type: 'init', windowId: win.id });
-        }
-    });
-
-    // 3. 监听关闭指令
-    port.onMessage.addListener((msg) => {
-        if (msg.action === 'close_panel') {
-            window.close(); // 只有在扩展页面内部调用有效
-        }
-    });
-} catch(e) {
-    console.error('Connection failed', e);
-}
-// ----------------------------------------
-
-document.addEventListener('DOMContentLoaded', async () => {
     const container = document.getElementById('content');
     const searchInput = document.getElementById('search');
-    const refreshBtn = document.getElementById('refresh');
     
-    let allLinks = [];
-    let allCategories = [];
-    let expandedCats = new Set(); 
-
-    const getArrowIcon = () => {
-        return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cat-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>';
-    };
-
-    const getFaviconUrl = (pageUrl) => {
-        try {
-            const url = new URL(chrome.runtime.getURL("/_favicon/"));
-            url.searchParams.set("pageUrl", pageUrl);
-            url.searchParams.set("size", "32");
-            return url.toString();
-        } catch (e) {
-            return '';
-        }
-    };
-
-    const toggleCat = (id) => {
-        const header = document.querySelector(\`.cat-header[data-id="\${id}"]\`);
-        if (header) {
-            header.classList.toggle('active');
-            if (header.classList.contains('active')) {
-                expandedCats.add(id);
-            } else {
-                expandedCats.delete(id);
-            }
-        }
-    };
-
-    container.addEventListener('click', (e) => {
-        const header = e.target.closest('.cat-header');
-        if (header) {
-            toggleCat(header.dataset.id);
+    if (!container) {
+        console.error("找不到 content 元素");
+        return;
+    }
+    
+    container.innerHTML = '<div class="loading">正在加载数据...</div>';
+    
+    console.log("开始加载数据");
+    
+    // 先尝试从缓存加载
+    chrome.storage.local.get('cloudnav_data', (result) => {
+        console.log("从 storage 读取结果", result);
+        
+        if (result.cloudnav_data) {
+            const data = result.cloudnav_data;
+            console.log("从缓存加载成功", data);
+            renderData(data);
+        } else {
+            // 从 API 加载
+            fetch(\`\${CONFIG.apiBase}/api/storage\`, {
+                headers: { 'x-auth-password': CONFIG.password }
+            })
+            .then(res => {
+                console.log("API 响应状态", res.status);
+                if (!res.ok) throw new Error(\`HTTP \${res.status}\`);
+                return res.json();
+            })
+            .then(data => {
+                console.log("API 数据加载成功", data);
+                chrome.storage.local.set({ cloudnav_data: data });
+                renderData(data);
+            })
+            .catch(err => {
+                console.error("加载失败", err);
+                container.innerHTML = \`<div class="empty" style="color:#ef4444">加载失败: \${err.message}</div>\`;
+            });
         }
     });
-
-    const render = (filter = '') => {
-        const q = filter.toLowerCase();
-        let html = '';
-        let hasContent = false;
+    
+    function renderData(data) {
+        console.log("渲染数据", data);
         
-        const isSearching = q.length > 0;
-
-        allCategories.forEach(cat => {
-            const catLinks = allLinks.filter(l => {
-                const inCat = l.categoryId === cat.id;
-                if (!inCat) return false;
-                if (!q) return true;
-                return l.title.toLowerCase().includes(q) || 
-                       l.url.toLowerCase().includes(q) || 
-                       (l.description && l.description.toLowerCase().includes(q));
-            });
-
-            if (catLinks.length === 0) return;
-            hasContent = true;
-
-            const isOpen = expandedCats.has(cat.id) || isSearching;
-            const activeClass = isOpen ? 'active' : '';
-
-            html += \`
-            <div class="cat-group">
-                <div class="cat-header \${activeClass}" data-id="\${cat.id}">
-                    \${getArrowIcon()}
-                    <span>\${cat.name}</span>
-                </div>
-                <div class="cat-links">
-            \`;
+        const links = data.links || [];
+        const categories = data.categories || [];
+        
+        let html = '';
+        
+        // 顶级分类
+        const topCats = categories.filter(c => !c.parentId);
+        
+        topCats.forEach(cat => {
+            const catLinks = links.filter(l => l.categoryId === cat.id);
+            
+            html += '<div class="cat-group">';
+            html += '<div class="cat-header active">';
+            html += '<svg class="cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"/></svg>';
+            html += '<span>' + cat.name + '</span>';
+            html += '</div>';
+            
+            html += '<div class="cat-links" style="display:block">';
             
             catLinks.forEach(link => {
-                const iconSrc = getFaviconUrl(link.url);
-                html += \`
-                    <a href="\${link.url}" target="_blank" class="link-item">
-                        <div class="link-icon"><img src="\${iconSrc}" /></div>
-                        <div class="link-info">
-                            <div class="link-title">\${link.title}</div>
-                        </div>
-                    </a>
-                \`;
+                html += '<a href="' + link.url + '" target="_blank" class="link-item">';
+                html += '<div class="link-info">';
+                html += '<div class="link-title">' + link.title + '</div>';
+                html += '</div>';
+                html += '</a>';
             });
-
-            html += \`</div></div>\`;
+            
+            html += '</div>';
+            html += '</div>';
         });
-
-        if (!hasContent) {
-            container.innerHTML = filter ? '<div class="empty">无搜索结果</div>' : '<div class="empty">暂无数据</div>';
-        } else {
-            container.innerHTML = html;
-        }
-    };
-
-    const loadData = async (forceRefresh = false) => {
-        try {
-            if (!forceRefresh) {
-                const cached = await chrome.storage.local.get(CACHE_KEY);
-                if (cached[CACHE_KEY]) {
-                    const data = cached[CACHE_KEY];
-                    allLinks = data.links || [];
-                    allCategories = data.categories || [];
-                    render(searchInput.value);
-                    // 即使有缓存，也可以在后台悄悄更新一下 Context Menu 的数据源
-                    return;
-                }
-            }
-
-            refreshBtn.classList.add('rotating');
-            container.innerHTML = '<div class="loading">同步数据中...</div>';
-            
-            const res = await fetch(\`\${CONFIG.apiBase}/api/storage\`, {
-                headers: { 'x-auth-password': CONFIG.password }
-            });
-            
-            if (!res.ok) throw new Error("Sync failed");
-            
-            const data = await res.json();
-            allLinks = data.links || [];
-            allCategories = data.categories || [];
-            
-            // 重要：保存到 storage，供 Background 和 Popup 使用
-            await chrome.storage.local.set({ [CACHE_KEY]: data });
-            
-            render(searchInput.value);
-        } catch (e) {
-            container.innerHTML = \`<div class="empty" style="color:#ef4444">加载失败: \${e.message}<br>请点击右上角刷新</div>\`;
-        } finally {
-            refreshBtn.classList.remove('rotating');
-        }
-    };
-
-    loadData();
-
-    searchInput.addEventListener('input', (e) => render(e.target.value));
-    refreshBtn.addEventListener('click', () => loadData(true));
-
-    // Listen for refresh messages
-    chrome.runtime.onMessage.addListener((msg) => {
-        if (msg.type === 'refresh') {
-            loadData(true);
-        }
-    });
+        
+        container.innerHTML = html || '<div class="empty">暂无数据</div>';
+    }
 });`;
 
   const renderCodeBlock = (filename: string, code: string) => (
