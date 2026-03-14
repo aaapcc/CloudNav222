@@ -554,12 +554,10 @@ function App() {
   // 处理更多按钮点击 - 使用路由跳转
   const handleMoreClick = (catId: string) => {
     navigate(`/category/${catId}`);
-    // 立即滚动到顶部
-    setTimeout(() => {
-      if (mainRef.current) {
-        mainRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }, 50);
+    // 立即将滚动位置设置到顶部
+    if (mainRef.current) {
+      mainRef.current.scrollTop = 0;
+    }
   };
 
   // 处理返回首页 - 使用路由跳转
