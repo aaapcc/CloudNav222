@@ -663,15 +663,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cat.isVisible === false) {
             return null;
         }
-
-        // 如果是仅管理员可见，加个标识但不隐藏
-        const isAdminOnly = cat.isAdminOnly === true;
-
+        
         const catLinks = links.filter(l => l.categoryId === cat.id);
         const childCats = categories.filter(c => c.parentId === cat.id);
         
         // 递归检查子分类是否有内容
         const hasVisibleChildren = childCats.some(child => {
+            // 子分类如果是隐藏的，不计入
+            if (child.isVisible === false) return false;
             const childLinks = links.filter(l => l.categoryId === child.id);
             const grandChildren = categories.filter(c => c.parentId === child.id);
             return childLinks.length > 0 || grandChildren.length > 0;
