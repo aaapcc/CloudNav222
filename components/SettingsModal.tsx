@@ -1366,7 +1366,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                         disabled={isZipping}
                                         className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-lg shadow-blue-500/20"
                                     >
-                                        <Package size={20} />
                                         {isZipping ? '打包中...' : '📦 一键下载所有文件 (v7.6 Pro)'}
                                     </button>
                                 </div>
