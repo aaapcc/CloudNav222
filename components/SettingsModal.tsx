@@ -669,7 +669,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // 根据层级决定缩进
                 const indentClass = level === 0 ? '' : 'ml-4';
                 
-                result += `<div class="cat-group ${indentClass}">`;
+                result += '<div class="cat-group ' + indentClass + '">';
                 
                 // 如果有链接或子分类，才显示分类头
                 if (catLinks.length > 0 || childCats.length > 0) {
