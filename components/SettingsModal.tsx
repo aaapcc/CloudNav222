@@ -684,22 +684,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const headerDiv = document.createElement('div');
         headerDiv.className = 'cat-header' + (isOpen ? ' active' : '');
         headerDiv.setAttribute('data-id', cat.id);
-        
+
         // 箭头
         const arrowSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         arrowSvg.setAttribute('class', 'cat-arrow');
         arrowSvg.setAttribute('viewBox', '0 0 24 24');
         arrowSvg.setAttribute('fill', 'none');
         arrowSvg.setAttribute('stroke', 'currentColor');
-        
+
         const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
         polyline.setAttribute('points', '9 18 15 12 9 6');
         arrowSvg.appendChild(polyline);
-        
-        // 分类名
+
+        // 分类名（如果有密码，加锁图标）
         const nameSpan = document.createElement('span');
-        nameSpan.textContent = cat.name;
-        
+        nameSpan.textContent = (cat.password ? '🔒 ' : '') + cat.name;
+
         headerDiv.appendChild(arrowSvg);
         headerDiv.appendChild(nameSpan);
         
