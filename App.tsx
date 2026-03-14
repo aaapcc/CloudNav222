@@ -1419,7 +1419,7 @@ function App() {
                               {!isLocked && (
                                 <button
                                   onClick={() => handleMoreClick(cat.id)}
-                                  className="flex items-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                                  className="flex items-center text-sm text-slate-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                                 >
                                   <span>更多</span>
                                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
