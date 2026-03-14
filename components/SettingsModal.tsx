@@ -1050,67 +1050,90 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 {/* 1. Site Settings */}
                 {activeTab === 'site' && (
-                    <div className="space-y-6 animate-in fade-in duration-300">
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">网页标题 (Title)</label>
-                                <input 
-                                    type="text" 
-                                    value={localSiteSettings.title}
-                                    onChange={(e) => handleSiteChange('title', e.target.value)}
-                                    className="w-full p-2 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">导航栏标题</label>
-                                <input 
-                                    type="text" 
-                                    value={localSiteSettings.navTitle}
-                                    onChange={(e) => handleSiteChange('navTitle', e.target.value)}
-                                    className="w-full p-2 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">网站图标 (Favicon URL)</label>
-                                <div className="flex gap-3 items-center">
-                                    <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-600">
-                                        {localSiteSettings.favicon ? <img src={localSiteSettings.favicon} className="w-full h-full object-cover"/> : <Globe size={20} className="text-slate-400"/>}
-                                    </div>
-                                    <input 
-                                        type="text" 
-                                        value={localSiteSettings.favicon}
-                                        onChange={(e) => handleSiteChange('favicon', e.target.value)}
-                                        placeholder="https://example.com/favicon.ico"
-                                        className="flex-1 p-2 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
+                <div className="space-y-6 animate-in fade-in duration-300">
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">网页标题 (Title)</label>
+                            <input 
+                                type="text" 
+                                value={localSiteSettings.title}
+                                onChange={(e) => handleSiteChange('title', e.target.value)}
+                                className="w-full p-2 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">导航栏标题</label>
+                            <input 
+                                type="text" 
+                                value={localSiteSettings.navTitle}
+                                onChange={(e) => handleSiteChange('navTitle', e.target.value)}
+                                className="w-full p-2 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">网站图标 (Favicon URL)</label>
+                            <div className="flex gap-3 items-center">
+                                <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-600">
+                                    {localSiteSettings.favicon ? <img src={localSiteSettings.favicon} className="w-full h-full object-cover"/> : <Globe size={20} className="text-slate-400"/>}
                                 </div>
-                                <div className="mt-3">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <p className="text-xs text-slate-500">选择生成的随机图标 (点击右侧按钮刷新):</p>
+                                <input 
+                                    type="text" 
+                                    value={localSiteSettings.favicon}
+                                    onChange={(e) => handleSiteChange('favicon', e.target.value)}
+                                    placeholder="https://example.com/favicon.ico"
+                                    className="flex-1 p-2 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+                            <div className="mt-3">
+                                <div className="flex items-center justify-between mb-2">
+                                    <p className="text-xs text-slate-500">选择生成的随机图标 (点击右侧按钮刷新):</p>
+                                    <button 
+                                        type="button"
+                                        onClick={() => updateGeneratedIcons(localSiteSettings.navTitle)}
+                                        className="text-xs flex items-center gap-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-700 px-2 py-1 rounded transition-colors"
+                                    >
+                                        <RefreshCw size={12} /> 随机生成
+                                    </button>
+                                </div>
+                                <div className="flex gap-2">
+                                    {generatedIcons.map((icon, idx) => (
                                         <button 
-                                            type="button"
-                                            onClick={() => updateGeneratedIcons(localSiteSettings.navTitle)}
-                                            className="text-xs flex items-center gap-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-700 px-2 py-1 rounded transition-colors"
+                                            key={idx}
+                                            onClick={() => handleSiteChange('favicon', icon)}
+                                            className="w-8 h-8 rounded hover:ring-2 ring-blue-500 transition-all border border-slate-100 dark:border-slate-600"
                                         >
-                                            <RefreshCw size={12} /> 随机生成
+                                            <img src={icon} className="w-full h-full rounded" />
                                         </button>
-                                    </div>
-                                    <div className="flex gap-2">
-                                        {generatedIcons.map((icon, idx) => (
-                                            <button 
-                                                key={idx}
-                                                onClick={() => handleSiteChange('favicon', icon)}
-                                                className="w-8 h-8 rounded hover:ring-2 ring-blue-500 transition-all border border-slate-100 dark:border-slate-600"
-                                            >
-                                                <img src={icon} className="w-full h-full rounded" />
-                                            </button>
-                                        ))}
-                                    </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
+                        
+                        {/* 新增：退出登录按钮 */}
+                        <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                            <button
+                                onClick={() => {
+                                    if (confirm('确定要退出登录吗？')) {
+                                        // 清除登录状态
+                                        localStorage.removeItem('cloudnav_auth_token');
+                                        // 刷新页面使状态生效
+                                        window.location.reload();
+                                    }
+                                }}
+                                className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/30 dark:text-red-400 rounded-lg transition-colors border border-red-200 dark:border-red-800"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                    <polyline points="16 17 21 12 16 7" />
+                                    <line x1="21" x2="9" y1="12" y2="12" />
+                                </svg>
+                                退出登录
+                            </button>
+                            <p className="text-xs text-slate-500 mt-2">退出后你将无法添加、编辑或删除链接</p>
+                        </div>
                     </div>
-                )}
+                </div>
+            )}
 
                 {/* 2. AI Settings */}
                 {activeTab === 'ai' && (
