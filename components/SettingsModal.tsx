@@ -574,6 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const container = document.getElementById('content');
     const searchInput = document.getElementById('search');
+    const refreshBtn = document.getElementById('refresh');
     
     if (!container) {
         console.error("找不到 content 元素");
@@ -583,6 +584,9 @@ document.addEventListener('DOMContentLoaded', () => {
     container.innerHTML = '<div class="loading">正在加载数据...</div>';
     
     console.log("开始加载数据");
+    
+    // 存储展开状态的 Set
+    let expandedCats = new Set();
     
     // 先尝试从缓存加载
     chrome.storage.local.get('cloudnav_data', (result) => {
@@ -614,41 +618,150 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // 切换分类展开/折叠
+    function toggleCategory(id) {
+        if (expandedCats.has(id)) {
+            expandedCats.delete(id);
+        } else {
+            expandedCats.add(id);
+        }
+        
+        // 重新渲染
+        chrome.storage.local.get('cloudnav_data', (result) => {
+            if (result.cloudnav_data) {
+                renderData(result.cloudnav_data);
+            }
+        });
+    }
+    
+    // 递归渲染分类树
+    function renderCategory(cat, categories, links, level = 0) {
+        const catLinks = links.filter(l => l.categoryId === cat.id);
+        const childCats = categories.filter(c => c.parentId === cat.id);
+        const hasChildren = childCats.length > 0;
+        const isOpen = expandedCats.has(cat.id);
+        
+        // 创建分类组
+        const groupDiv = document.createElement('div');
+        groupDiv.className = 'cat-group';
+        if (level > 0) {
+            groupDiv.style.marginLeft = '20px';
+        }
+        
+        // 分类头
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'cat-header' + (isOpen ? ' active' : '');
+        headerDiv.setAttribute('data-id', cat.id);
+        
+        // 箭头
+        const arrowSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        arrowSvg.setAttribute('class', 'cat-arrow');
+        arrowSvg.setAttribute('viewBox', '0 0 24 24');
+        arrowSvg.setAttribute('fill', 'none');
+        arrowSvg.setAttribute('stroke', 'currentColor');
+        
+        const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+        polyline.setAttribute('points', '9 18 15 12 9 6');
+        arrowSvg.appendChild(polyline);
+        
+        // 分类名
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = cat.name;
+        
+        headerDiv.appendChild(arrowSvg);
+        headerDiv.appendChild(nameSpan);
+        
+        // 添加点击事件
+        headerDiv.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleCategory(cat.id);
+        });
+        
+        groupDiv.appendChild(headerDiv);
+        
+        // 链接容器
+        const linksDiv = document.createElement('div');
+        linksDiv.className = 'cat-links';
+        linksDiv.style.display = isOpen ? 'block' : 'none';
+        
+        // 添加链接
+        if (catLinks.length > 0) {
+            catLinks.forEach(link => {
+                const linkA = document.createElement('a');
+                linkA.href = link.url;
+                linkA.target = '_blank';
+                linkA.className = 'link-item';
+                
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'link-info';
+                
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'link-title';
+                titleDiv.textContent = link.title;
+                
+                infoDiv.appendChild(titleDiv);
+                linkA.appendChild(infoDiv);
+                linksDiv.appendChild(linkA);
+            });
+        }
+        
+        groupDiv.appendChild(linksDiv);
+        
+        // 递归渲染子分类
+        if (hasChildren && isOpen) {
+            childCats.forEach(child => {
+                groupDiv.appendChild(renderCategory(child, categories, links, level + 1));
+            });
+        }
+        
+        return groupDiv;
+    }
+    
     function renderData(data) {
         console.log("渲染数据", data);
         
         const links = data.links || [];
         const categories = data.categories || [];
         
-        let html = '';
+        // 清空容器
+        container.innerHTML = '';
+        
+        // 如果没有数据
+        if (categories.length === 0) {
+            container.innerHTML = '<div class="empty">暂无分类</div>';
+            return;
+        }
         
         // 顶级分类
         const topCats = categories.filter(c => !c.parentId);
         
         topCats.forEach(cat => {
-            const catLinks = links.filter(l => l.categoryId === cat.id);
-            
-            html += '<div class="cat-group">';
-            html += '<div class="cat-header active">';
-            html += '<svg class="cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"/></svg>';
-            html += '<span>' + cat.name + '</span>';
-            html += '</div>';
-            
-            html += '<div class="cat-links" style="display:block">';
-            
-            catLinks.forEach(link => {
-                html += '<a href="' + link.url + '" target="_blank" class="link-item">';
-                html += '<div class="link-info">';
-                html += '<div class="link-title">' + link.title + '</div>';
-                html += '</div>';
-                html += '</a>';
-            });
-            
-            html += '</div>';
-            html += '</div>';
+            container.appendChild(renderCategory(cat, categories, links, 0));
         });
         
-        container.innerHTML = html || '<div class="empty">暂无数据</div>';
+        console.log("渲染完成，子节点数:", container.children.length);
+    }
+    
+    // 搜索功能
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const keyword = e.target.value.toLowerCase();
+            // 搜索功能暂时简化，可以先不加
+        });
+    }
+    
+    // 刷新功能
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+            chrome.storage.local.remove('cloudnav_data', () => {
+                container.innerHTML = '<div class="loading">刷新数据...</div>';
+                chrome.storage.local.get('cloudnav_data', (result) => {
+                    if (result.cloudnav_data) {
+                        renderData(result.cloudnav_data);
+                    }
+                });
+            });
+        });
     }
 });`;
 
