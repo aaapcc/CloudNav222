@@ -661,7 +661,7 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden text-slate-900 dark:text-slate-50">
+    <div className="flex h-full overflow-hidden text-slate-900 dark:text-slate-50" style={{ height: '100%', overflow: 'hidden' }}>
       
       {/* Right Click Context Menu */}
       {contextMenu && (
@@ -1043,7 +1043,7 @@ function App() {
       </aside>
 
       <main 
-          className="flex-1 flex flex-col h-full bg-slate-50 dark:bg-slate-900 relative"
+          className="flex-1 flex flex-col h-full overflow-hidden relative"
           style={{ overflow: 'hidden' }}
       >
           <header className="h-16 px-4 lg:px-8 flex items-center justify-between bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shrink-0">
@@ -1170,8 +1170,14 @@ function App() {
           </header>
           <div 
             ref={mainRef} 
-            className="flex-1 overflow-y-auto scroll-smooth"
-            style={{ overflowY: 'auto', overflowX: 'hidden' }}
+            className="overflow-y-auto"
+            style={{ 
+              flex: 1,
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              WebkitOverflowScrolling: 'touch',
+              height: 'calc(100% - 4rem)' // 明确减去头部高度 (h-16 = 4rem)
+            }}
           >
             <div className="p-4 lg:p-8 space-y-8">
               {detailCategoryId ? (
