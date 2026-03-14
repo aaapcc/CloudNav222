@@ -19,7 +19,8 @@ const NotFound: React.FC = () => {
         <p className="text-slate-500 dark:text-slate-400 mb-8">
           您访问的链接可能已失效、被删除，或者您输入的地址有误。
           <br />
-          请确认当前链接是否正确。
+          <br />
+          请确认当前链接是否正确？
         </p>
         
         <div className="space-y-3">
