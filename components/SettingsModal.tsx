@@ -547,6 +547,9 @@ function notify(title, message) {
         .empty { text-align: center; padding: 20px; color: var(--muted); font-size: 12px; }
         .loading { display: flex; justify-content: center; padding: 40px; color: var(--accent); font-size: 12px; }
         .ml-4 { margin-left: 16px; }
+        /* 管理员标签样式 */
+        .admin-tag { display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 500; background-color: #f3e8ff; color: #9333ea; border: 1px solid #e9d5ff; line-height: 1; margin-left: 4px; }
+        @media (prefers-color-scheme: dark) { .admin-tag { background-color: rgba(147, 51, 234, 0.2); color: #c084fc; border-color: #581c87; } }
     </style>
 </head>
 <body>
@@ -730,7 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 如果是仅管理员可见
         if (cat.isAdminOnly) {
             const adminSpan = document.createElement('span');
-            adminSpan.className = 'inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 border border-purple-200';
+            adminSpan.className = 'admin-tag';  // 使用我们定义的类名
             adminSpan.textContent = '管';
             headerContent.appendChild(adminSpan);
             
