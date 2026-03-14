@@ -546,7 +546,6 @@ function notify(title, message) {
         
         .empty { text-align: center; padding: 20px; color: var(--muted); font-size: 12px; }
         .loading { display: flex; justify-content: center; padding: 40px; color: var(--accent); font-size: 12px; }
-        .ml-4 { margin-left: 16px; }
     </style>
 </head>
 <body>
@@ -585,13 +584,12 @@ try {
     // 3. 监听关闭指令
     port.onMessage.addListener((msg) => {
         if (msg.action === 'close_panel') {
-            window.close(); // 只有在扩展页面内部调用有效
+            window.close();
         }
     });
 } catch(e) {
     console.error('Connection failed', e);
 }
-// ----------------------------------------
 
 document.addEventListener('DOMContentLoaded', async () => {
     const container = document.getElementById('content');
@@ -600,7 +598,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     let allLinks = [];
     let allCategories = [];
-    let expandedCats = new Set(); 
+    let expandedCats = new Set();
 
     const getArrowIcon = () => {
         return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cat-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>';
@@ -640,73 +638,71 @@ document.addEventListener('DOMContentLoaded', async () => {
         const q = filter.toLowerCase();
         let html = '';
         let hasContent = false;
-        
         const isSearching = q.length > 0;
 
-        // 先找出所有顶级分类（没有 parentId 的）
-        const topLevelCats = allCategories.filter(cat => !cat.parentId);
+        // 先获取顶级分类
+        const topLevelCats = allCategories.filter(c => !c.parentId);
 
-        // 递归渲染分类树
-        const renderCategoryTree = (parentCats, level = 0) => {
-            let result = '';
-            parentCats.forEach(cat => {
-                // 获取当前分类的链接
-                const catLinks = allLinks.filter(l => {
-                    const inCat = l.categoryId === cat.id;
-                    if (!inCat) return false;
-                    if (!q) return true;
-                    return l.title.toLowerCase().includes(q) || 
-                           l.url.toLowerCase().includes(q) || 
-                           (l.description && l.description.toLowerCase().includes(q));
-                });
-
-                // 获取子分类
-                const childCats = allCategories.filter(c => c.parentId === cat.id);
-                const hasChildren = childCats.length > 0;
-
-                // 如果当前分类没有链接也没有子分类，跳过
-                if (catLinks.length === 0 && childCats.length === 0) return;
-
-                hasContent = true;
-                const isOpen = expandedCats.has(cat.id) || isSearching;
-
-                // 根据层级设置缩进 - 使用 style 而不是 class
-                const indentStyle = level > 0 ? ' style="margin-left: 20px;"' : '';
-                
-                result += '<div class="cat-group"' + indentStyle + '>';
-                
-                // 显示分类标题（如果有链接或子分类）
-                result += '<div class="cat-header ' + (isOpen ? 'active' : '') + '" data-id="' + cat.id + '">';
-                result += getArrowIcon();
-                result += '<span>' + cat.name + '</span>';
-                result += '</div>';
-                
-                // 显示链接
-                if (catLinks.length > 0) {
-                    result += '<div class="cat-links" style="display: ' + (isOpen ? 'block' : 'none') + '">';
-                    catLinks.forEach(link => {
-                        const iconSrc = getFaviconUrl(link.url);
-                        result += '<a href="' + link.url + '" target="_blank" class="link-item">';
-                        result += '<div class="link-icon"><img src="' + iconSrc + '" /></div>';
-                        result += '<div class="link-info">';
-                        result += '<div class="link-title">' + link.title + '</div>';
-                        result += '</div>';
-                        result += '</a>';
-                    });
-                    result += '</div>';
-                }
-                
-                // 递归渲染子分类
-                if (hasChildren && isOpen) {
-                    result += renderCategoryTree(childCats, level + 1);
-                }
-                
-                result += '</div>';
+        // 递归函数：渲染分类及其子分类
+        const renderCategory = (cat, level = 0) => {
+            const catLinks = allLinks.filter(l => {
+                if (l.categoryId !== cat.id) return false;
+                if (!q) return true;
+                return l.title.toLowerCase().includes(q) || 
+                       l.url.toLowerCase().includes(q) || 
+                       (l.description && l.description.toLowerCase().includes(q));
             });
+
+            const childCats = allCategories.filter(c => c.parentId === cat.id);
+            const hasChildren = childCats.length > 0;
+            const isOpen = expandedCats.has(cat.id) || isSearching;
+
+            // 如果没有内容且没有子分类，不显示
+            if (catLinks.length === 0 && childCats.length === 0) return '';
+
+            hasContent = true;
+            
+            // 根据层级添加缩进
+            const indent = level > 0 ? ' style="margin-left: 20px;"' : '';
+            
+            let result = '<div class="cat-group"' + indent + '>';
+            
+            // 分类标题
+            result += '<div class="cat-header' + (isOpen ? ' active' : '') + '" data-id="' + cat.id + '">';
+            result += getArrowIcon();
+            result += '<span>' + cat.name + '</span>';
+            result += '</div>';
+            
+            // 链接列表
+            if (catLinks.length > 0) {
+                result += '<div class="cat-links" style="display: ' + (isOpen ? 'block' : 'none') + '">';
+                catLinks.forEach(link => {
+                    const iconSrc = getFaviconUrl(link.url);
+                    result += '<a href="' + link.url + '" target="_blank" class="link-item">';
+                    result += '<div class="link-icon"><img src="' + iconSrc + '" /></div>';
+                    result += '<div class="link-info">';
+                    result += '<div class="link-title">' + link.title + '</div>';
+                    result += '</div>';
+                    result += '</a>';
+                });
+                result += '</div>';
+            }
+            
+            // 子分类
+            if (hasChildren && isOpen) {
+                childCats.forEach(child => {
+                    result += renderCategory(child, level + 1);
+                });
+            }
+            
+            result += '</div>';
             return result;
         };
 
-        html = renderCategoryTree(topLevelCats);
+        // 渲染所有顶级分类
+        topLevelCats.forEach(cat => {
+            html += renderCategory(cat);
+        });
 
         if (!hasContent) {
             container.innerHTML = filter ? '<div class="empty">无搜索结果</div>' : '<div class="empty">暂无数据</div>';
@@ -724,7 +720,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     allLinks = data.links || [];
                     allCategories = data.categories || [];
                     render(searchInput.value);
-                    // 即使有缓存，也可以在后台悄悄更新一下 Context Menu 的数据源
                     return;
                 }
             }
@@ -742,7 +737,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             allLinks = data.links || [];
             allCategories = data.categories || [];
             
-            // 重要：保存到 storage，供 Background 和 Popup 使用
             await chrome.storage.local.set({ [CACHE_KEY]: data });
             
             render(searchInput.value);
@@ -758,7 +752,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     searchInput.addEventListener('input', (e) => render(e.target.value));
     refreshBtn.addEventListener('click', () => loadData(true));
 
-    // Listen for refresh messages
     chrome.runtime.onMessage.addListener((msg) => {
         if (msg.type === 'refresh') {
             loadData(true);
