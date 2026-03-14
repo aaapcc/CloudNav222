@@ -516,7 +516,7 @@ function notify(title, message) {
         .search-input { flex: 1; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--hover); color: var(--text); outline: none; box-sizing: border-box; font-size: 13px; }
         .search-input:focus { border-color: var(--accent); }
         
-        .refresh-btn { width: 30px; display: flex; items-center; justify-content: center; border: 1px solid var(--border); background: var(--hover); border-radius: 6px; color: var(--muted); cursor: pointer; transition: all 0.2s; }
+        .refresh-btn { width: 30px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); background: var(--hover); border-radius: 6px; color: var(--muted); cursor: pointer; transition: all 0.2s; }
         .refresh-btn:hover { color: var(--accent); border-color: var(--accent); }
         .refresh-btn:active { transform: scale(0.95); }
         .rotating { animation: spin 1s linear infinite; }
