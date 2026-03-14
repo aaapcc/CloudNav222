@@ -554,21 +554,20 @@ function App() {
   // 处理更多按钮点击 - 使用路由跳转
   const handleMoreClick = (catId: string) => {
     navigate(`/category/${catId}`);
-    // 立即将滚动位置设置到顶部
-    if (mainRef.current) {
-      mainRef.current.scrollTop = 0;
-    }
+    setTimeout(() => {
+      if (mainRef.current) {
+        mainRef.current.scrollTop = 0;
+      }
+    }, 0);
   };
 
   // 处理返回首页 - 使用路由跳转
   const handleBackToHome = () => {
     navigate('/');
-    // 返回首页时也滚动到顶部
-    setTimeout(() => {
-      if (mainRef.current) {
-        mainRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }, 50);
+    // 返回首页时也滚动到顶部，无动画
+    if (mainRef.current) {
+      mainRef.current.scrollTop = 0;
+    }
   };
 
   // --- Render Components ---
@@ -1228,7 +1227,12 @@ function App() {
                             {/* 返回首页按钮 - 使用路由跳转 */}
                             <div className="flex items-center gap-3">
                                 <button
-                                    onClick={() => navigate('/')}
+                                    onClick={() => {
+                                        navigate('/');
+                                        if (mainRef.current) {
+                                            mainRef.current.scrollTop = 0;
+                                        }
+                                    }}
                                     className="flex items-center gap-1 px-2.5 py-1.5 text-sm bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
