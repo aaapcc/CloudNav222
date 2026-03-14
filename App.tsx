@@ -1043,9 +1043,10 @@ function App() {
       </aside>
 
       <main 
-          className="flex-1 flex flex-col h-full bg-slate-50 dark:bg-slate-900 overflow-hidden relative"
+          className="flex-1 flex flex-col h-full bg-slate-50 dark:bg-slate-900 relative"
+          style={{ overflow: 'hidden' }}
       >
-          <header className="h-16 px-4 lg:px-8 flex items-center justify-between bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shrink-0">
+          <header className="h-16 px-4 lg:px-8 flex items-center justify-between bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shrink-0">
             <div className="flex items-center gap-4 flex-1">
               <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 -ml-2 text-slate-600 dark:text-slate-300">
                 <Menu size={24} />
@@ -1170,6 +1171,7 @@ function App() {
           <div 
             ref={mainRef} 
             className="flex-1 overflow-y-auto scroll-smooth"
+            style={{ overflowY: 'auto', overflowX: 'hidden' }}
           >
             <div className="p-4 lg:p-8 space-y-8">
               {detailCategoryId ? (
