@@ -1356,7 +1356,7 @@ function App() {
                   })()
               ) : (
                   /* 首页内容 */
-                   !isDataLoaded ? (
+                  !isDataLoaded ? (
                     // 数据还没加载完，显示加载中
                     <div className="flex items-center justify-center py-20">
                       <div className="text-slate-400 flex items-center">
