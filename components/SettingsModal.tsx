@@ -584,12 +584,13 @@ try {
     // 3. 监听关闭指令
     port.onMessage.addListener((msg) => {
         if (msg.action === 'close_panel') {
-            window.close();
+            window.close(); // 只有在扩展页面内部调用有效
         }
     });
 } catch(e) {
     console.error('Connection failed', e);
 }
+// ----------------------------------------
 
 document.addEventListener('DOMContentLoaded', async () => {
     const container = document.getElementById('content');
@@ -598,7 +599,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     let allLinks = [];
     let allCategories = [];
-    let expandedCats = new Set();
+    let expandedCats = new Set(); 
 
     const getArrowIcon = () => {
         return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cat-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>';
@@ -638,70 +639,47 @@ document.addEventListener('DOMContentLoaded', async () => {
         const q = filter.toLowerCase();
         let html = '';
         let hasContent = false;
+        
         const isSearching = q.length > 0;
 
-        // 先获取顶级分类
-        const topLevelCats = allCategories.filter(c => !c.parentId);
-
-        // 递归函数：渲染分类及其子分类
-        const renderCategory = (cat, level = 0) => {
+        allCategories.forEach(cat => {
             const catLinks = allLinks.filter(l => {
-                if (l.categoryId !== cat.id) return false;
+                const inCat = l.categoryId === cat.id;
+                if (!inCat) return false;
                 if (!q) return true;
                 return l.title.toLowerCase().includes(q) || 
                        l.url.toLowerCase().includes(q) || 
                        (l.description && l.description.toLowerCase().includes(q));
             });
 
-            const childCats = allCategories.filter(c => c.parentId === cat.id);
-            const hasChildren = childCats.length > 0;
-            const isOpen = expandedCats.has(cat.id) || isSearching;
-
-            // 如果没有内容且没有子分类，不显示
-            if (catLinks.length === 0 && childCats.length === 0) return '';
-
+            if (catLinks.length === 0) return;
             hasContent = true;
-            
-            // 根据层级添加缩进
-            const indent = level > 0 ? ' style="margin-left: 20px;"' : '';
-            
-            let result = '<div class="cat-group"' + indent + '>';
-            
-            // 分类标题
-            result += '<div class="cat-header' + (isOpen ? ' active' : '') + '" data-id="' + cat.id + '">';
-            result += getArrowIcon();
-            result += '<span>' + cat.name + '</span>';
-            result += '</div>';
-            
-            // 链接列表
-            if (catLinks.length > 0) {
-                result += '<div class="cat-links" style="display: ' + (isOpen ? 'block' : 'none') + '">';
-                catLinks.forEach(link => {
-                    const iconSrc = getFaviconUrl(link.url);
-                    result += '<a href="' + link.url + '" target="_blank" class="link-item">';
-                    result += '<div class="link-icon"><img src="' + iconSrc + '" /></div>';
-                    result += '<div class="link-info">';
-                    result += '<div class="link-title">' + link.title + '</div>';
-                    result += '</div>';
-                    result += '</a>';
-                });
-                result += '</div>';
-            }
-            
-            // 子分类
-            if (hasChildren && isOpen) {
-                childCats.forEach(child => {
-                    result += renderCategory(child, level + 1);
-                });
-            }
-            
-            result += '</div>';
-            return result;
-        };
 
-        // 渲染所有顶级分类
-        topLevelCats.forEach(cat => {
-            html += renderCategory(cat);
+            const isOpen = expandedCats.has(cat.id) || isSearching;
+            const activeClass = isOpen ? 'active' : '';
+
+            html += \`
+            <div class="cat-group">
+                <div class="cat-header \${activeClass}" data-id="\${cat.id}">
+                    \${getArrowIcon()}
+                    <span>\${cat.name}</span>
+                </div>
+                <div class="cat-links">
+            \`;
+            
+            catLinks.forEach(link => {
+                const iconSrc = getFaviconUrl(link.url);
+                html += \`
+                    <a href="\${link.url}" target="_blank" class="link-item">
+                        <div class="link-icon"><img src="\${iconSrc}" /></div>
+                        <div class="link-info">
+                            <div class="link-title">\${link.title}</div>
+                        </div>
+                    </a>
+                \`;
+            });
+
+            html += \`</div></div>\`;
         });
 
         if (!hasContent) {
@@ -720,6 +698,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     allLinks = data.links || [];
                     allCategories = data.categories || [];
                     render(searchInput.value);
+                    // 即使有缓存，也可以在后台悄悄更新一下 Context Menu 的数据源
                     return;
                 }
             }
@@ -737,6 +716,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             allLinks = data.links || [];
             allCategories = data.categories || [];
             
+            // 重要：保存到 storage，供 Background 和 Popup 使用
             await chrome.storage.local.set({ [CACHE_KEY]: data });
             
             render(searchInput.value);
@@ -752,6 +732,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     searchInput.addEventListener('input', (e) => render(e.target.value));
     refreshBtn.addEventListener('click', () => loadData(true));
 
+    // Listen for refresh messages
     chrome.runtime.onMessage.addListener((msg) => {
         if (msg.type === 'refresh') {
             loadData(true);
