@@ -546,6 +546,7 @@ function notify(title, message) {
         
         .empty { text-align: center; padding: 20px; color: var(--muted); font-size: 12px; }
         .loading { display: flex; justify-content: center; padding: 40px; color: var(--accent); font-size: 12px; }
+        .ml-4 { margin-left: 16px; }
     </style>
 </head>
 <body>
@@ -642,45 +643,73 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         const isSearching = q.length > 0;
 
-        allCategories.forEach(cat => {
-            const catLinks = allLinks.filter(l => {
-                const inCat = l.categoryId === cat.id;
-                if (!inCat) return false;
-                if (!q) return true;
-                return l.title.toLowerCase().includes(q) || 
-                       l.url.toLowerCase().includes(q) || 
-                       (l.description && l.description.toLowerCase().includes(q));
-            });
+        // 先构建分类树
+        const topLevelCategories = allCategories.filter(c => !c.parentId);
 
-            if (catLinks.length === 0) return;
-            hasContent = true;
+        const renderCategoryTree = (parentCats, level = 0) => {
+            let result = '';
+            parentCats.forEach(cat => {
+                const catLinks = allLinks.filter(l => {
+                    const inCat = l.categoryId === cat.id;
+                    if (!inCat) return false;
+                    if (!q) return true;
+                    return l.title.toLowerCase().includes(q) || 
+                           l.url.toLowerCase().includes(q) || 
+                           (l.description && l.description.toLowerCase().includes(q));
+                });
 
-            const isOpen = expandedCats.has(cat.id) || isSearching;
-            const activeClass = isOpen ? 'active' : '';
+                const childCats = allCategories.filter(c => c.parentId === cat.id);
+                const hasChildren = childCats.length > 0;
 
-            html += \`
-            <div class="cat-group">
-                <div class="cat-header \${activeClass}" data-id="\${cat.id}">
-                    \${getArrowIcon()}
-                    <span>\${cat.name}</span>
-                </div>
-                <div class="cat-links">
-            \`;
-            
-            catLinks.forEach(link => {
-                const iconSrc = getFaviconUrl(link.url);
-                html += \`
-                    <a href="\${link.url}" target="_blank" class="link-item">
-                        <div class="link-icon"><img src="\${iconSrc}" /></div>
-                        <div class="link-info">
-                            <div class="link-title">\${link.title}</div>
+                if (catLinks.length === 0 && childCats.length === 0) return;
+
+                hasContent = true;
+                const isOpen = expandedCats.has(cat.id) || isSearching;
+
+                // 根据层级决定缩进
+                const indentClass = level === 0 ? '' : 'ml-4';
+                
+                result += `<div class="cat-group ${indentClass}">`;
+                
+                // 如果有链接或子分类，才显示分类头
+                if (catLinks.length > 0 || childCats.length > 0) {
+                    result += `
+                        <div class="cat-header ${isOpen ? 'active' : ''}" data-id="${cat.id}">
+                            ${getArrowIcon()}
+                            <span>${cat.name}</span>
                         </div>
-                    </a>
-                \`;
+                    `;
+                }
+                
+                // 显示链接
+                if (catLinks.length > 0) {
+                    result += `<div class="cat-links" style="display: ${isOpen ? 'block' : 'none'}">`;
+                    catLinks.forEach(link => {
+                        const iconSrc = getFaviconUrl(link.url);
+                        result += `
+                            <a href="${link.url}" target="_blank" class="link-item">
+                                <div class="link-icon"><img src="${iconSrc}" /></div>
+                                <div class="link-info">
+                                    <div class="link-title">${link.title}</div>
+                                </div>
+                            </a>
+                        `;
+                    });
+                    result += `</div>`;
+                }
+                
+                // 递归渲染子分类
+                if (hasChildren && isOpen) {
+                    result += renderCategoryTree(childCats, level + 1);
+                }
+                
+                result += `</div>`;
             });
+            return result;
+        };
 
-            html += \`</div></div>\`;
-        });
+        // 使用
+        html += renderCategoryTree(topLevelCategories);
 
         if (!hasContent) {
             container.innerHTML = filter ? '<div class="empty">无搜索结果</div>' : '<div class="empty">暂无数据</div>';
