@@ -655,6 +655,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 递归渲染分类树
     function renderCategory(cat, categories, links, level = 0) {
+        // 如果是全员隐藏，直接不显示
+        if (cat.isVisible === false) {
+            return null;
+        }
+
+        // 如果是仅管理员可见，加个标识但不隐藏
+        const isAdminOnly = cat.isAdminOnly === true;
+
         const catLinks = links.filter(l => l.categoryId === cat.id);
         const childCats = categories.filter(c => c.parentId === cat.id);
         
@@ -698,7 +706,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 分类名（如果有密码，加锁图标）
         const nameSpan = document.createElement('span');
-        nameSpan.textContent = (cat.password ? '🔒 ' : '') + cat.name;
+        nameSpan.textContent = cat.name + (cat.password ? ' 🔒' : '') + (isAdminOnly ? ' 👑' : '');
 
         headerDiv.appendChild(arrowSvg);
         headerDiv.appendChild(nameSpan);
