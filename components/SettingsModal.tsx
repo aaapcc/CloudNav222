@@ -707,10 +707,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 分类名（如果有密码，加锁图标）
         const nameSpan = document.createElement('span');
-        nameSpan.textContent = cat.name + (cat.password ? ' 🔒' : '') + (isAdminOnly ? ' 👑' : '');
+        nameSpan.textContent = cat.name;
 
+        // 创建容器来放分类名和标签
+        const headerContent = document.createElement('div');
+        headerContent.style.display = 'flex';
+        headerContent.style.alignItems = 'center';
+        headerContent.style.gap = '4px';
+        headerContent.style.flex = '1';
+
+        // 分类名
+        const nameText = document.createTextNode(cat.name);
+        headerContent.appendChild(nameText);
+
+        // 如果只有密码，没有仅管理员
+        if (cat.password && !cat.isAdminOnly) {
+            const lockSpan = document.createElement('span');
+            lockSpan.textContent = ' 🔒';
+            headerContent.appendChild(lockSpan);
+        }
+
+        // 如果是仅管理员可见
+        if (cat.isAdminOnly) {
+            const adminSpan = document.createElement('span');
+            adminSpan.className = 'inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 border border-purple-200';
+            adminSpan.textContent = '管';
+            headerContent.appendChild(adminSpan);
+            
+            // 如果同时有密码
+            if (cat.password) {
+                const lockSpan = document.createElement('span');
+                lockSpan.textContent = ' 🔒';
+                headerContent.appendChild(lockSpan);
+            }
+        }
+
+        // 清空原来的 nameSpan，换成 headerContent
         headerDiv.appendChild(arrowSvg);
-        headerDiv.appendChild(nameSpan);
+        headerDiv.appendChild(headerContent);
         
         // 添加点击事件
         headerDiv.addEventListener('click', (e) => {
