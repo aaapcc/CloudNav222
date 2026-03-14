@@ -1356,6 +1356,16 @@ function App() {
                   })()
               ) : (
                   /* 首页内容 */
+                   !isDataLoaded ? (
+                    // 数据还没加载完，显示加载中
+                    <div className="flex items-center justify-center py-20">
+                      <div className="text-slate-400 flex items-center">
+                        <div className="loading-spinner"></div>
+                        <span>加载中...</span>
+                      </div>
+                    </div>
+                  ) : (
+                    // 数据加载完成，显示首页内容
                   <>
                       {/* 置顶链接部分 */}
                       {pinnedLinks.length > 0 && !searchQuery && (
