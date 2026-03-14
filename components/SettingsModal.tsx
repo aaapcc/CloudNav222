@@ -643,12 +643,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         const isSearching = q.length > 0;
 
-        // 先构建分类树
-        const topLevelCategories = allCategories.filter(c => !c.parentId);
+        // 先找出所有顶级分类（没有 parentId 的）
+        const topLevelCats = allCategories.filter(cat => !cat.parentId);
 
+        // 递归渲染分类树
         const renderCategoryTree = (parentCats, level = 0) => {
             let result = '';
             parentCats.forEach(cat => {
+                // 获取当前分类的链接
                 const catLinks = allLinks.filter(l => {
                     const inCat = l.categoryId === cat.id;
                     if (!inCat) return false;
@@ -658,44 +660,40 @@ document.addEventListener('DOMContentLoaded', async () => {
                            (l.description && l.description.toLowerCase().includes(q));
                 });
 
+                // 获取子分类
                 const childCats = allCategories.filter(c => c.parentId === cat.id);
                 const hasChildren = childCats.length > 0;
 
+                // 如果当前分类没有链接也没有子分类，跳过
                 if (catLinks.length === 0 && childCats.length === 0) return;
 
                 hasContent = true;
                 const isOpen = expandedCats.has(cat.id) || isSearching;
 
-                // 根据层级决定缩进
-                const indentClass = level === 0 ? '' : 'ml-4';
+                // 根据层级设置缩进 - 使用 style 而不是 class
+                const indentStyle = level > 0 ? ' style="margin-left: 20px;"' : '';
                 
-                result += '<div class="cat-group ' + indentClass + '">';
+                result += '<div class="cat-group"' + indentStyle + '>';
                 
-                // 如果有链接或子分类，才显示分类头
-                if (catLinks.length > 0 || childCats.length > 0) {
-                    result += `
-                        <div class="cat-header ${isOpen ? 'active' : ''}" data-id="${cat.id}">
-                            ${getArrowIcon()}
-                            <span>${cat.name}</span>
-                        </div>
-                    `;
-                }
+                // 显示分类标题（如果有链接或子分类）
+                result += '<div class="cat-header ' + (isOpen ? 'active' : '') + '" data-id="' + cat.id + '">';
+                result += getArrowIcon();
+                result += '<span>' + cat.name + '</span>';
+                result += '</div>';
                 
                 // 显示链接
                 if (catLinks.length > 0) {
-                    result += `<div class="cat-links" style="display: ${isOpen ? 'block' : 'none'}">`;
+                    result += '<div class="cat-links" style="display: ' + (isOpen ? 'block' : 'none') + '">';
                     catLinks.forEach(link => {
                         const iconSrc = getFaviconUrl(link.url);
-                        result += `
-                            <a href="${link.url}" target="_blank" class="link-item">
-                                <div class="link-icon"><img src="${iconSrc}" /></div>
-                                <div class="link-info">
-                                    <div class="link-title">${link.title}</div>
-                                </div>
-                            </a>
-                        `;
+                        result += '<a href="' + link.url + '" target="_blank" class="link-item">';
+                        result += '<div class="link-icon"><img src="' + iconSrc + '" /></div>';
+                        result += '<div class="link-info">';
+                        result += '<div class="link-title">' + link.title + '</div>';
+                        result += '</div>';
+                        result += '</a>';
                     });
-                    result += `</div>`;
+                    result += '</div>';
                 }
                 
                 // 递归渲染子分类
@@ -703,13 +701,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     result += renderCategoryTree(childCats, level + 1);
                 }
                 
-                result += `</div>`;
+                result += '</div>';
             });
             return result;
         };
 
-        // 使用
-        html += renderCategoryTree(topLevelCategories);
+        html = renderCategoryTree(topLevelCats);
 
         if (!hasContent) {
             container.innerHTML = filter ? '<div class="empty">无搜索结果</div>' : '<div class="empty">暂无数据</div>';
