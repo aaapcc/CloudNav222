@@ -537,7 +537,7 @@ function notify(title, message) {
         .cat-links { display: none; padding-left: 8px; margin-bottom: 8px; }
         .cat-header.active + .cat-links { display: block; }
         
-        .link-item { display: flex; items-center; gap: 8px; padding: 6px 8px; border-radius: 6px; text-decoration: none; color: var(--text); transition: background 0.1s; border-left: 2px solid transparent; }
+        .link-item { display: flex; items-center; gap: 8px; padding: 6px 8px; border-radius: 6px; text-decoration: none; color: var(--text); transition: background 0.1s; border-left: 2px solid transparent; margin-left: 12px; }
         .link-item:hover { background: var(--hover); border-left-color: var(--accent); }
         .link-icon { width: 16px; height: 16px; flex-shrink: 0; display: flex; items-center; justify-content: center; overflow: hidden; }
         .link-icon img { width: 100%; height: 100%; object-fit: contain; }
@@ -768,6 +768,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const linkA = document.createElement('a');
                 linkA.href = link.url;
                 linkA.target = '_blank';
+                linkA.rel = 'noopener noreferrer'; 
                 linkA.className = 'link-item';
                 
                 // 图标
