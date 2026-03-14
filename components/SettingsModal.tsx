@@ -634,10 +634,42 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    // 获取图标URL
+    function getFaviconUrl(pageUrl) {
+        try {
+            // 使用 Chrome 扩展的 favicon API
+            const url = new URL(chrome.runtime.getURL("/_favicon/"));
+            url.searchParams.set("pageUrl", pageUrl);
+            url.searchParams.set("size", "32");
+            return url.toString();
+        } catch (e) {
+            // 降级方案：使用 Google 的 favicon 服务
+            try {
+                const urlObj = new URL(pageUrl);
+                return \`https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&url=\${encodeURIComponent(urlObj.origin)}&size=32\`;
+            } catch (e2) {
+                return '';
+            }
+        }
+    }
+    
     // 递归渲染分类树
     function renderCategory(cat, categories, links, level = 0) {
         const catLinks = links.filter(l => l.categoryId === cat.id);
         const childCats = categories.filter(c => c.parentId === cat.id);
+        
+        // 递归检查子分类是否有内容
+        const hasVisibleChildren = childCats.some(child => {
+            const childLinks = links.filter(l => l.categoryId === child.id);
+            const grandChildren = categories.filter(c => c.parentId === child.id);
+            return childLinks.length > 0 || grandChildren.length > 0;
+        });
+        
+        // 如果当前分类没有链接且没有有内容的子分类，隐藏
+        if (catLinks.length === 0 && !hasVisibleChildren) {
+            return null;
+        }
+        
         const hasChildren = childCats.length > 0;
         const isOpen = expandedCats.has(cat.id);
         
@@ -684,7 +716,7 @@ document.addEventListener('DOMContentLoaded', () => {
         linksDiv.className = 'cat-links';
         linksDiv.style.display = isOpen ? 'block' : 'none';
         
-        // 添加链接
+        // 添加链接（带图标）
         if (catLinks.length > 0) {
             catLinks.forEach(link => {
                 const linkA = document.createElement('a');
@@ -692,6 +724,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 linkA.target = '_blank';
                 linkA.className = 'link-item';
                 
+                // 图标
+                const iconDiv = document.createElement('div');
+                iconDiv.className = 'link-icon';
+                
+                const iconImg = document.createElement('img');
+                iconImg.src = getFaviconUrl(link.url);
+                iconImg.onerror = () => {
+                    iconImg.style.display = 'none';
+                    iconDiv.textContent = link.title.charAt(0);
+                };
+                
+                iconDiv.appendChild(iconImg);
+                linkA.appendChild(iconDiv);
+                
+                // 链接信息
                 const infoDiv = document.createElement('div');
                 infoDiv.className = 'link-info';
                 
@@ -710,7 +757,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // 递归渲染子分类
         if (hasChildren && isOpen) {
             childCats.forEach(child => {
-                groupDiv.appendChild(renderCategory(child, categories, links, level + 1));
+                const childDiv = renderCategory(child, categories, links, level + 1);
+                if (childDiv) {
+                    groupDiv.appendChild(childDiv);
+                }
             });
         }
         
@@ -734,19 +784,29 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 顶级分类
         const topCats = categories.filter(c => !c.parentId);
+        let hasAnyContent = false;
         
         topCats.forEach(cat => {
-            container.appendChild(renderCategory(cat, categories, links, 0));
+            const catDiv = renderCategory(cat, categories, links, 0);
+            if (catDiv) {
+                container.appendChild(catDiv);
+                hasAnyContent = true;
+            }
         });
+        
+        if (!hasAnyContent) {
+            container.innerHTML = '<div class="empty">暂无数据</div>';
+        }
         
         console.log("渲染完成，子节点数:", container.children.length);
     }
     
-    // 搜索功能
+    // 搜索功能（简化版）
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase();
-            // 搜索功能暂时简化，可以先不加
+            // 如果有搜索词，可以在这里添加搜索逻辑
+            // 暂时不做复杂处理
         });
     }
     
