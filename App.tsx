@@ -173,16 +173,18 @@ function App() {
           }
         });
         setCollapsedFolders(initialCollapsed);
+        setIsDataLoaded(true);
 
       } catch (e) {
         setLinks(INITIAL_LINKS);
         setCategories(DEFAULT_CATEGORIES);
+        setIsDataLoaded(true);
       }
     } else {
       setLinks(INITIAL_LINKS);
       setCategories(DEFAULT_CATEGORIES);
+      setIsDataLoaded(true);
     }
-    setIsDataLoaded(true);
   };
 
   const syncToCloud = async (newLinks: LinkItem[], newCategories: Category[], newSettings: SiteSettings, token: string) => {
@@ -276,6 +278,7 @@ function App() {
                         }
                     });
                     setCollapsedFolders(initialCollapsed);
+                    setIsDataLoaded(true);
 
                     return;
                 }
@@ -1189,11 +1192,14 @@ function App() {
                       if (!isDataLoaded) {
                         return (
                           <div className="flex items-center justify-center py-20">
-                            <div className="text-slate-400">加载中...</div>
+                            <div className="text-slate-400 flex items-center">
+                              <div className="loading-spinner"></div>
+                              <span>加载中...</span>
+                            </div>
                           </div>
                         );
                       }
-                      
+
                       const cat = categories.find(c => c.id === detailCategoryId);
                       if (!cat) {
                         // 如果分类不存在，返回 404 信息
