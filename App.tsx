@@ -1334,9 +1334,6 @@ function App() {
                                       )}
                                   </div>
                               )}
-
-                              {/* 在最后添加底部留白 */}
-                              <div className="h-20"></div>
                           </div>
                       );
                   })()
@@ -1522,9 +1519,6 @@ function App() {
                               <button onClick={() => setIsModalOpen(true)} className="mt-4 text-blue-500 hover:underline">添加一个?</button>
                           </div>
                       )}
-
-                      {/* 底部留白 */}
-                      <div className="h-20"></div>
                   </>
               )}
             </div>
