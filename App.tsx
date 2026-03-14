@@ -118,6 +118,7 @@ function App() {
   
   const [syncStatus, setSyncStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [authToken, setAuthToken] = useState<string>('');
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(new Set());
   const [detailCategoryId, setDetailCategoryId] = useState<string | null>(null);
@@ -181,6 +182,7 @@ function App() {
       setLinks(INITIAL_LINKS);
       setCategories(DEFAULT_CATEGORIES);
     }
+    setIsDataLoaded(true);
   };
 
   const syncToCloud = async (newLinks: LinkItem[], newCategories: Category[], newSettings: SiteSettings, token: string) => {
@@ -1183,6 +1185,15 @@ function App() {
               {detailCategoryId ? (
                   /* 分类详情页 - 替换首页内容 */
                   (() => {
+                      // 如果数据还没加载完，显示加载中
+                      if (!isDataLoaded) {
+                        return (
+                          <div className="flex items-center justify-center py-20">
+                            <div className="text-slate-400">加载中...</div>
+                          </div>
+                        );
+                      }
+                      
                       const cat = categories.find(c => c.id === detailCategoryId);
                       if (!cat) {
                         // 如果分类不存在，返回 404 信息
