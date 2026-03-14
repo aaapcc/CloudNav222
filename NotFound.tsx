@@ -12,10 +12,6 @@ const NotFound: React.FC = () => {
           <AlertCircle size={40} className="text-amber-600 dark:text-amber-400" />
         </div>
         
-        <h1 className="text-3xl font-bold text-slate-800 dark:text-white mb-2">
-          404
-        </h1>
-        
         <h2 className="text-xl font-semibold text-slate-700 dark:text-slate-200 mb-4">
           页面不存在
         </h2>
@@ -33,13 +29,6 @@ const NotFound: React.FC = () => {
           >
             <Home size={18} />
             返回首页
-          </button>
-          
-          <button
-            onClick={() => window.history.back()}
-            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-          >
-            返回上一页
           </button>
         </div>
       </div>
