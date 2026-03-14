@@ -821,13 +821,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // 刷新功能
     if (refreshBtn) {
         refreshBtn.addEventListener('click', () => {
-            chrome.storage.local.remove('cloudnav_data', () => {
-                container.innerHTML = '<div class="loading">刷新数据...</div>';
-                chrome.storage.local.get('cloudnav_data', (result) => {
-                    if (result.cloudnav_data) {
-                        renderData(result.cloudnav_data);
-                    }
+            console.log("点击刷新按钮");
+            container.innerHTML = '<div class="loading">刷新数据中...</div>';
+            
+            // 直接从 API 获取最新数据
+            fetch(\`\${CONFIG.apiBase}/api/storage\`, {
+                headers: { 'x-auth-password': CONFIG.password }
+            })
+            .then(res => {
+                console.log("刷新 API 响应状态", res.status);
+                if (!res.ok) throw new Error(\`HTTP \${res.status}\`);
+                return res.json();
+            })
+            .then(data => {
+                console.log("刷新数据成功", data);
+                // 更新缓存
+                chrome.storage.local.set({ cloudnav_data: data }, () => {
+                    renderData(data);
                 });
+            })
+            .catch(err => {
+                console.error("刷新失败", err);
+                container.innerHTML = \`<div class="empty" style="color:#ef4444">刷新失败: \${err.message}</div>\`;
             });
         });
     }
