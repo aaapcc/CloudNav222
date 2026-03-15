@@ -108,12 +108,12 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
           className={`flex flex-col p-3 rounded-lg group gap-2  ${
             level === 0 
               ? 'border border-slate-100 dark:border-slate-600 bg-slate-50 dark:bg-slate-700/50'  // 顶级目录
-              : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'        // 二级及以下目录
+              : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 mt-2'   // 二级及以下目录
           }`}
         >
         
           {/* 分类行 */}
-          <div className="flex flex-col w-full items-start gap-2 bg-slate-50 dark:bg-slate-700/50">
+          <div className="flex flex-col w-full items-start gap-2">
             {/* 第二行：原有的分类内容（上下箭头、图标、名称、操作按钮等） */}
             <div className="flex items-start gap-2 w-full">
               {/* 上下箭头 - 所有分类都显示 */}
