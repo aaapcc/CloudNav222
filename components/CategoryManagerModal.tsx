@@ -103,7 +103,14 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
       const realIndex = categories.findIndex(c => c.id === cat.id);
       
       return (
-        <div key={cat.id} className="flex flex-col p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg group gap-2 border border-slate-100 dark:border-slate-600">
+        <div 
+          key={cat.id} 
+          className={`flex flex-col p-3 rounded-lg group gap-2  ${
+            level === 0 
+              ? 'border border-slate-100 dark:border-slate-600 bg-slate-50 dark:bg-slate-700/50'  // 顶级目录
+              : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'        // 二级及以下目录
+          }`}
+        >
         
           {/* 分类行 */}
           <div className="flex flex-col w-full items-start gap-2 bg-slate-50 dark:bg-slate-700/50">
@@ -301,7 +308,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                 return newSet;
                               });
                             }}
-                            className="flex items-center gap-1 text-xs text-slate-500 rounded text-white bg-slate-400 hover:bg-slate-500 transition-colors pl-1.5 pr-2.5"
+                            className="flex items-center gap-1 text-xs text-slate-500 rounded text-white bg-slate-400 hover:bg-slate-500 transition-colors pl-1 pr-2"
                           >
                             {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                             <span>{isExpanded ? '折叠目录' : '展开目录'}</span>
