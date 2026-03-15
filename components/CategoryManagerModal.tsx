@@ -101,10 +101,9 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
         
           {/* 分类行 */}
           <div className="flex items-start gap-2 bg-slate-50 dark:bg-slate-700/50 relative">
-            <div className="flex items-start gap-2">
-              
-              {/* 展开箭头 - 绝对定位，不占宽度 */}
-              {hasChildren && editingId !== cat.id && mergingCatId !== cat.id && (
+            {/* 第一行：展开按钮（只在有子分类时显示） */}
+            {hasChildren && editingId !== cat.id && mergingCatId !== cat.id && (
+              <div className="flex justify-start">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -118,13 +117,16 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                       return newSet;
                     });
                   }}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -ml-2 text-slate-400 hover:text-blue-500 bg-white dark:bg-slate-800 rounded-full w-5 h-5 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600"
-                  style={{ zIndex: 10 }}
+                  className="flex items-center gap-1 text-xs text-slate-500 hover:text-blue-500"
                 >
-                  {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+                  {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                  <span>{isExpanded ? '折叠' : '展开'}</span>
                 </button>
-              )}
-              
+              </div>
+            )}
+
+            {/* 第二行：原有的分类内容（上下箭头、图标、名称、操作按钮等） */}
+            <div className="flex items-start gap-2">
               {/* 上下箭头 - 所有分类都显示 */}
               {editingId !== cat.id && (
                 <div className="flex flex-col gap-1 mr-1 shrink-0">
