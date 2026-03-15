@@ -105,10 +105,10 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
       return (
         <div 
           key={cat.id} 
-          className={`flex flex-col p-3 rounded-lg group gap-2  ${
-            level === 0 
-              ? 'border border-slate-100 dark:border-slate-600 bg-slate-50 dark:bg-slate-700/50'  // 顶级目录
-              : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 mt-2'   // 二级及以下目录
+          className={`flex flex-col p-3 rounded-lg group gap-2 ${
+            level % 2 === 0
+              ? 'border border-slate-100 dark:border-slate-600 bg-slate-50 dark:bg-slate-700/50'  // 偶数层（0,2,4...）
+              : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 mt-1'   // 奇数层（1,3,5...）
           }`}
         >
         
