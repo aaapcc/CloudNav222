@@ -64,6 +64,22 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
 
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());  // 记录展开的文件夹
 
+  // 在这里添加递归函数 👇
+  const renderCategoryOptions = (parentId?: string, level: number = 0): React.ReactNode[] => {
+    const children = categories.filter(c => c.parentId === parentId);
+    
+    const result: React.ReactNode[] = [];
+    children.forEach(cat => {
+      result.push(
+        <option key={cat.id} value={cat.id}>
+          {'　'.repeat(level)}作为「{cat.name}」子分类
+        </option>
+      );
+      result.push(...renderCategoryOptions(cat.id, level + 1));
+    });
+    return result;
+  };
+
   // Merge State
   const [mergingCatId, setMergingCatId] = useState<string | null>(null);
   const [targetMergeId, setTargetMergeId] = useState<string>('');
@@ -849,11 +865,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                       className="flex-1 p-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value={NO_PARENT_VALUE}>作为顶级分类</option>
-                      {categories.map(parent => (
-                        <option key={parent.id} value={parent.id}>
-                          {'　'.repeat(parent.level || 0)}作为「{parent.name}」子分类
-                        </option>
-                      ))}
+                      {renderCategoryOptions()}
                     </select>
                   </div>
            </div>
