@@ -63,6 +63,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
   const [editParentId, setEditParentId] = useState<string>(NO_PARENT_VALUE);
 
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());  // 记录展开的文件夹
+  const [hiddenChildrenIds, setHiddenChildrenIds] = useState<Set<string>>(new Set());
 
   // Merge State
   const [mergingCatId, setMergingCatId] = useState<string | null>(null);
@@ -92,6 +93,11 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
     const children = categories.filter(c => c.parentId === parentId);
     
     return children.map(cat => {
+      // 如果在合并模式且当前分类是被隐藏的子分类，则不渲染
+      if (mergingCatId && hiddenChildrenIds.has(cat.id)) {
+        return null;
+      }
+
       const hasChildren = categories.some(c => c.parentId === cat.id);
       const isExpanded = expandedFolders.has(cat.id);
       const realIndex = categories.findIndex(c => c.id === cat.id);
@@ -262,7 +268,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                         ))}
                     </select>
                     <button onClick={executeMerge} className="text-xs bg-blue-600 text-white px-2 py-1 rounded">确认</button>
-                    <button onClick={() => setMergingCatId(null)} className="text-xs text-slate-500 px-2 py-1">取消</button>
+                    <button onClick={() => { setMergingCatId(null); setHiddenChildrenIds(new Set());}} className="text-xs text-slate-500 px-2 py-1">取消</button>
                   </div>
                 ) : (
                   // 正常显示模式
@@ -275,9 +281,13 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                     </div>
                     
                     <div className="flex flex-col">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium dark:text-slate-200 truncate">{cat.name}</span>
+                        {cat.password && <Lock size={12} className="text-amber-500 shrink-0" />}
+                      </div>
                       {/* 第一行：展开按钮（只在有子分类时显示） */}
                       {hasChildren && editingId !== cat.id && mergingCatId !== cat.id && (
-                        <div className="flex justify-start h-6">
+                        <div className="flex justify-start h-5 mt-0.5 mb-1">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -291,18 +301,13 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                 return newSet;
                               });
                             }}
-                            className="flex items-center gap-1 text-xs text-slate-500 rounded text-white bg-slate-400 hover:bg-slate-500 transition-colors pl-1.5 pr-2.5 "
+                            className="flex items-center gap-1 text-xs text-slate-500 rounded text-white bg-slate-400 hover:bg-slate-500 transition-colors pl-1.5 pr-2.5"
                           >
                             {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                             <span>{isExpanded ? '折叠目录' : '展开目录'}</span>
                           </button>
                         </div>
                       )}
-                      
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium dark:text-slate-200 truncate">{cat.name}</span>
-                        {cat.password && <Lock size={12} className="text-amber-500 shrink-0" />}
-                      </div>
                       <span className="text-xs text-slate-400">{links.filter(l => l.categoryId === cat.id).length} 个链接</span>
                       {/* 可见性下拉框 - 添加在这里 */}
                       <div className="pt-1">
@@ -473,6 +478,17 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
     setMergingCatId(catId);
     const firstTarget = categories.find(c => c.id !== catId);
     if (firstTarget) setTargetMergeId(firstTarget.id);
+    
+    // 获取所有子分类 ID（包括孙分类）
+    const getAllChildren = (id: string): string[] => {
+      const children = categories.filter(c => c.parentId === id);
+      return children.reduce((acc, child) => {
+        return [...acc, child.id, ...getAllChildren(child.id)];
+      }, [] as string[]);
+    };
+    
+    const childrenIds = getAllChildren(catId);
+    setHiddenChildrenIds(new Set(childrenIds));
   };
 
   const executeMerge = () => {
@@ -486,6 +502,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
 
     onUpdateCategories(newCats, newLinks);
     setMergingCatId(null);
+    setHiddenChildrenIds(new Set());
   };
 
   return (
