@@ -64,7 +64,14 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
 
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());  // 记录展开的文件夹
 
-  // 在这里添加递归函数 👇
+  // Merge State
+  const [mergingCatId, setMergingCatId] = useState<string | null>(null);
+  const [targetMergeId, setTargetMergeId] = useState<string>('');
+
+  const [editId, setEditId] = useState('');
+  const [newCatId, setNewCatId] = useState('');
+
+  // 在这里添加递归函数
   const renderCategoryOptions = (parentId?: string, level: number = 0): React.ReactNode[] => {
     const children = categories.filter(c => c.parentId === parentId);
     
@@ -79,13 +86,6 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
     });
     return result;
   };
-
-  // Merge State
-  const [mergingCatId, setMergingCatId] = useState<string | null>(null);
-  const [targetMergeId, setTargetMergeId] = useState<string>('');
-
-  const [editId, setEditId] = useState('');
-  const [newCatId, setNewCatId] = useState('');
 
   if (!isOpen) return null;
 
@@ -143,6 +143,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
     if (!newCatName.trim()) return;
     const newCat: Category = {
       id: newCatId.trim() || Date.now().toString(), // 如果输入了ID则使用，否则自动生成
+      id: Date.now().toString(),
       name: newCatName.trim(),
       icon: newCatIcon.trim() || 'Folder',
       password: newCatPassword.trim() || undefined,
@@ -288,7 +289,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           placeholder="分类名称"
                           autoFocus
                         />
-                        <span className="text-xs text-slate-400">分类名称</span>
+                        <span class="text-xs text-slate-400">分类名称</span>
                       </div>
                       
                       {/* 第三行：分类ID */}
@@ -305,7 +306,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           className="flex-1 p-2 text-sm rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
                           placeholder="分类ID (用于URL，例如: dev)"
                         />
-                        <span className="text-xs text-slate-400">分类ID</span>
+                        <span class="text-xs text-slate-400">分类ID</span>
                       </div>
                       
                       {/* 第四行：密码 */}
@@ -318,7 +319,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           className="flex-1 p-2 text-sm rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
                           placeholder="设置密码 (留空则不加密)"
                         />
-                        <span className="text-xs text-slate-400">分类密码</span>
+                        <span class="text-xs text-slate-400">分类密码</span>
                       </div>
                       
                       {/* 第五行：父分类选择 */}
@@ -451,7 +452,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                             }}
                             className="text-xs p-1 pr-6 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none appearance-none cursor-pointer"
                             style={{
-                              backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' strokeLinecap='round' strokeLinejoin='round' strokeWidth='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                              backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
                               backgroundPosition: 'right 0.25rem center',
                               backgroundRepeat: 'no-repeat',
                               backgroundSize: '1.2em 1.2em',
@@ -701,7 +702,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                             }}
                                             className="text-xs p-1 pr-5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white outline-none appearance-none cursor-pointer w-28"
                                             style={{
-                                              backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' strokeLinecap='round' strokeLinejoin='round' strokeWidth='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                                              backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
                                               backgroundPosition: 'right 0.2rem center',
                                               backgroundRepeat: 'no-repeat',
                                               backgroundSize: '1em 1em',
@@ -825,8 +826,8 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
 
              {/* 新增：ID 输入 */}
               <div className="flex items-center gap-2">
-                <div className="flex-1 relative">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-lock absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true">
+                <div class="flex-1 relative">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true">
                     <circle cx="12" cy="12" r="10"></circle>
                     <line x1="12" y1="8" x2="12" y2="16"></line>
                     <line x1="8" y1="12" x2="16" y2="12"></line>
@@ -855,9 +856,6 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                  </div>
                  {/* 添加时的父分类选择 */}
                   <div className="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
-                      <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
-                    </svg>
                     <select
                       value={newCatParentId}
                       onChange={(e) => setNewCatParentId(e.target.value)}
@@ -867,6 +865,14 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                       {renderCategoryOptions()}
                     </select>
                   </div>
+                 <button 
+                    onClick={handleAdd}
+                    disabled={!newCatName.trim()}
+                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors flex items-center"
+                 >
+                   <Plus size={18} />
+                 </button>
+             </div>
            </div>
         </div>
       </div>
