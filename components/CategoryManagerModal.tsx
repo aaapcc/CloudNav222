@@ -101,30 +101,6 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
         
           {/* 分类行 */}
           <div className="flex flex-col w-full items-start gap-2 bg-slate-50 dark:bg-slate-700/50">
-            {/* 第一行：展开按钮（只在有子分类时显示） */}
-            {hasChildren && editingId !== cat.id && mergingCatId !== cat.id && (
-              <div className="flex justify-start h-6">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setExpandedFolders(prev => {
-                      const newSet = new Set(prev);
-                      if (newSet.has(cat.id)) {
-                        newSet.delete(cat.id);
-                      } else {
-                        newSet.add(cat.id);
-                      }
-                      return newSet;
-                    });
-                  }}
-                  className="flex items-center gap-1 text-xs text-slate-500 rounded text-white bg-slate-400 hover:bg-slate-500 transition-colors pl-1.5 pr-2.5 "
-                >
-                  {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                  <span>{isExpanded ? '折叠目录' : '展开目录'}</span>
-                </button>
-              </div>
-            )}
-
             {/* 第二行：原有的分类内容（上下箭头、图标、名称、操作按钮等） */}
             <div className="flex items-start gap-2 w-full">
               {/* 上下箭头 - 所有分类都显示 */}
@@ -299,6 +275,30 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                     </div>
                     
                     <div className="flex flex-col">
+                      {/* 第一行：展开按钮（只在有子分类时显示） */}
+                      {hasChildren && editingId !== cat.id && mergingCatId !== cat.id && (
+                        <div className="flex justify-start h-6">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedFolders(prev => {
+                                const newSet = new Set(prev);
+                                if (newSet.has(cat.id)) {
+                                  newSet.delete(cat.id);
+                                } else {
+                                  newSet.add(cat.id);
+                                }
+                                return newSet;
+                              });
+                            }}
+                            className="flex items-center gap-1 text-xs text-slate-500 rounded text-white bg-slate-400 hover:bg-slate-500 transition-colors pl-1.5 pr-2.5 "
+                          >
+                            {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                            <span>{isExpanded ? '折叠目录' : '展开目录'}</span>
+                          </button>
+                        </div>
+                      )}
+                      
                       <div className="flex items-center gap-2">
                         <span className="font-medium dark:text-slate-200 truncate">{cat.name}</span>
                         {cat.password && <Lock size={12} className="text-amber-500 shrink-0" />}
