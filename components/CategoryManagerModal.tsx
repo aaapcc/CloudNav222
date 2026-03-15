@@ -374,7 +374,9 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
           
           {/* 子分类列表 - 递归渲染 */}
           {isExpanded && hasChildren && (
-            {renderCategoryTree(cat.id, level + 1)}
+            <div className="">
+              {renderCategoryTree(cat.id, level + 1)}
+            </div>
           )}
         </div>
       );
