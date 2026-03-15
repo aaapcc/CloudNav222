@@ -292,69 +292,69 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                   </div>
                 ) : (
                   // 正常显示模式
-                  <div className="flex items-center gap-3">
-                    {/* 图标 */}
-                    <div className="w-8 h-8 rounded bg-white dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-600 shrink-0">
-                      {cat.icon && cat.icon.length <= 4 && !/^[a-zA-Z]+$/.test(cat.icon) 
-                        ? <span className="text-lg">{cat.icon}</span> 
-                        : <Icon name={cat.icon} size={16} />
-                      }
-                    </div>
-                    
-                    {/* 文字信息 */}
-                    <div className="flex flex-col">
-                      {/* 分类名称 + 密码锁 */}
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium dark:text-slate-200 truncate">{cat.name}</span>
-                        {cat.password && <Lock size={12} className="text-amber-500 shrink-0" />}
-                      </div>
-                      
-                      {/* 链接数量 */}
-                      <span className="text-xs text-slate-400">{links.filter(l => l.categoryId === cat.id).length} 个链接</span>
-                      
-                      {/* 可见性下拉框 - 添加在这里 */}
-                      <div className="pt-2">
-                        <select
-                          value={
-                            (cat as any).isVisible === false ? "hidden" :
-                            (cat as any).isAdminOnly === true ? "admin" : "public"
-                          }
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            let isVisible = true;
-                            let isAdminOnly = false;
-                            
-                            if (value === "hidden") {
-                              isVisible = false;
-                              isAdminOnly = false;
-                            } else if (value === "admin") {
-                              isVisible = true;
-                              isAdminOnly = true;
-                            } else {
-                              isVisible = true;
-                              isAdminOnly = false;
-                            }
-                            
-                            const updatedCategories = categories.map(c => 
-                              c.id === cat.id ? { ...c, isVisible, isAdminOnly } : c
-                            );
-                            onUpdateCategories(updatedCategories);
-                          }}
-                          className="text-xs p-1 pr-6 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none appearance-none cursor-pointer"
-                          style={{
-                            backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                            backgroundPosition: 'right 0.25rem center',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundSize: '1.2em 1.2em',
-                          }}
-                        >
-                          <option value="public" className="dark:bg-slate-800">👥 全员可见</option>
-                          <option value="admin" className="dark:bg-slate-800">👑 仅管理员可见</option>
-                          <option value="hidden" className="dark:bg-slate-800">🚫 全员隐藏</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
+<div className="flex items-center gap-3">
+  {/* 图标 */}
+  <div className="w-8 h-8 rounded bg-white dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-600 shrink-0">
+    {cat.icon && cat.icon.length <= 4 && !/^[a-zA-Z]+$/.test(cat.icon) 
+      ? <span className="text-lg">{cat.icon}</span> 
+      : <Icon name={cat.icon} size={16} />
+    }
+  </div>
+  
+  {/* 文字信息 */}
+  <div className="flex flex-col">
+    {/* 分类名称 + 密码锁 */}
+    <div className="flex items-center gap-2">
+      <span className="font-medium dark:text-slate-200 truncate">{cat.name}</span>
+      {cat.password && <Lock size={12} className="text-amber-500 shrink-0" />}
+    </div>
+    
+    {/* 链接数量 */}
+    <span className="text-xs text-slate-400">{links.filter(l => l.categoryId === cat.id).length} 个链接</span>
+    
+    {/* 可见性下拉框 */}
+    <div className="pt-2">
+      <select
+        value={
+          (cat as any).isVisible === false ? "hidden" :
+          (cat as any).isAdminOnly === true ? "admin" : "public"
+        }
+        onChange={(e) => {
+          const value = e.target.value;
+          let isVisible = true;
+          let isAdminOnly = false;
+          
+          if (value === "hidden") {
+            isVisible = false;
+            isAdminOnly = false;
+          } else if (value === "admin") {
+            isVisible = true;
+            isAdminOnly = true;
+          } else {
+            isVisible = true;
+            isAdminOnly = false;
+          }
+          
+          const updatedCategories = categories.map(c => 
+            c.id === cat.id ? { ...c, isVisible, isAdminOnly } : c
+          );
+          onUpdateCategories(updatedCategories);
+        }}
+        className="text-xs p-1 pr-6 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none appearance-none cursor-pointer"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+          backgroundPosition: 'right 0.25rem center',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: '1.2em 1.2em',
+        }}
+      >
+        <option value="public" className="dark:bg-slate-800">👥 全员可见</option>
+        <option value="admin" className="dark:bg-slate-800">👑 仅管理员可见</option>
+        <option value="hidden" className="dark:bg-slate-800">🚫 全员隐藏</option>
+      </select>
+    </div>
+  </div>
+</div>
                 )}
               </div>
 
