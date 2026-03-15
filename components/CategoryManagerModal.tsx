@@ -120,7 +120,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                   className="flex items-center gap-1 text-xs text-slate-500 rounded text-white bg-slate-400 hover:bg-slate-500 transition-colors pl-1.5 pr-2.5 "
                 >
                   {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                  <span>{isExpanded ? '折叠' : '展开'}</span>
+                  <span>{isExpanded ? '折叠目录' : '展开目录'}</span>
                 </button>
               </div>
             )}
