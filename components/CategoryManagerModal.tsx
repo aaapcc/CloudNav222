@@ -117,7 +117,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                       return newSet;
                     });
                   }}
-                  className="flex items-center gap-1 text-xs text-slate-500 hover:text-blue-500 rounded border border-slate-200 dark:border-slate-600 pl-1.5 pr-2.5"
+                  className="flex items-center gap-1 text-xs text-slate-500 rounded text-white bg-slate-400 hover:bg-slate-500 transition-colors pl-1.5 pr-2.5 "
                 >
                   {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                   <span>{isExpanded ? '折叠' : '展开'}</span>
@@ -126,7 +126,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
             )}
 
             {/* 第二行：原有的分类内容（上下箭头、图标、名称、操作按钮等） */}
-            <div className="flex items-start gap-2">
+            <div className="flex items-start gap-2 w-full">
               {/* 上下箭头 - 所有分类都显示 */}
               {editingId !== cat.id && (
                 <div className="flex flex-col gap-1 mr-1 shrink-0">
@@ -352,7 +352,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
 
               {/* 操作按钮 */}
               {editingId !== cat.id && mergingCatId !== cat.id && (
-                <div className="flex items-center gap-1 ml-auto">
+                <div className="flex items-center gap-1 ml-auto shrink-0">
                   <button onClick={() => startEdit(cat)} className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-slate-200 dark:hover:bg-slate-600 rounded" title="编辑">
                     <Edit2 size={14} />
                   </button>
