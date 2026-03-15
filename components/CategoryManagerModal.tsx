@@ -305,10 +305,8 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                         <span className="font-medium dark:text-slate-200 truncate">{cat.name}</span>
                         {cat.password && <Lock size={12} className="text-amber-500 shrink-0" />}
                       </div>
-                      
                       <span className="text-xs text-slate-400">{links.filter(l => l.categoryId === cat.id).length} 个链接</span>
-                    </div>
-                    {/* 可见性下拉框 - 添加在这里 */}
+                      {/* 可见性下拉框 - 添加在这里 */}
                       <div className="pt-2">
                         <select
                           value={
@@ -349,6 +347,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           <option value="hidden" className="dark:bg-slate-800">🚫 全员隐藏</option>
                         </select>
                       </div>
+                    </div>
                   </div>
                 )}
               </div>
