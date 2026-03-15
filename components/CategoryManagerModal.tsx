@@ -97,9 +97,9 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
       const realIndex = categories.findIndex(c => c.id === cat.id);
       
       return (
-        <div key={cat.id} className="flex flex-col">
+        <div key={cat.id} className="border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 overflow-hidden mb-2">
           {/* 分类行 */}
-          <div className="flex flex-col p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg group gap-2 border border-slate-100 dark:border-slate-600">
+          <div className="flex items-start gap-2 p-3 bg-slate-50 dark:bg-slate-700/50">
             <div className="flex items-start gap-2">
               
               {/* 左侧固定宽度区域：用于显示展开箭头或留白 */}
@@ -373,7 +373,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
           
           {/* 子分类列表 - 递归渲染 */}
           {isExpanded && hasChildren && (
-            <div className="ml-6 mt-1 space-y-1">
+            <div className="ml-6 mt-1 space-y-1 pb-2 pr-2">
               {renderCategoryTree(cat.id, level + 1)}
             </div>
           )}
