@@ -100,7 +100,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
         <div key={cat.id} className="flex flex-col p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg group gap-2 border border-slate-100 dark:border-slate-600">
         
           {/* 分类行 */}
-          <div className="flex items-start gap-2 p-3 bg-slate-50 dark:bg-slate-700/50">
+          <div className="flex items-start gap-2 bg-slate-50 dark:bg-slate-700/50">
             <div className="flex items-start gap-2">
               
               {/* 左侧固定宽度区域：用于显示展开箭头或留白 */}
