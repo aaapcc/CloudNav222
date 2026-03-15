@@ -103,7 +103,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
           <div className="flex flex-col w-full items-start gap-2 bg-slate-50 dark:bg-slate-700/50">
             {/* 第一行：展开按钮（只在有子分类时显示） */}
             {hasChildren && editingId !== cat.id && mergingCatId !== cat.id && (
-              <div className="flex justify-start">
+              <div className="flex justify-start h-6">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -117,7 +117,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                       return newSet;
                     });
                   }}
-                  className="flex items-center gap-1 text-xs text-slate-500 hover:text-blue-500"
+                  className="flex items-center gap-1 text-xs text-slate-500 hover:text-blue-500 rounded border border-slate-200 dark:border-slate-600 pl-1.5 pr-2.5"
                 >
                   {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                   <span>{isExpanded ? '折叠' : '展开'}</span>
