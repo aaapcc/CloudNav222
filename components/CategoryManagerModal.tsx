@@ -143,7 +143,6 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
     if (!newCatName.trim()) return;
     const newCat: Category = {
       id: newCatId.trim() || Date.now().toString(), // 如果输入了ID则使用，否则自动生成
-      id: Date.now().toString(),
       name: newCatName.trim(),
       icon: newCatIcon.trim() || 'Folder',
       password: newCatPassword.trim() || undefined,
@@ -289,7 +288,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           placeholder="分类名称"
                           autoFocus
                         />
-                        <span class="text-xs text-slate-400">分类名称</span>
+                        <span className="text-xs text-slate-400">分类名称</span>
                       </div>
                       
                       {/* 第三行：分类ID */}
@@ -306,7 +305,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           className="flex-1 p-2 text-sm rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
                           placeholder="分类ID (用于URL，例如: dev)"
                         />
-                        <span class="text-xs text-slate-400">分类ID</span>
+                        <span className="text-xs text-slate-400">分类ID</span>
                       </div>
                       
                       {/* 第四行：密码 */}
@@ -319,7 +318,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                           className="flex-1 p-2 text-sm rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
                           placeholder="设置密码 (留空则不加密)"
                         />
-                        <span class="text-xs text-slate-400">分类密码</span>
+                        <span className="text-xs text-slate-400">分类密码</span>
                       </div>
                       
                       {/* 第五行：父分类选择 */}
