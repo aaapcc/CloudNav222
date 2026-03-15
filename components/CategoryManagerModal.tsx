@@ -100,7 +100,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
         <div key={cat.id} className="flex flex-col p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg group gap-2 border border-slate-100 dark:border-slate-600">
         
           {/* 分类行 */}
-          <div className="flex items-start gap-2 bg-slate-50 dark:bg-slate-700/50 relative">
+          <div className="flex flex-col w-full items-start gap-2 bg-slate-50 dark:bg-slate-700/50">
             {/* 第一行：展开按钮（只在有子分类时显示） */}
             {hasChildren && editingId !== cat.id && mergingCatId !== cat.id && (
               <div className="flex justify-start">
