@@ -108,7 +108,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
           className={`flex flex-col p-3 rounded-lg group gap-2 
             ${level !== 0 ? 'mt-1' : ''} 
             ${level % 2 === 0 
-              ? 'border border-slate-100 dark:border-slate-600 bg-slate-50 dark:bg-slate-700/50' 
+              ? 'border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/50' 
               : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'
             }`}
         >
