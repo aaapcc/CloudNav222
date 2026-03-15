@@ -591,23 +591,22 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                                         placeholder="设置密码 (留空则不加密)"
                                       />
                                     </div>
+                                    {/* 添加时的父分类选择 */}
                                     <div className="flex items-center gap-2">
                                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
                                         <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
                                       </svg>
                                       <select
-                                        value={editParentId}
-                                        onChange={(e) => setEditParentId(e.target.value)}
-                                        className="flex-1 p-1.5 px-2 text-xs rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white outline-none"
+                                        value={newCatParentId}
+                                        onChange={(e) => setNewCatParentId(e.target.value)}
+                                        className="flex-1 p-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
                                       >
                                         <option value={NO_PARENT_VALUE}>作为顶级分类</option>
-                                        {categories
-                                          .filter(c => c.id !== sub.id && !c.parentId)
-                                          .map(parent => (
-                                            <option key={parent.id} value={parent.id}>
-                                              作为「{parent.name}」子分类
-                                            </option>
-                                          ))}
+                                        {categories.map(parent => (
+                                          <option key={parent.id} value={parent.id}>
+                                            {'　'.repeat(parent.level || 0)}作为「{parent.name}」子分类
+                                          </option>
+                                        ))}
                                       </select>
                                     </div>
                                     {/* 子分类编辑模式下的保存和取消按钮 */}
