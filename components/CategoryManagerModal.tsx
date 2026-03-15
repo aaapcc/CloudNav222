@@ -92,10 +92,6 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
     const children = categories.filter(c => c.parentId === parentId);
     
     return children.map(cat => {
-      if (cat.isVisible === false) {
-        return null;
-      }
-
       const hasChildren = categories.some(c => c.parentId === cat.id);
       const isExpanded = expandedFolders.has(cat.id);
       const realIndex = categories.findIndex(c => c.id === cat.id);
@@ -386,7 +382,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
           )}
         </div>
       );
-    }).filter(Boolean);
+    });
   };
 
   if (!isOpen) return null;
