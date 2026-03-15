@@ -101,8 +101,6 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
           {/* 分类行 */}
           <div className="flex flex-col p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg group gap-2 border border-slate-100 dark:border-slate-600">
             <div className="flex items-start gap-2">
-              {/* 缩进占位 */}
-              {level > 0 && <div className="w-6 shrink-0"></div>}
               
               {/* 左侧固定宽度区域：用于显示展开箭头或留白 */}
               <div className="w-6 shrink-0 flex justify-center mt-1">
@@ -307,7 +305,7 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
                       </div>
                       <span className="text-xs text-slate-400">{links.filter(l => l.categoryId === cat.id).length} 个链接</span>
                       {/* 可见性下拉框 - 添加在这里 */}
-                      <div className="pt-2">
+                      <div className="pt-1">
                         <select
                           value={
                             (cat as any).isVisible === false ? "hidden" :
