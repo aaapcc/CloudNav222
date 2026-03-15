@@ -100,33 +100,30 @@ const CategoryManagerModal: React.FC<CategoryManagerModalProps> = ({
         <div key={cat.id} className="flex flex-col p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg group gap-2 border border-slate-100 dark:border-slate-600">
         
           {/* 分类行 */}
-          <div className="flex items-start gap-2 bg-slate-50 dark:bg-slate-700/50">
+          <div className="flex items-start gap-2 bg-slate-50 dark:bg-slate-700/50 relative">
             <div className="flex items-start gap-2">
               
-              {/* 左侧固定宽度区域：用于显示展开箭头或留白 */}
-              <div className="w-6 shrink-0 flex justify-center mt-1">
-                {hasChildren && editingId !== cat.id && mergingCatId !== cat.id ? (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setExpandedFolders(prev => {
-                        const newSet = new Set(prev);
-                        if (newSet.has(cat.id)) {
-                          newSet.delete(cat.id);
-                        } else {
-                          newSet.add(cat.id);
-                        }
-                        return newSet;
-                      });
-                    }}
-                    className="text-slate-400 hover:text-blue-500"
-                  >
-                    {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                  </button>
-                ) : (
-                  editingId !== cat.id && mergingCatId !== cat.id && <div className="w-4"></div>
-                )}
-              </div>
+              {/* 展开箭头 - 绝对定位，不占宽度 */}
+              {hasChildren && editingId !== cat.id && mergingCatId !== cat.id && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setExpandedFolders(prev => {
+                      const newSet = new Set(prev);
+                      if (newSet.has(cat.id)) {
+                        newSet.delete(cat.id);
+                      } else {
+                        newSet.add(cat.id);
+                      }
+                      return newSet;
+                    });
+                  }}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 -ml-2 text-slate-400 hover:text-blue-500 bg-white dark:bg-slate-800 rounded-full w-5 h-5 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-600"
+                  style={{ zIndex: 10 }}
+                >
+                  {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+                </button>
+              )}
               
               {/* 上下箭头 - 所有分类都显示 */}
               {editingId !== cat.id && (
